@@ -511,11 +511,12 @@ def MakePDF(agentId,projectId):
 
     # Page10 ===========================================================================
     # makefunc.background('RTD Intelligence Report27.png')
+    makefunc.background('9.jpg')
 
     # LOGO
     makefunc.AddLogo()
 
-    makefunc.addTesxts(fontsize=60,x=400,y=pagesize[1]-100,text="PROGRESSIVE PAYMENT",color=(116,230,217))
+    makefunc.addTesxts(fontsize=60,x=400,y=pagesize[1]-100,text="PROGRESSIVE PAYMENT")
 
     # 贷款计算
     unitcalculator = [
