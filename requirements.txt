@@ -1,0 +1,7 @@
+requests
+reportlab
+Pillow
+loguru
+python-multipart
+fastapi
+importlib_metadata
