@@ -1,30 +1,14 @@
-# HUATU
-
-打包命令：pyinstaller -F -i 003.ico run_tk.py
+# 
 
 
-新加坡项目画图使用窗口工具
-
-1#使用第三方模块：tkinter、PIL、requests、cv2、numpy
-2#两种实现方式：CV2图片自动识别、json批量转化。
-3#
-
-
-###################################################
-
-使用流程：
-
-登录 ------> 选择项目 -------->  选择buildding -------> 自动画图|| json转换
+'''
+虚拟环境切换： conda activate FastAPI
+FastAPI 程序启动 ：
+uvicorn manger:app --port 7777 --reload
+正式环境后台运行 无需其他的管理工具 ：
+nohup uvicorn manger:app --host 0.0.0.0 --port 7777 --reload  > /home/mixgo/project/python/logs/log.txt 2>&1 &
 
 
-注意： 
-1、 每次完成后，必须重新登录，不然touken会失效。
-2、 json生成方法需要现场演示。
-
-
-
-
-
-
-
-
+PDF 有个字体需要传入到 安装包下 /usr/local/python3/lib/python3.7/site-packages/reportlab/fonts
+线上 字体位置 /usr/local/lib/python3.9/site-packages/reportlab/fonts
+'''

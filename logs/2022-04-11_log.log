@@ -1,0 +1,35 @@
+2022-04-11 09:42:26.188 | INFO     | modules.Project:GetPndPdfPro:130 - ----->>>创建 era_bedroom_pdf
+2022-04-11 09:42:27.312 | INFO     | modules.Project:GetPndPdfPro:135 - PDF创建成功=======>/home/upload/broke/0c5d80359cc5416a9ea953fdebcbfc20\pdf\20220411\71dd9f81e0534265afae1b19e9517b321649641346.pdf
+2022-04-11 09:43:59.225 | INFO     | modules.Project:GetPndPdfPro:130 - ----->>>创建 era_bedroom_pdf
+2022-04-11 09:44:00.141 | INFO     | modules.Project:GetPndPdfPro:135 - PDF创建成功=======>/home/upload/broke/0c5d80359cc5416a9ea953fdebcbfc20\pdf\20220411\71dd9f81e0534265afae1b19e9517b321649641439.pdf
+2022-04-11 09:47:58.958 | INFO     | modules.Project:GetPndPdfPro:131 - ----->>>创建 era_bedroom_pdf
+2022-04-11 09:47:59.096 | INFO     | modules.Project.comm:setmd5:38 - signature=======>2ca266c3cceac3079ddfa91c580fd938
+2022-04-11 09:47:59.791 | INFO     | modules.Project:GetPndPdfPro:136 - PDF创建成功=======>/home/upload/broke/0c5d80359cc5416a9ea953fdebcbfc20\pdf\20220411\71dd9f81e0534265afae1b19e9517b321649641678.pdf
+2022-04-11 09:51:09.759 | INFO     | modules.Project:GetPndPdfPro:131 - ----->>>创建 era_bedroom_pdf
+2022-04-11 09:51:09.923 | INFO     | modules.Project.comm:setmd5:38 - signature=======>1026f896dce34c69083dc91d29c2a028
+2022-04-11 09:53:06.680 | INFO     | modules.Project:GetPndPdfPro:131 - ----->>>创建 era_bedroom_pdf
+2022-04-11 09:53:06.814 | INFO     | modules.Project.comm:setmd5:38 - signature=======>1026f896dce34c69083dc91d29c2a028
+2022-04-11 09:53:07.545 | INFO     | modules.Project:GetPndPdfPro:136 - PDF创建成功=======>/home/upload/broke/0c5d80359cc5416a9ea953fdebcbfc20\pdf\20220411\71dd9f81e0534265afae1b19e9517b321649641986.pdf
+2022-04-11 10:02:01.305 | INFO     | modules.Project:GetPndPdfPro:133 - ----->>>创建 era_bedroom_pdf
+2022-04-11 10:02:01.482 | INFO     | modules.Project.comm:setmd5:38 - signature=======>1026f896dce34c69083dc91d29c2a028
+2022-04-11 10:02:02.185 | INFO     | modules.Project:GetPndPdfPro:138 - PDF创建成功=======>/home/upload/broke/0c5d80359cc5416a9ea953fdebcbfc20\pdf\20220411\71dd9f81e0534265afae1b19e9517b321649642521.pdf
+2022-04-11 10:02:03.229 | INFO     | modules.Project:GetPndPdfPro:133 - ----->>>创建 era_bedroom_pdf
+2022-04-11 10:02:03.371 | INFO     | modules.Project.comm:setmd5:38 - signature=======>1026f896dce34c69083dc91d29c2a028
+2022-04-11 10:02:04.059 | INFO     | modules.Project:GetPndPdfPro:138 - PDF创建成功=======>/home/upload/broke/0c5d80359cc5416a9ea953fdebcbfc20\pdf\20220411\71dd9f81e0534265afae1b19e9517b321649642523.pdf
+2022-04-11 10:02:33.718 | INFO     | modules.Project:GetPndPdfPro:133 - ----->>>创建 era_bedroom_pdf
+2022-04-11 10:02:33.892 | INFO     | modules.Project.comm:setmd5:38 - signature=======>1026f896dce34c69083dc91d29c2a028
+2022-04-11 10:02:34.583 | INFO     | modules.Project:GetPndPdfPro:138 - PDF创建成功=======>/home/upload/broke/0c5d80359cc5416a9ea953fdebcbfc20\pdf\20220411\71dd9f81e0534265afae1b19e9517b321649642553.pdf
+2022-04-11 10:04:49.652 | INFO     | modules.Project:GetPndPdfPro:133 - ----->>>创建 era_bedroom_pdf
+2022-04-11 10:04:49.810 | INFO     | modules.Project.comm:setmd5:38 - signature=======>1026f896dce34c69083dc91d29c2a028
+2022-04-11 10:04:50.481 | INFO     | modules.Project:GetPndPdfPro:138 - PDF创建成功=======>/home/upload/broke/0c5d80359cc5416a9ea953fdebcbfc20\pdf\20220411\71dd9f81e0534265afae1b19e9517b321649642689.pdf
+2022-04-11 10:07:16.957 | INFO     | modules.Project:GetPndPdfPro:136 - ----->>>创建 era_bedroom_pdf
+2022-04-11 10:07:17.101 | INFO     | modules.Project.comm:setmd5:38 - signature=======>1026f896dce34c69083dc91d29c2a028
+2022-04-11 10:07:17.859 | INFO     | modules.Project:GetPndPdfPro:141 - PDF创建成功=======>/home/upload/broke/0c5d80359cc5416a9ea953fdebcbfc20\pdf\20220411\71dd9f81e0534265afae1b19e9517b321649642836.pdf
+2022-04-11 10:07:32.083 | INFO     | modules.Project:GetPndPdfPro:136 - ----->>>创建 era_bedroom_pdf
+2022-04-11 10:07:32.209 | INFO     | modules.Project.comm:setmd5:38 - signature=======>1026f896dce34c69083dc91d29c2a028
+2022-04-11 10:07:32.908 | INFO     | modules.Project:GetPndPdfPro:141 - PDF创建成功=======>/home/upload/broke/0c5d80359cc5416a9ea953fdebcbfc20\pdf\20220411\71dd9f81e0534265afae1b19e9517b321649642852.pdf
+2022-04-11 10:23:09.242 | ERROR    | manger:request_validation_exception_handler:61 - 参数错误POST http://127.0.0.1:7777/project/era_bedroom_pdf
+2022-04-11 10:23:26.422 | ERROR    | manger:request_validation_exception_handler:61 - 参数错误POST http://127.0.0.1:7777/project/era_bedroom_pdf
+2022-04-11 10:24:07.526 | INFO     | modules.Project:GetPndPdfPro:147 - ----->>>创建 era_bedroom_pdf
+2022-04-11 10:24:07.648 | INFO     | modules.Project.comm:setmd5:38 - signature=======>1026f896dce34c69083dc91d29c2a028
+2022-04-11 10:24:36.268 | ERROR    | manger:request_validation_exception_handler:61 - 参数错误POST http://127.0.0.1:7777/project/era_bedroom_pdf

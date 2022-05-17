@@ -1,0 +1,874 @@
+
+# import imp
+import imp
+from logging import exception
+import re
+# from msilib.schema import Error
+from fastapi import APIRouter,Form,HTTPException
+import os
+# from PIL import Image
+from .comm import MakeReportlab,getAPI
+from comm.logger import logger
+
+# reportlab
+from reportlab.pdfgen import canvas
+# from reportlab.lib.pagesizes import letter, A4
+from reportlab.platypus import PageBreak,Table
+# from reportlab.graphics.charts.piecharts import Pie
+from reportlab.lib.units import mm,cm
+from reportlab.lib import colors
+from reportlab.lib.colors import HexColor,black,red,PCMYKColor
+from reportlab.graphics.shapes import Drawing,Rect
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
+# from reportlab.graphics.charts.barcharts import HorizontalBarChart
+# from reportlab.lib.formatters import DecimalFormatter
+import requests,json,time,datetime
+from hashlib import md5
+
+
+router = APIRouter(prefix="/project",tags=['project'],responses={405: {"description": "Not found"}},)
+
+
+
+# envs = "test" # 发布
+envs = "release" # 发布
+
+imgpath = 'http://192.168.0.145:8083'
+urlpath = 'http://192.168.0.145:9998' #API
+filepath = os.getcwd() # 当前文件路径 服务器文件路径 ：/home/upload/broke/pnd/file/report
+returnpaths = os.getcwd() # 当前文件路径 服务器文件路径 ：/home/upload/broke/pnd/file/report
+
+if envs == "test":
+    imgpath = 'http://192.168.0.145:8083'
+    urlpath = 'http://192.168.0.145:9998' #API
+    filepath = '/home/upload/broke/pnd/file/report'
+    returnpaths = "/home/upload/broke/pnd/file/report"
+if envs == 'release':
+    imgpath = 'https://img.singmap.com'
+    urlpath = 'https://api.singmap.com' #API
+    filepath = '/home/upload/broke/pnd/file/report'
+    returnpaths = "/home/upload/broke/pnd/file/report"
+
+
+@router.get("/")
+def read_users():
+
+    return "res_data"
+
+
+@router.post('/pnd_pro_pdf')
+async def GetPndPdfPro(agentId: str=Form(...) ,projectId:str=Form(...)):
+    """
+    项目ID
+    用户ID
+    """
+    logger.info('创建PDF,%s'%projectId)
+    if not agentId and not projectId :
+        raise HTTPException(status_code=404, detail="参数错误")
+
+    # rentunpath = MakePDF(agentId,projectId)
+    # return rentunpath
+
+    try:
+        rentunpath = MakePDF(agentId,projectId)
+        logger.info('PDF创建成功=======>{}'.format(rentunpath))
+        rtdata = {
+            'code':'0',
+            'msg':'succeed',
+            "datas":rentunpath
+        }
+        return rtdata
+    except BaseException as e:
+            rtdata = {
+            'code':'-1',
+            'msg':'error',
+            "datas":e
+            }
+            return rtdata
+
+
+@router.post('/pnd_pro_pdf_Comparison')
+async def GetPndComparison(agentId: str=Form(...) ,projectId:str=Form(...)):
+    """
+    项目ID
+    用户ID
+    """
+    print(agentId,projectId)
+    logger.info('创建PDF,%s'%projectId)
+    if not agentId or not projectId :
+        raise HTTPException(status_code=404, detail="参数错误")
+
+    # rentunpath = MakePDF(agentId,projectId)
+    # return rentunpath
+
+    try:
+        rentunpath = ComparisonPDF(agentId,projectId)
+        logger.info('ComparisonPDF创建成功=======>{}'.format(rentunpath))
+        rtdata = {
+            'code':'0',
+            'msg':'succeed',
+            "datas":rentunpath
+        }
+        return rtdata
+    except BaseException as e:
+            rtdata = {
+            'code':'-1',
+            'msg':'error',
+            "datas":e
+            }
+            return rtdata
+
+
+
+def MakePDF(agentId,projectId):
+
+    # 基础数据准备 =====================================================
+    getapi = getAPI()
+    # 项目信息
+    proinfourl = urlpath+"/pnd-api/project/queryProjectInfoById"
+    proinfodata = {
+        "projectId":projectId,
+        "agentId":agentId
+    }
+    proinfo = getapi.requsetAPI(proinfourl,proinfodata)
+    
+
+    if "projectInfo" in proinfo and "unitInfo" in proinfo and "agentInfo" in proinfo:
+        logger.info('项目信息查询成功--->>>projectId:%s,agentId:%s,projectInfo:%s,unitInfo:%s,agentInfo:%s'%(projectId,agentId,proinfo['projectInfo'],proinfo['unitInfo'],proinfo['agentInfo']))
+    else:
+        logger.info('项目信息查询失败--->>>projectId:%s,agentId:%s'%(projectId,agentId))
+        raise HTTPException(status_code=404, detail="项目信息查询失败")
+
+    prodatainfo = proinfo['projectInfo'] # 项目信息
+    unitInfo = proinfo['unitInfo'] # 单位信息
+    userinfo = proinfo['agentInfo'] #用户信息
+    dealInfo = proinfo['dealInfo'] # 房间-信息
+    Symbol = "$" #价格符
+    if prodatainfo["currencySymbol"] != None:
+        Symbol = prodatainfo["currencySymbol"]
+    unitproce = [0,0,0,0,0] #单位售价
+
+    # 项目PDF上传图片
+    propdfurls = urlpath+"/pnd-api/pdf/queryPdfProjectList"
+    propdfdatas = {
+        "projectId":projectId,
+        "type":""
+    }
+    propdfinfo = getapi.requsetAPI(propdfurls,propdfdatas)
+    if propdfinfo == None :
+        logger.info('项目PDF上传图片为空--->>>projectId:%s,agentId:%s'%(projectId,agentId))
+
+    # 项目区域
+    districturl = urlpath+"/pnd-api/pdf/queryPdfDistrictList"
+    districtdata = {
+        "district":prodatainfo['district'],
+        "type":"1"
+    }
+    districtinfo = getapi.requsetAPI(districturl,districtdata)
+    logger.info('项目区域销售图查询成功--->>>%s'%(districtinfo))
+
+    # PDF文件　页面图片查询
+    fileurl = urlpath+"/pnd-api/pdf/queryPdfList"
+    filedata = {
+        "fileName":"ProjectReport",
+        "page":""
+    }
+    fileinfo = getapi.requsetAPI(fileurl,filedata)
+    logger.info('PDF文件页面图片查询成功--->>>%s'%(fileinfo))
+
+    #新加坡区间 销售统计
+    regionurl = urlpath+"/pnd-api/project/queryRetailCount"
+    RCRdata = {
+        "region":"RCR"
+    }
+    RCRinfo = getapi.requsetAPI(regionurl,RCRdata)
+    logger.info('RCR查询成功--->>>%s'%(RCRdata))
+
+    CCRdata = {
+        "region":"CCR"
+    }
+    CCRinfo = getapi.requsetAPI(regionurl,CCRdata)
+    logger.info('CCR查询成功--->>>%s'%(CCRinfo))
+
+    OCRdata = {
+        "region":"OCR"
+    }
+    OCRinfo = getapi.requsetAPI(regionurl,OCRdata)
+    logger.info('OCR查询成功--->>>%s'%(OCRinfo))
+
+    # 创建PDF文档 =====================================================
+    song = "simsun"
+    pdfmetrics.registerFont(TTFont(song, "simsun.ttc"))
+    pdfmetrics.registerFont(TTFont('ARIALBD','ARIALBD.TTF')) #注册字体
+    pdfmetrics.registerFont(TTFont('arial','arial.ttf')) #注册字体
+    Imagepath = os.path.join(filepath,'file')
+    pagesize = (1747,965) # 画布大小
+    # pagesize = (A4[1],A4[0]) # 画布大小
+    # PND文件夹+ 项目ID + 用户信息 + 文件名称
+    uppath = os.path.join(filepath,agentId)
+    if not os.path.exists(uppath):
+        os.makedirs(uppath)
+    savepath = os.path.join(uppath,projectId+'.pdf') 
+    returnPath = os.path.join(returnpaths,agentId,projectId+'.pdf')
+    doc = canvas.Canvas(savepath,pagesize=pagesize)
+    makefunc = MakeReportlab(doc,Imagepath,pagesize,Symbol) # 加载方法
+    logger.info('---------->>>文档创建')
+
+    
+
+    ######################################################################
+    # page1  ===============================================
+    # 背景
+    makefunc.background('0.jpg')
+    if userinfo['logo']:
+        makefunc.AddURLImages(imgpath+userinfo['logo'],x=650,y=150,w=224,h=224) 
+
+    agentdata4 = [
+    ["NAME",':', userinfo['agentName']],
+    ["MOBILE",':', userinfo['mobile']],
+    ["EMAIL",':',userinfo['email']],
+    ["CEA",':', userinfo['regNum']]
+    ]
+
+    t = Table(agentdata4, style={
+    ("FONT", (0, 0), (-1, -1), 'arial', 35,50),
+    ("TEXTCOLOR", (0, 0), (-1, -1), colors.black),
+    ('ALIGN', (1, 0), (1, -1), 'CENTER')
+    })
+    t._argW[1] = 20
+    t.wrapOn(doc, 0, 0)
+    t.drawOn(doc, 880, 150)
+    doc.showPage()  # 保存当前画布页面
+    logger.info('============>> 1 page')
+
+    # Page2  ===============================================
+    makefunc.AddImages('1.jpg',w=pagesize[0],h=pagesize[1])
+    doc.showPage()
+    logger.info('============>> 2 page')
+
+    # Page3 ===============================================
+    makefunc.background('bgB.png')
+
+    my_text = prodatainfo['projectName']
+    doc.setFillColorRGB(0,0,0) #choose your font colour
+    doc.setFont('ARIALBD', 60)
+    textobject = doc.beginText(70, pagesize[1]-80)
+    for line in my_text.splitlines(False):
+        textobject.textLine(line.rstrip())
+    doc.drawText(textobject)
+
+    makefunc.addTesxts(fontsize=25,fontname='ARIALBD',x=70,y=pagesize[1]-150,text="PROJECT SUMMARY",color=HexColor('#E37200'))
+    # 项目主图
+    makefunc.ImageAdaptive(imgpath+prodatainfo['mainImage'],x=pagesize[0]-400,y=pagesize[1]-400,w=400,h=200) 
+    completionDate = ''
+    if type(prodatainfo['completionDate']) is int:
+        timeArray = time.strptime(prodatainfo['completionDate'], "%Y-%m-%d")
+        completionDate = time.strftime("%Y-%m-%d", timeArray)
+    if type(prodatainfo['completionDate']) is str:
+        completionDate = prodatainfo['completionDate']
+
+    prodata = [
+    ["Developer",':', prodatainfo['brokeName']],
+    ["Tenure",':', prodatainfo['tenure']],
+    ["District",':', prodatainfo['district']],
+    ["Region",':', prodatainfo['projectArea']],
+    ["Top",':', completionDate],
+    ["Total Units",':', prodatainfo['unitsNum']]
+    ]
+
+    makefunc.drawUserInfoTable(prodata,70,580)
+    # 单位类型价格统计表
+    makefunc.addTesxts(fontsize=25,fontname='ARIALBD',x=70,y=550,text="UNIT PRICE",color=HexColor('#E37200'))
+    prodataroombed = [
+    ["Types",'','Price from'],
+    ]
+    Pielist = []
+    for item in unitInfo:
+        # print(item)
+        if item['bedrooms'] == None or item['bedrooms'] < 1 or item['bedrooms'] > 5:
+            continue
+        else:
+            prodataroombed.append([str(item['bedrooms'])+" Bedroom",':',makefunc.priceset(item['price']),])
+            if item['bedrooms'] == 1:
+                unitproce[0] = item['price']
+            if item['bedrooms'] == 2:
+                unitproce[1] = item['price']
+            if item['bedrooms'] == 3:
+                unitproce[2] = item['price']
+            if item['bedrooms'] == 4:
+                unitproce[3] = item['price']
+            if item['bedrooms'] == 5:
+                unitproce[4] = item['price']
+    makefunc.drawUserInfoTable(prodataroombed,70,300)
+    makefunc.addTesxts(fontsize=25,fontname='ARIALBD',x=pagesize[0]-930,y=pagesize[1]-250,text="BEDROOM UNITS SHARES",color=HexColor('#E37200'))
+    # 饼图
+    makefunc.MakePie(unitInfo).drawOn(doc,830,250)
+    # 底部内容
+    page3_btm = [
+        ['Within Mrt.','[Yes] Outram Park'],
+        ['School(s) Within 1 KM','[-]'],
+        ['Project Brochure','[-]'],
+        ['360 Panorama','[-]'],
+    ]
+    t = Table(page3_btm, style={
+    ("FONT", (0, 0), (-1, -1), "ARIALBD", 20),
+    ("TEXTCOLOR", (0, 0), (0, -1), HexColor('#E37200')),
+    })
+
+    t.wrapOn(doc, 0, 0)
+    t.drawOn(doc, 70, 150)
+    # 页脚
+    makefunc.addTesxts(fontsize=16,x=10,y=10,text="Personalised Property Analytics Report • Value-adding Your Home Purchase")
+    doc.showPage()  # 保存当前画布页面
+    logger.info('============>> PROJECT SUMMARY')
+
+    # Page4 项目周边===========================================================================
+    # 背景图
+    makefunc.background('bgB.png')
+    makefunc.addTesxts(fontsize=60,x=70,y=pagesize[1]-80,text=prodatainfo['projectName'],fontname='ARIALBD')
+    makefunc.addTesxts(fontsize=40,x=pagesize[0]/2.6,y=pagesize[1]-270,text="LOCATION HIGHLIGHT",color=HexColor('#E37200'))
+    if prodatainfo['snapshotLogo'] :
+         # 地址Google 截图
+        makefunc.AddURLImages(imgpath+prodatainfo['snapshotLogo'],x=100,y=100,w=700,h=550) 
+    if propdfinfo != [] :
+        # 周边截图
+        makefunc.AddURLImages(imgpath+propdfinfo[0]['logo'],x=pagesize[0]/2,y=100,w=700,h=550)
+    doc.showPage()  # 保存当前画布页面
+    logger.info('============>> LOCATION HIGHLIGHT')
+
+    # Page6 区域出租记录图片 ===========================================================================
+    if districtinfo :
+        makefunc.AddURLImages(imgpath+districtinfo[0]['logo'],w=pagesize[0],h=pagesize[1])
+        makefunc.addTesxts(fontsize=50,x=10,y=pagesize[1]-80,text='District Pricing (Rental)',color=HexColor('#E37200'))
+        doc.showPage()  # 保存当前画布页面
+        logger.info('============>> District Pricing (Rental)')
+
+    # Page7 中介信息===========================================================================
+    makefunc.background('6.jpg')
+    if userinfo['logo']:
+        makefunc.AddURLImages(imgpath+userinfo['logo'],x=650,y=200,w=224,h=224) 
+
+    agentdata2 = [
+    ["NAME",':', userinfo['agentName']],
+    ["MOBILE",':', userinfo['mobile']],
+    ["EMAIL",':',userinfo['email']],
+    ["CEA",':', userinfo['regNum']]
+    ]
+    t = Table(agentdata2, style={
+    ("FONT", (0, 0), (-1, -1), "arial", 35,50),
+    ("TEXTCOLOR", (0, 0), (-1, -1), colors.black),
+    ('ALIGN', (1, 0), (1, -1), 'CENTER')
+    })
+    t._argW[1] = 20
+    t.wrapOn(doc, 0, 0)
+    t.drawOn(doc, 880, 195)
+    # WhatsApp 聊天跳转按钮
+    doc.linkURL('https://api.whatsapp.com/send?phone= '+userinfo['mobile'], (1250,90,1250+447,150))
+    doc.showPage()  # 保存当前画布页面
+    # Page8 ===========================================================================
+    makefunc.background('bgA.png')
+    makefunc.addTesxts(fontsize=40,x=pagesize[0]/3,y=650,text="Guide to Financial Wellness")
+    # 单位统计表
+    unittype2 = [
+    ["Unit Type",'Price from', "Monthly Installment","Min. Monthly Income \n Required For The Purchase",""],
+    ["",'','', "Employee","Self Employed"],
+    ]
+    for item in unitInfo:
+        ...
+        if item['bedrooms'] == None  or item['bedrooms'] < 1 or item['bedrooms'] > 5:
+            continue
+        else:
+            unittype2.append([str(item['bedrooms'])+" Bedroom",makefunc.priceset(item['price']), makefunc.stages(item['price']), makefunc.priceset(item['price']*0.6), makefunc.priceset(item['price']*0.7)])
+    t = Table(unittype2,(pagesize[0]-436)/5,50, style={
+    ('SPAN', (-2, 0), (-1,0)), # 合并单元格(列,行)
+    ('BACKGROUND',(1,2),(-1,-1), colors.white),
+    ('LINEBEFORE', (0, 0), (-1, -1), 0.1 * cm, colors.black),
+    ('BOX', (0, 0), (-1, -1), 0.1 * cm, colors.black),
+    ('LINEABOVE', (0, 0), (-1, -1), 0.1 * cm, colors.black),
+    ('LINEBELOW', (0,0), (-1,-1), 0.1 * cm, colors.black),
+    # ("FONT", (0, 0), (-1, -1), song, 25),
+    ("FONT", (0, 0), (-1, -1), "arial", 25),
+    ("TEXTCOLOR", (0, 0), (-1, -1), colors.black),
+    ('ALIGN', (0, 0), (-1, -1), 'CENTER')
+    })
+    t._argH[0] = 75 
+    t._argH[1] = 65 
+    t.wrapOn(doc, 0, 0)
+    t.drawOn(doc, 200, 250)
+    # 页脚
+    # makefunc.addTesxts(fontsize=16,x=70,y=30,text=" PERSONALISED PROPERTY ANALYTICS REPORT. | 2022")
+    makefunc.addTesxts(fontsize=16,x=300,y=135,text="*Calculation based on 30 years tenure, 1.6% bank interest rate. For your personal financial calculation, please approach our salesperson for assistance.")
+
+    doc.showPage()  # 保存当前画布页面
+    logger.info('============>>Guide to Financial Wellness')
+    
+    # Page9 ===========================================================================
+    # 背景
+    makefunc.background('8.jpg')
+    if userinfo['logo']:
+        ...
+        makefunc.AddURLImages(imgpath+userinfo['logo'],x=100,y=250,w=224,h=224) 
+
+    agentdata5 = [
+    ["NAME",':', userinfo['agentName']],
+    ["MOBILE",':', userinfo['mobile']],
+    ["EMAIL",':',userinfo['email']],
+    ["CEA",':', userinfo['regNum']]
+    ]
+
+    t = Table(agentdata5, style={
+    ("FONT", (0, 0), (-1, -1), 'arial', 35,50),
+    ("TEXTCOLOR", (0, 0), (-1, -1), colors.black),
+    ('ALIGN', (1, 0), (1, -1), 'CENTER')
+    })
+    t._argW[1] = 20
+    t.wrapOn(doc, 0, 0)
+    t.drawOn(doc, 350, 250)
+    # WhatsApp 聊天跳转按钮
+    doc.linkURL('https://api.whatsapp.com/send?phone='+userinfo['mobile'], (600,120,600+447,196))
+
+    doc.showPage()  # 保存当前画布页面
+
+    # Page10 ===========================================================================
+    makefunc.background('9.jpg')
+    makefunc.background('bgA.png')
+
+    makefunc.addTesxts(fontsize=60,x=400,y=pagesize[1]-100,text="PROGRESSIVE PAYMENT")
+    # 贷款计算
+    unitcalculator = [
+        ['','','1 Bedroom','2 Bedroom','3 Bedroom','4 Bedroom','5 Bedroom'],
+        ['PURCHASE PRICE','','-','-','-','-','-'],
+        ['LOAN AMT (75%)','','-','-','-','-','-'],
+        ['DOWN PAYMENTS & STAM DUTIES','','','','',''],
+        [R'5% Upon Booking - Cash','','-','-','-','-','-'],
+        ["Buyer's Stamp Duty - BSD",'','-','-','-','-','-'],
+        ['15% Down Payment - Cash/CPF','','-','-','-','-','-'],
+        ['Total Intial Down Payment (20% + BSD) ','','-','-','-','-','-'],
+        ['DURING CONSTRUCTION PERIOD','','','','',''],
+        ['10% Upon Foundation - 5% Cash/CPF','','-','-','-','-','-'],
+        ['Grand Total for Cash + CPF','','-','-','-','-','-'],
+    ]
+    for y,data in enumerate(unitcalculator):
+        # if item > 1:
+        for x,data2 in enumerate(data):
+            if x >1 :
+                BSD = makefunc.priceBSD(unitproce[x-2])
+                if y ==1:
+                    unitcalculator[y][x] = makefunc.testNan(Symbol,round(unitproce[x-2]))
+                if y ==2:
+                    unitcalculator[y][x] = makefunc.testNan(Symbol,round(unitproce[x-2]*0.75))
+                if y ==4:
+                    unitcalculator[y][x] = makefunc.testNan(Symbol,round(unitproce[x-2]*0.05))
+                if y ==5:
+                    ...
+                    unitcalculator[y][x] = makefunc.testNan(Symbol,BSD)
+                if y ==6:
+                    unitcalculator[y][x] = makefunc.testNan(Symbol,round(unitproce[x-2]*0.15))
+                if y ==7:
+                    ...
+                    unitcalculator[y][x] = makefunc.testNan(Symbol,round((unitproce[x-2]*0.2)+BSD))
+                if y ==9:
+                    unitcalculator[y][x] = makefunc.testNan(Symbol,round(unitproce[x-2]*0.5)) 
+                if y ==10:
+                    unitcalculator[y][x] = makefunc.testNan(Symbol,round(((unitproce[x-2]*0.2)+BSD)+(unitproce[x-2]*0.5)))
+    t = Table(unitcalculator,220,35)
+    style={
+    ('SPAN', (0, 0), (1,0)), # 合并单元格(列,行)
+    ("FONT", (0, 0), (-1, -1),'arial', 16),
+    ('LINEBEFORE', (0, 0), (-1, -1), 0.05 * cm, colors.whitesmoke),
+    ('BACKGROUND',(2,1),(-1,2), colors.white),
+    ('BACKGROUND',(2,4),(-1,6), colors.white),
+    ('BACKGROUND',(2,7),(-1,7), colors.orange),
+    ('BACKGROUND',(2,9),(-1,9), colors.white),
+    ('BACKGROUND',(2,10),(-1,10), colors.orange),
+    ("TEXTCOLOR", (0,1), (-1, -1), colors.black),
+    ('ALIGN', (1, 0), (-1, -1), 'CENTER')
+    }
+    t._argW[0] = 100
+    t._argW[1] = 200
+    t.setStyle(style)
+    t.wrapOn(doc, 0, 0)
+    t.drawOn(doc, 150, 420)
+
+    unitcalculator1 = [
+        ['','','Outstanding \n Loan','Monthly \n Installment','Outstanding \n Loan','Monthly \n Installment','Outstanding \n Loan','Monthly \n Installment','Outstanding \n Loan','Monthly \n Installment','Outstanding \n Loan','Monthly \n Installment'],
+        ['10% Upon Foundation - Next 5%','',makefunc.counts(Symbol,unitproce[0],0.05),makefunc.counts(Symbol,unitproce[0],0.05,0.0035),
+                                            makefunc.counts(Symbol,unitproce[1],0.05),makefunc.counts(Symbol,unitproce[1],0.05,0.0035),
+                                            makefunc.counts(Symbol,unitproce[2],0.05),makefunc.counts(Symbol,unitproce[2],0.05,0.0035),
+                                            makefunc.counts(Symbol,unitproce[3],0.05),makefunc.counts(Symbol,unitproce[3],0.05,0.0035),
+                                            makefunc.counts(Symbol,unitproce[4],0.05),makefunc.counts(Symbol,unitproce[4],0.05,0.0035),],
+        ['10% Upon Concrete Framework','',makefunc.counts(Symbol,unitproce[0],0.15),makefunc.counts(Symbol,unitproce[0],0.15,0.0035),
+                                          makefunc.counts(Symbol,unitproce[1],0.15),makefunc.counts(Symbol,unitproce[1],0.15,0.0035),
+                                          makefunc.counts(Symbol,unitproce[2],0.15),makefunc.counts(Symbol,unitproce[2],0.15,0.0035),
+                                          makefunc.counts(Symbol,unitproce[3],0.15),makefunc.counts(Symbol,unitproce[3],0.15,0.0035),
+                                          makefunc.counts(Symbol,unitproce[4],0.15),makefunc.counts(Symbol,unitproce[4],0.15,0.0035),],
+        ['20% Upon Brick/Celling/Roads/Carparks','',makefunc.counts(Symbol,unitproce[0],0.35),makefunc.counts(Symbol,unitproce[0],0.35,0.0035),
+                                                    makefunc.counts(Symbol,unitproce[1],0.35),makefunc.counts(Symbol,unitproce[1],0.35,0.0035),
+                                                    makefunc.counts(Symbol,unitproce[2],0.35),makefunc.counts(Symbol,unitproce[2],0.35,0.0035),
+                                                    makefunc.counts(Symbol,unitproce[3],0.35),makefunc.counts(Symbol,unitproce[3],0.35,0.0035),
+                                                    makefunc.counts(Symbol,unitproce[4],0.35),makefunc.counts(Symbol,unitproce[4],0.35,0.0035),],
+        ['UPON & AFTER T.O.P','','','',''],
+        ['25% Upon T.O.P','',makefunc.counts(Symbol,unitproce[0],0.6),makefunc.counts(Symbol,unitproce[0],0.6,0.0035),
+                            makefunc.counts(Symbol,unitproce[1],0.6),makefunc.counts(Symbol,unitproce[1],0.6,0.0035),
+                            makefunc.counts(Symbol,unitproce[2],0.6),makefunc.counts(Symbol,unitproce[2],0.6,0.0035),
+                            makefunc.counts(Symbol,unitproce[3],0.6),makefunc.counts(Symbol,unitproce[3],0.6,0.0035),
+                            makefunc.counts(Symbol,unitproce[4],0.6),makefunc.counts(Symbol,unitproce[4],0.6,0.0035),],
+        ['15% CSC','',makefunc.counts(Symbol,unitproce[0],0.75),makefunc.counts(Symbol,unitproce[0],0.75,0.0035),
+                    makefunc.counts(Symbol,unitproce[1],0.75),makefunc.counts(Symbol,unitproce[1],0.75,0.0035),
+                    makefunc.counts(Symbol,unitproce[2],0.75),makefunc.counts(Symbol,unitproce[2],0.75,0.0035),
+                    makefunc.counts(Symbol,unitproce[3],0.75),makefunc.counts(Symbol,unitproce[3],0.75,0.0035),
+                    makefunc.counts(Symbol,unitproce[4],0.75),makefunc.counts(Symbol,unitproce[4],0.75,0.0035),],
+
+
+    ]
+    
+    unitcalculatortb1 = Table(unitcalculator1,110,35, style={
+    ('SPAN', (0, 0), (1,0)), # 合并单元格(列,行)
+    ('LINEBEFORE', (0, 0), (-1, -1), 0.05 * cm, colors.whitesmoke),
+    ("FONT", (0, 0), (-1, -1), 'arial', 16),
+    ('FONTNAME', (0,0), (-1,0), 'Courier-Bold'),
+    ('TEXTCOLOR',(2,0),(-1,0), colors.white),
+    ('BACKGROUND',(2,0),(-1,0), colors.midnightblue),
+    ("FONT", (2,0),(-1,0), 'arial', 16),
+
+    ('BACKGROUND',(2,1),(-1,-1), colors.white),
+    ("TEXTCOLOR", (0,1), (-1, -1), colors.black),
+    ('ALIGN', (1, 0), (-1, -1), 'CENTER')
+    })
+    unitcalculatortb1._argH[0] = 50
+    unitcalculatortb1._argW[0] = 100
+    unitcalculatortb1._argW[1] = 200
+    unitcalculatortb1.wrapOn(doc, 0, 0)
+    unitcalculatortb1.drawOn(doc, 150, 155)
+
+    # 免责声明
+    makefunc.addTesxts(fontsize=16,x=600,y=100,text="*Calculation based on 30 years tenure, 1.6% bank interest rate. For your personal")
+    makefunc.addTesxts(fontsize=16,x=620,y=80,text=" financial calculation, please approach our salesperson for assistance.")
+    doc.showPage()  # 保存当前画布页面
+    logger.info('============>>PROGRESSIVE PAYMENT')
+
+    # Page10 ===========================================================================
+    makefunc.background('10.jpg')
+    if userinfo['logo']:
+        ...
+        makefunc.AddURLImages(imgpath+userinfo['logo'],x=100,y=270,w=224,h=224) 
+    agentdata6 = [
+    ["NAME",':', userinfo['agentName']],
+    ["MOBILE",':', userinfo['mobile']],
+    ["EMAIL",':',userinfo['email']],
+    ["CEA",':', userinfo['regNum']]
+    ]
+
+    t = Table(agentdata6, style={
+    # ("FONT", (0, 0), (-1, -1), song, 35,50),
+    ("FONT", (0, 0), (-1, -1), 'arial', 35,50),
+    ("TEXTCOLOR", (0, 0), (-1, -1), colors.black),
+    ('ALIGN', (1, 0), (1, -1), 'CENTER')
+    })
+    t._argW[1] = 20
+    t.wrapOn(doc, 0, 0)
+    t.drawOn(doc, 350, 270)
+    doc.linkURL('https://api.whatsapp.com/send?phone= '+userinfo['mobile'], (50,160,50+630,230))
+    doc.showPage()  # 保存当前画布页面
+
+    # Page11 ===========================================================================
+    if fileinfo:
+        for item in fileinfo:
+            # print('page10')
+            if item["page"] == 10:
+                makefunc.AddURLImages(imgpath+item['logo'],x=0,y=0,w=pagesize[0],h=pagesize[1]) 
+                doc.showPage()  # 保存当前画布页面
+    makefunc.background('11.jpg')
+    doc.showPage()  # 保存当前画布页面
+    logger.info('============>>10 page')
+
+    # Page12 ===========================================================================
+    makefunc.background('bgA.png')
+    makefunc.AddImages('14right.jpg',x=pagesize[0]-550,y=160,w=430,h=536)
+        # 项目单位总数
+    # makefunc.addTesxts(fontsize=40,x=pagesize[0]-530,y=610,text=str(prodatainfo['unitsNum']),fontname='ARIALBD')
+    # # 项目已释放单位数
+    # makefunc.addTesxts(fontsize=40,x=pagesize[0]-530,y=410,text=str(int(prodatainfo['unitsNum'])-int(prodatainfo['released'])),fontname='ARIALBD')
+    # # 项目已售单位数
+    # makefunc.addTesxts(fontsize=40,x=pagesize[0]-530,y=220,text=str(prodatainfo['sold']),fontname='ARIALBD')
+
+    makefunc.addTesxts(fontsize=60,x=600,y=pagesize[1]-180,text="Sales Transactions",fontname='ARIALBD')
+
+    # 单位销量统计
+    unittransactions = [
+        ['Date','Floor','Size(Sqft)','Price','Price(psf)'],
+    ]
+    for item in dealInfo:
+        date = '-'
+        unitprice = 0
+        transactionPrice = 0
+        if item['transactionDate']:
+            date = time.strftime('%Y-%m',time.localtime(item['transactionDate']/1000))
+        if item['price']:
+            unitprice = item['price']
+        if item['transactionPrice']:
+            transactionPrice = item['transactionPrice']
+        unittransactions.append([date,item['floor'],item['area'],makefunc.priceset(transactionPrice),makefunc.priceset(unitprice),])
+    
+    t = Table(unittransactions,(pagesize[0]-560)/6,60, style={
+    # ("FONT", (0, 0), (-1, -1), song, 22),
+    ("FONT", (0, 0), (-1, -1), 'arial', 22),
+    ('LINEABOVE', (0, 0), (-1, -1), 0.05 * cm, colors.whitesmoke),
+    ('LINEBELOW', (0,-1), (-1,-1), 0.05 * cm, colors.whitesmoke),
+    ('BACKGROUND',(0,0),(-1,0), colors.darkslateblue),
+    ('TEXTCOLOR',(0,0),(-1,0), colors.white),
+    ('BACKGROUND',(0,1),(-1,-1), colors.white),
+    ("TEXTCOLOR", (0,1), (-1, -1), colors.black),
+    ('ALIGN', (0, 0), (-1, -1), 'CENTER')
+    })
+    t._argH[0] = 35
+    t.wrapOn(doc, 0, 0)
+    t.drawOn(doc, 100, 125)
+    logger.info('============>>transactionDate')
+    doc.showPage()  # 保存当前画布页面
+
+    # Page13 ===========================================================================
+    makefunc.background('bgA.png')
+    # New Project Sales Progress
+    # Core Central Region (CCR)
+    makefunc.addTesxts(fontsize=40,x=pagesize[0]-600,y=500,text="New Project Sales Progress")
+    makefunc.addTesxts(fontsize=25,x=pagesize[0]-600,y=450,text="Core Central Region (CCR)")
+    
+    makefunc.make_drawing(CCRinfo).drawOn(doc,0,125)
+    makefunc.AddImages('total sold.png',x=pagesize[0]-600,y=700,w=60,h=50)
+
+    doc.showPage()  # 保存当前画布页面
+    logger.info('============>>Core Central Region (CCR)')
+
+    # Page14 ===========================================================================
+    makefunc.background('bgA.png')
+    # New Project Sales Progress
+    # Core Central Region (RCR)
+    makefunc.addTesxts(fontsize=40,x=pagesize[0]-600,y=500,text="New Project Sales Progress")
+    makefunc.addTesxts(fontsize=25,x=pagesize[0]-600,y=450,text="Core Central Region (RCR)")
+    makefunc.make_drawing(RCRinfo).drawOn(doc,0,125)
+    makefunc.AddImages('total sold.png',x=pagesize[0]-600,y=700,w=60,h=50)
+    doc.showPage()  # 保存当前画布页面
+    logger.info('============>>Core Central Region (RCR)')
+
+    # Page15 ===========================================================================
+    makefunc.background('bgA.png')
+
+    # New Project Sales Progress
+    # Core Central Region (OCR)
+    makefunc.make_drawing(OCRinfo).drawOn(doc,0,125)
+    makefunc.addTesxts(fontsize=40,x=pagesize[0]-600,y=500,text="New Project Sales Progress")
+    makefunc.addTesxts(fontsize=25,x=pagesize[0]-600,y=450,text="Core Central Region (OCR)")
+    makefunc.AddImages('total sold.png',x=pagesize[0]-600,y=700,w=60,h=50)
+    doc.showPage()  # 保存当前画布页面
+    logger.info('============>>Core Central Region (OCR)')
+
+    # Page16 ===========================================================================
+    makefunc.background('16.jpg')
+    doc.showPage()  # 保存当前画布页面
+
+    # Page16 ===========================================================================
+    makefunc.background('17.jpg')
+
+    if userinfo['logo']:
+        ...
+        makefunc.AddURLImages(imgpath+userinfo['logo'],x=700,y=250,w=224,h=224) 
+
+    agentdata3 = [
+    ["NAME",':', userinfo['agentName']],
+    ["MOBILE",':', userinfo['mobile']],
+    ["EMAIL",':',userinfo['email']],
+    ["CEA",':', userinfo['regNum']]
+    ]
+
+    t = Table(agentdata3, style={
+    # ("FONT", (0, 0), (-1, -1), song, 35,50),
+    ("FONT", (0, 0), (-1, -1), 'arial', 35,50),
+    ("TEXTCOLOR", (0, 0), (-1, -1), colors.black),
+    ('ALIGN', (1, 0), (1, -1), 'CENTER')
+    })
+    t._argW[1] = 20
+    t.wrapOn(doc, 0, 0)
+    t.drawOn(doc, 920, 250)
+
+    # WhatsApp 聊天跳转按钮
+    # makefunc.AddImages('RTD Intelligence Report29.png',x=1050,y=100,w=447,h=76) 
+    doc.linkURL('https://api.whatsapp.com/send?phone= '+userinfo['mobile'], (1250,130,1250+350,200))
+    # makefunc.addTesxts(fontsize=16,x=0,y=10,text="Personalised Property Analytics Report • Value-adding Your Home Purchase")
+    doc.showPage()  # 保存当前画布页面
+    logger.info('============>>add 17 page')
+
+    # Page17 ===========================================================================
+    makefunc.background('18.jpg')
+    doc.showPage()  # 保存当前画布页面
+    doc.save()  # 保存文件并关闭画布
+    # time.sleep(3)
+    return returnPath
+    # return savepath 
+
+
+def ComparisonPDF(agentId,projectId):
+    ##################################################################
+    # 项目对比报表
+    ##################################################################
+    proidlist = projectId.split(',')
+    getapi = getAPI()
+    # 项目信息
+    prolsit = []
+    proinfourl = urlpath+"/pnd-api/project/queryProjectInfoById"
+    for item in proidlist:
+        proinfodata = {
+            "projectId":item,
+            "agentId":agentId
+        }
+        proinfo = getapi.requsetAPI(proinfourl,proinfodata)
+        # prolsit[item] = proinfo
+        prolsit.append(proinfo)
+        if not proinfo['agentInfo']:
+            return 
+        logger.info('---------->项目信息获取完成 %s'%proinfo)
+    Symbol = "$" #价格符
+    pagesize = (1747,965) # 画布大小
+    # pagesize = (A4[1],A4[0]) # 画布大小
+    # PND文件夹+ 项目ID + 用户信息 + 文件名称
+    # filepath = os.getcwd() # 当前文件路径 服务器文件路径 ：/home/upload/broke/pnd/file/report
+    Imagepath = os.path.join(filepath,'file')
+    # savepath = os.path.join(Imagepath,'test.pdf') 
+    uppath = os.path.join(filepath,'Comparison')
+    if not os.path.exists(uppath):
+        os.makedirs(uppath)
+    # filename = agentId+str(int(time.time()))
+    savepath = os.path.join(uppath,agentId+'.pdf') 
+    returnPath = os.path.join(uppath,agentId+'.pdf')
+    doc = canvas.Canvas(savepath,pagesize=pagesize)
+    makefunc = MakeReportlab(doc,Imagepath,pagesize,Symbol) # 加载方法
+    
+    song = "simsun"
+    pdfmetrics.registerFont(TTFont(song, "simsun.ttc"))
+    pdfmetrics.registerFont(TTFont('ARIALBD','ARIALBD.TTF')) #注册字体
+    pdfmetrics.registerFont(TTFont('arial','arial.ttf')) #注册字体
+    logger.info('----------> 文件生成完成')
+
+    # page 1
+    userinfo = {
+        "agentName":"",
+        "email":"",
+        "mobile":"",
+        "regNum":"",
+        "id":"",
+    }
+
+
+    procomparison = [
+        ["PROJECT",'','','',''],
+        ["DISTRICT",'','','',''],
+        ["TOTAL UNITS",'','','',''],
+        ["TOP",'','','',''],
+        ["TENURE",'','','',''],
+        ["DEVELOPER",'','','',''],
+        ["1 BR",'','','',''],
+        ["2 BR",'','','',''],
+        ["3 BR",'','','',''],
+        ["4 BR",'','','',''],
+        ["5 BR",'','','',''],
+        ["DISTANCE \n FRM MRT",'','','',''],
+        ["SCHOOLS",'','','',''],
+    ]
+    proimglist = []
+    for keys,items in enumerate(prolsit):
+        unitInfoinfo = items['unitInfo']
+        projectdata = items['projectInfo']
+        userinfo = items['agentInfo']
+        Symbol = "$" #价格符
+        if projectdata["currencySymbol"] != None:
+            Symbol = projectdata["currencySymbol"]
+        completionDate = ''
+        if type(projectdata['completionDate']) is int:
+            timeArray = time.strptime(projectdata['completionDate'], "%Y-%m-%d")
+            completionDate = time.strftime("%Y-%m-%d", timeArray)
+        if type(projectdata['completionDate']) is str:
+            completionDate = projectdata['completionDate']
+        # print(int(keys+1),projectdata)
+        procomparison[0][int(keys+1)] = projectdata['projectName']
+        procomparison[1][keys+1] = projectdata['district']
+        procomparison[2][keys+1] = projectdata['unitsNum']
+        procomparison[3][keys+1] = completionDate
+        procomparison[4][keys+1] = projectdata['tenure']
+        procomparison[5][keys+1] = projectdata['brokeName']
+        proimglist.append(projectdata['mainImage'])
+        for unit in unitInfoinfo:
+            if unit['bedrooms'] == 1 and unit['price'] >0:
+                procomparison[6][keys+1] = Symbol+str(unit['price'])
+            if unit['bedrooms'] == 2 and unit['price'] >0:
+                procomparison[7][keys+1] = Symbol+str(unit['price'])
+            if unit['bedrooms'] == 3 and unit['price'] >0:
+                procomparison[8][keys+1] = Symbol+str(unit['price'])
+            if unit['bedrooms'] == 4 and unit['price'] >0:
+                procomparison[9][keys+1] = Symbol+str(unit['price'])
+            if unit['bedrooms'] == 5 and unit['price'] >0:
+                procomparison[10][keys+1] = Symbol+str(unit['price'])
+    # page1  ===============================================
+    # 背景
+    logger.info('---------->proimglist 处理完成')
+    makefunc.background('0.jpg')
+  
+    if userinfo['logo']:
+        ...
+        makefunc.AddURLImages(imgpath+userinfo['logo'],x=650,y=150,w=224,h=224) 
+    agentdata4 = [
+    ["NAME",':', userinfo['agentName']],
+    ["MOBILE",':', userinfo['mobile']],
+    ["EMAIL",':',userinfo['email']],
+    ["CEA",':', userinfo['regNum']]
+    ]
+
+    t = Table(agentdata4, style={
+    # ("FONT", (0, 0), (-1, -1), song, 35,50),
+    ("FONT", (0, 0), (-1, -1), 'arial', 35,50),
+    ("TEXTCOLOR", (0, 0), (-1, -1), colors.black),
+    ('ALIGN', (1, 0), (1, -1), 'CENTER')
+    })
+    t._argW[1] = 20
+    t.wrapOn(doc, 0, 0)
+    t.drawOn(doc, 880, 150)
+    doc.showPage()  # 保存当前画布页面
+
+    logger.info('---------->page 1')
+
+    makefunc.background('bgC.png')
+
+    itemx = 190
+    for imgitem in proimglist:
+        # if imgitem.endswith('.jpg') or imgitem.endswith('.png'):
+        #     print(imgpath+imgitem)
+        makefunc.ImageAdaptive(imgpath+imgitem+'?x-oss-process=image/resize,w_400,h_200/auto-orient,1/quality,q_65/format,jpg',x=itemx,y=pagesize[1]-400,w=400,h=200) 
+        itemx+=390
+    # logger.info('---------->AAAAAAAAA')
+    # print(procomparison)
+    t = Table(procomparison,390,35, style={
+    ("FONT", (0, -1), (-1, -1), 'arial', 60,25),
+    ("FONT", (0, 0), (0, -1), 'ARIALBD', 16,25),
+    ("FONT", (0, 0), (-1, 0), 'ARIALBD', 16,25),
+    ("FONT", (0, 6), (10, -1), 'ARIALBD', 16,25),
+    ("TEXTCOLOR", (0, 0), (-1, -1), HexColor("0x335C72")),
+    ('BACKGROUND',(0,0),(-1,-1), colors.white),
+    ('LINEBEFORE', (0, 0), (-1, -1), 0.05* cm, HexColor("0x335C72")),
+    ('LINEBELOW', (0, 6), (-1, 10), 0.05* cm, HexColor("0x335C72")),
+    ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+    ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'), 
+    })
+    t._argH[10] = 52
+    t._argH[11] = 60
+    t._argH[12] = 52
+    t._argW[0] = 150
+    t.wrapOn(doc, 0, 0)
+    t.drawOn(doc, 20, 20)
+    doc.showPage()  # 保存当前画布页面
+    logger.info('---------->page 2')
+
+    makefunc.background('18.jpg')
+    doc.showPage()  # 保存当前画布页面
+    logger.info('---------->page 3')
+    doc.save()  # 保存文件并关闭画布
+    return returnPath

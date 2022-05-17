@@ -1,0 +1,21 @@
+2022-04-14 10:39:31.378 | INFO     | modules.Project:GetPndPdfPro:136 - ----->>>创建 era_bedroom_pdf
+2022-04-14 10:40:00.029 | INFO     | modules.Project:GetPndPdfPro:136 - ----->>>创建 era_bedroom_pdf
+2022-04-14 10:40:00.385 | INFO     | modules.Project:GetPndPdfPro:141 - PDF创建成功=======><reportlab.platypus.doctemplate.SimpleDocTemplate object at 0x00000280E9F38888>
+2022-04-14 10:45:23.968 | INFO     | modules.Project:GetPndPdfPro:136 - ----->>>创建 era_bedroom_pdf
+2022-04-14 10:46:22.885 | INFO     | modules.Project:GetPndPdfPro:136 - ----->>>创建 era_bedroom_pdf
+2022-04-14 10:46:42.603 | INFO     | modules.Project:GetPndPdfPro:136 - ----->>>创建 era_bedroom_pdf
+2022-04-14 10:47:48.085 | INFO     | modules.Project:GetPndPdfPro:136 - ----->>>创建 era_bedroom_pdf
+2022-04-14 10:50:26.399 | INFO     | modules.Project:GetPndPdfPro:136 - ----->>>创建 era_bedroom_pdf
+2022-04-14 11:35:27.431 | INFO     | modules.Project:GetPndPdfPro:141 - ----->>>创建 era_bedroom_pdf
+2022-04-14 11:35:55.285 | INFO     | modules.Project:GetPndPdfPro:141 - ----->>>创建 era_bedroom_pdf
+2022-04-14 11:36:39.541 | INFO     | modules.Project:GetPndPdfPro:141 - ----->>>创建 era_bedroom_pdf
+2022-04-14 11:38:01.411 | INFO     | modules.Project:GetPndPdfPro:141 - ----->>>创建 era_bedroom_pdf
+2022-04-14 11:38:44.694 | INFO     | modules.Project:GetPndPdfPro:141 - ----->>>创建 era_bedroom_pdf
+2022-04-14 11:39:39.258 | INFO     | modules.Project:GetPndPdfPro:141 - ----->>>创建 era_bedroom_pdf
+2022-04-14 11:39:56.583 | INFO     | modules.Project:GetPndPdfPro:141 - ----->>>创建 era_bedroom_pdf
+2022-04-14 11:40:20.171 | INFO     | modules.Project:GetPndPdfPro:141 - ----->>>创建 era_bedroom_pdf
+2022-04-14 11:40:26.953 | INFO     | modules.Project:GetPndPdfPro:141 - ----->>>创建 era_bedroom_pdf
+2022-04-14 11:41:08.073 | INFO     | modules.Project:GetPndPdfPro:141 - ----->>>创建 era_bedroom_pdf
+2022-04-14 11:41:09.120 | INFO     | modules.Project:GetPndPdfPro:147 - PDF创建成功=======>rentunpath
+2022-04-14 11:41:44.570 | INFO     | modules.Project:GetPndPdfPro:141 - ----->>>创建 era_bedroom_pdf
+2022-04-14 11:41:45.422 | INFO     | modules.Project:GetPndPdfPro:147 - PDF创建成功=======>rentunpath

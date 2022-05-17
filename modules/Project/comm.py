@@ -13,11 +13,20 @@ from reportlab.lib.formatters import DecimalFormatter
 from reportlab.lib.styles import getSampleStyleSheet
 from fastapi import HTTPException
 from PIL import Image
-import os,time,math
+import os,time,math,datetime
 import requests,json
 from io import BytesIO
 from comm.logger import logger
 from reportlab.lib.utils import ImageReader
+
+class getDatetimes():
+    def __init__(self):
+        ...
+    def Years(self):
+        return datetime.datetime.now().strftime('%Y')
+    def getDate(self):
+        return datetime.datetime.now().strftime('%Y%m%d')
+
 
 
 class getAPI(): # 网络请求
@@ -29,9 +38,13 @@ class getAPI(): # 网络请求
         a.sort(key=lambda x:x[0],reverse=False) # 排序
         keys = ''
         for item in a:
-            keys+= item[1]
+            if item[1] :
+                keys+= item[1]
+            else:
+                keys+= ''
         keys = keys+'c1d65f3667324592a071ebec5038f38c'
         signature = md5(keys.encode(encoding='UTF-8')).hexdigest() #加密
+        # logger.info('signature=======>{}'.format(signature))
         # print(signature)
         return signature
     def requsetAPI(self,path,params):
@@ -46,10 +59,11 @@ class getAPI(): # 网络请求
 
 
 
+
 class MakeReportlab():
-    def __init__(self, doc,imgpath,pagesize,S='$'):
+    def __init__(self, doc,imgpaths,pagesize,S='$'):
         self.doc = doc
-        self.imgpath = imgpath
+        self.imgpaths = imgpaths
         self.pagesize = pagesize
         # 中文宋体
         self.song = "simsun"
@@ -57,6 +71,8 @@ class MakeReportlab():
         pdfmetrics.registerFont(TTFont(self.song, "simsun.ttc"))
         pdfmetrics.registerFont(TTFont('ARIALBD','ARIALBD.TTF')) #注册字体
         pdfmetrics.registerFont(TTFont('arial','arial.ttf')) #注册字体
+        pdfmetrics.registerFont(TTFont('msyh','msyh.ttf')) #注册字体
+        pdfmetrics.registerFont(TTFont('msyhbd','msyhbd.ttf')) #注册字体
     def priceBSD(self,price):
         ...
         BSD = 0
@@ -73,9 +89,9 @@ class MakeReportlab():
         
     def testNan(self,S,price):
         if price >0:
-            return S+str(price)
+            return S+format(price,',')
         else:
-            return 'N/A'
+            return '-'
     def setmd5(self,data):
         # logger.info('Md5加密',data)
         a = list(data.items()) # 转列表
@@ -120,7 +136,7 @@ class MakeReportlab():
         x，y:图片起始坐标
         w,h : 图片大小
         """
-        I_path = os.path.join(self.imgpath,imgName)
+        I_path = os.path.join(self.imgpaths,imgName)
         if not w or not h:
             image = Image.open(I_path)
             self.doc.drawImage(I_path,x,y,width=image.width,height=image.height,mask='auto')
@@ -139,7 +155,7 @@ class MakeReportlab():
 
         if not w or not h:
             # print(555555555)
-            # image = Image.open(self.requsetImg(imgName))
+            image = Image.open(self.requsetImg(imgName))
             imgdata = self.requsetImg(imgName)  
 
             # print(333333333)
@@ -153,9 +169,6 @@ class MakeReportlab():
             # imgdata = ImageReader(imgdata)
             # print(image)
             self.doc.drawImage(ImageReader(imgdata),x,y,width=w,height=h,mask='auto') #mask=auto 背景透明
-            # print(444444444444)
-
-        # print(333333333)
 
     def ImageAdaptive(self,imgName,x=0,y=0,w=None,h=None):
         """
@@ -180,12 +193,16 @@ class MakeReportlab():
 
     def AddLogo(self):
         # LOGO
-        # self.AddImages('RTD Intelligence Report5.png',x=0,y=self.pagesize[1]-90,w=200,h=80) 
-        self.AddImages('huttonslogo.jpg',x=self.pagesize[0]-318,y=self.pagesize[1]-110,w=300,h=100) 
+        # self.AddImages('pndlogo.jpg',x=0,y=self.pagesize[1]-90,w=200,h=80) 
+        self.AddImages('huttonslogo.png',x=self.pagesize[0]-318,y=self.pagesize[1]-110,w=300,h=100) 
+    def AddLogoleft(self):
+        # LOGO
+        self.AddImages('pndlogo.jpg',x=0,y=self.pagesize[1]-90,w=200,h=80) 
+        # self.AddImages('huttonslogo.png',x=self.pagesize[0]-318,y=self.pagesize[1]-110,w=300,h=100) 
 
     def background(self,imgName):
         '''页面背景图片'''
-        I_path = os.path.join(self.imgpath,imgName)
+        I_path = os.path.join(self.imgpaths,imgName)
         # print(I_path)
         self.doc.drawImage(I_path,0,0,width=self.pagesize[0],height=self.pagesize[1],mask='auto') #mask=auto 背景透明
 
@@ -201,7 +218,7 @@ class MakeReportlab():
         if color:
             self.doc.setFillColor(color) #choose your font colour
         else:
-            print(text)
+            # print(text)
             self.doc.setFillColorRGB(0,0,0) #choose your font colour
 
         self.doc.setFont(fontname, fontsize) #choose your font type and font size
@@ -210,7 +227,7 @@ class MakeReportlab():
     def drawUserInfoTable(self,data, x, y):
         """绘制表格"""
         t = Table(data, style={
-        ("FONT", (0, 0), (-1, -1), self.song, 20),
+        ("FONT", (0, 0), (-1, -1), 'arial', 26),
         ("TEXTCOLOR", (0, 0), (-1, -1), colors.black),
         ('ALIGN', (1, 0), (1, -1), 'CENTER')
         })
@@ -230,7 +247,7 @@ class MakeReportlab():
             ...
             data[1] += (keys['available'],)
             data[0] += (keys['sold'],)
-            names.append(keys['projectName'])
+            names.append(keys['projectName'].upper())
         # self.addBagecolor(436,100,self.pagesize[0]-436,700,color="0xFFFFFF")
         drawing = Drawing(self.pagesize[0]-600, 400)
         # for keys,i in enumerate(datas):
@@ -261,7 +278,10 @@ class MakeReportlab():
         else:
             bc.valueAxis.valueMax = maxsold + 100
         if maxAvailable > 1000 or maxsold > 1000:
-            bc.valueAxis.valueStep = 100
+            if maxsold > maxAvailable :
+                bc.valueAxis.valueStep = maxsold/10
+            else:
+                bc.valueAxis.valueStep = maxAvailable/10
         else:
             bc.valueAxis.valueStep = 50
         bc.valueAxis.gridStrokeColor    = colors.whitesmoke
@@ -278,15 +298,15 @@ class MakeReportlab():
         bc.barLabels.dy            = 0
         bc.barLabels.boxTarget     = 'hi'
 
-        # chart bars 数据颜色、展示内容等
-        bc.bars[1].fillColor = 	HexColor('0x7CB5EC')
-        bc.bars[0].fillColor = HexColor('0x434348')
+        # chart bars 数据颜色、展示内容等 #041e42 #e57200
+        bc.bars[1].fillColor = 	HexColor('0x041e42')
+        bc.bars[0].fillColor = HexColor('0xe57200')
         bc.bars.strokeColor = None
 
         # 数据名称
         bc.categoryAxis.labels.boxAnchor = 'ne'
         bc.categoryAxis.labels.dx = -10
-        bc.categoryAxis.labels.fontName = self.song
+        bc.categoryAxis.labels.fontName = 'msyh'
         bc.categoryAxis.categoryNames = names
 
         drawing.add(bc)
@@ -297,7 +317,7 @@ class MakeReportlab():
         # print(datas)
         datas = []
         for item in dataold:
-            if item['bedrooms'] == None :
+            if item['bedrooms'] == None or item['bedrooms'] <1 or item['bedrooms'] > 5:
                 continue
             else:
                 datas.append(item)
@@ -313,14 +333,14 @@ class MakeReportlab():
         # sizedata = [0.6,0.6,0.6,0.6,0.6]
         for item in datas:
             pie_data.append(item['number'])
-            pie_label.append(str(item['bedrooms'])+' Bedroom ' +str(item['number']))
+            pie_label.append(str(item['bedrooms'])+' Bedroom (' +str(item['number'])+')')
 
         d = Drawing(0,0)
         pc = Pie()
         pc.x = 0
         pc.y = 0
-        pc.width = 450 
-        pc.height = 450
+        pc.width = 350 
+        pc.height = 350
         pc.data = pie_data
         pc.labels = pie_label
 
@@ -340,8 +360,8 @@ class MakeReportlab():
         表格图片自适应不拉伸
         w,h 最大宽高
         """
-        I_path = os.path.join(Imagepath,imgName)
-        img = Image.open(I_path)
+        img = Image.open(self.requsetImg(imgName))
+        imgs = self.requsetImg(imgName)
         imgw,imgh = img.size
         if w < imgw :
             new = imgw - w
@@ -353,31 +373,30 @@ class MakeReportlab():
             sizes = imgh/new
             imgw = imgw-(imgw/sizes)
             imgh = imgh-(imgh/sizes)
-        imgs = im(I_path,imgw,imgh)
+        imgs = im(imgs,imgw,imgh)
         return imgs
 
-    def create_body_text(self,text, font_name="Helvetica", font_size=24, color=HexColor("0x335C72")):
+    def create_body_text(self,text, font_name="msyh", font_size=16, color=HexColor("0x335C72")):
         # 表格文本自动换行效果
         style = getSampleStyleSheet()['BodyText']
         style.fontSize = font_size
         style.fontName = font_name
         style.textColor = color
-
+        style.leading = 18
         return Paragraph(text, style=style)
 
     def counts(self,S,price,scale,scaletwo=0):
         if price == 0:
             return '-'
         if scaletwo:
-            return S+str(round((price*scale)*scaletwo))
+            return S+format(round((price*scale)*scaletwo), ',')
         else:
-            return S+str(round(price*scale))
+            return S+format(round(price*scale),',')
 
 
     def stages(self,LoanAmount,S='$'):
-
-        if not int(LoanAmount) and LoanAmount == 0 :
-            return ''
+        if LoanAmount == None or LoanAmount == 0 :
+            return '-'
         Loan = 0.75
         LoanAmount = LoanAmount * Loan
         LoanTenure = 30 * 12
@@ -390,11 +409,35 @@ class MakeReportlab():
         ))
         return self.S+format(data, ',')
 
+    def stages_numb(self,LoanAmount):
+        # 计算 每月还款金额 不做格式化
+        if LoanAmount == None or LoanAmount == 0 :
+            return '-'
+        Loan = 0.75
+        LoanAmount = LoanAmount * Loan
+        LoanTenure = 30 * 12
+        InterestRate = 1.6 / 100
+        data = round((
+          (LoanAmount *
+            (InterestRate / 12) *
+            math.pow(1 + InterestRate / 12, LoanTenure)) /
+          (math.pow(1 + InterestRate / 12, LoanTenure) - 1)
+        ))
+        return data
 
     def priceset(self,price):
-        ...
-        price1 = format(round(price), ',')
-        if price1:
-            return str('-')
-        else:
+        if price !=0 and price != None:
+            price1 = format(round(price), ',')
             return str(self.S+price1)
+        else:
+            return str('-')
+    def isVaildDate(self, date):
+        # 
+            try:
+                if ":" in date:
+                    time.strptime(date, "%Y-%m-%d %H:%M:%S")
+                else:
+                    time.strptime(date, "%Y-%m-%d")
+                return True
+            except:
+                return False

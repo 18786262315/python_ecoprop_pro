@@ -1,0 +1,162 @@
+2022-04-12 17:45:59.605 | INFO     | modules.Project:GetPndComparison:97 - 创建PDF,bac8734f5565424b92039ad18e9daa9f
+2022-04-12 17:46:01.309 | INFO     | modules.Project:ComparisonPDF:857 - ----------> 生成空文件
+2022-04-12 17:46:01.313 | INFO     | modules.Project:ComparisonPDF:977 - ---------->proimglist 处理完成
+2022-04-12 17:46:21.721 | INFO     | modules.Project:GetPndComparison:97 - 创建PDF,bac8734f5565424b92039ad18e9daa9f
+2022-04-12 17:46:22.620 | INFO     | modules.Project:ComparisonPDF:857 - ----------> 生成空文件
+2022-04-12 17:46:22.624 | INFO     | modules.Project:ComparisonPDF:977 - ---------->proimglist 处理完成
+2022-04-12 17:46:39.448 | INFO     | modules.Project:GetPndComparison:97 - 创建PDF,bac8734f5565424b92039ad18e9daa9f
+2022-04-12 17:46:40.349 | INFO     | modules.Project:ComparisonPDF:857 - ----------> 生成空文件
+2022-04-12 17:46:40.353 | INFO     | modules.Project:ComparisonPDF:977 - ---------->proimglist 处理完成
+2022-04-12 17:46:40.607 | INFO     | modules.Project:ComparisonPDF:1000 - ---------->page 1
+2022-04-12 17:46:40.864 | INFO     | modules.Project:ComparisonPDF:1056 - ---------->page 2
+2022-04-12 17:46:40.881 | INFO     | modules.Project:ComparisonPDF:1059 - ---------->page 3
+2022-04-12 17:46:40.938 | INFO     | modules.Project:GetPndComparison:106 - ComparisonPDF创建成功=======>E:\新联国际\地产项目-C端\python\mixgo_py_pro\Comparison\02f84b66f27e4f899eb40e3abbfb007d.pdf
+2022-04-12 17:47:26.530 | INFO     | modules.Project:GetPndComparison:97 - 创建PDF,bac8734f5565424b92039ad18e9daa9f
+2022-04-12 17:47:27.445 | INFO     | modules.Project:ComparisonPDF:857 - ----------> 生成空文件
+2022-04-12 17:47:27.450 | INFO     | modules.Project:ComparisonPDF:977 - ---------->proimglist 处理完成
+2022-04-12 17:47:27.469 | INFO     | modules.Project:ComparisonPDF:1000 - ---------->page 1
+2022-04-12 17:47:27.658 | INFO     | modules.Project:ComparisonPDF:1056 - ---------->page 2
+2022-04-12 17:47:27.661 | INFO     | modules.Project:ComparisonPDF:1059 - ---------->page 3
+2022-04-12 17:47:27.723 | INFO     | modules.Project:GetPndComparison:106 - ComparisonPDF创建成功=======>E:\新联国际\地产项目-C端\python\mixgo_py_pro\Comparison\02f84b66f27e4f899eb40e3abbfb007d.pdf
+2022-04-12 17:51:43.065 | INFO     | modules.Project:GetPndComparison:97 - 创建PDF,bac8734f5565424b92039ad18e9daa9f
+2022-04-12 17:51:44.087 | INFO     | modules.Project:ComparisonPDF:857 - ----------> 生成空文件
+2022-04-12 17:51:44.091 | INFO     | modules.Project:ComparisonPDF:977 - ---------->proimglist 处理完成
+2022-04-12 17:52:13.657 | INFO     | modules.Project:GetPndComparison:97 - 创建PDF,bac8734f5565424b92039ad18e9daa9f
+2022-04-12 17:52:14.799 | INFO     | modules.Project:ComparisonPDF:857 - ----------> 生成空文件
+2022-04-12 17:52:14.804 | INFO     | modules.Project:ComparisonPDF:977 - ---------->proimglist 处理完成
+2022-04-12 17:52:28.427 | INFO     | modules.Project:GetPndComparison:97 - 创建PDF,bac8734f5565424b92039ad18e9daa9f
+2022-04-12 17:52:29.391 | INFO     | modules.Project:ComparisonPDF:857 - ----------> 生成空文件
+2022-04-12 17:52:29.395 | INFO     | modules.Project:ComparisonPDF:977 - ---------->proimglist 处理完成
+2022-04-12 17:52:46.114 | INFO     | modules.Project:GetPndComparison:97 - 创建PDF,bac8734f5565424b92039ad18e9daa9f
+2022-04-12 17:52:47.149 | INFO     | modules.Project:ComparisonPDF:857 - ----------> 生成空文件
+2022-04-12 17:52:47.152 | INFO     | modules.Project:ComparisonPDF:977 - ---------->proimglist 处理完成
+2022-04-12 17:53:19.528 | INFO     | modules.Project:GetPndComparison:97 - 创建PDF,bac8734f5565424b92039ad18e9daa9f
+2022-04-12 17:53:20.495 | INFO     | modules.Project:ComparisonPDF:857 - ----------> 生成空文件
+2022-04-12 17:53:20.500 | INFO     | modules.Project:ComparisonPDF:977 - ---------->proimglist 处理完成
+2022-04-12 17:53:42.988 | INFO     | modules.Project:GetPndComparison:97 - 创建PDF,bac8734f5565424b92039ad18e9daa9f
+2022-04-12 17:53:43.966 | INFO     | modules.Project:ComparisonPDF:857 - ----------> 生成空文件
+2022-04-12 17:53:43.970 | INFO     | modules.Project:ComparisonPDF:977 - ---------->proimglist 处理完成
+2022-04-12 17:53:58.411 | INFO     | modules.Project:GetPndComparison:97 - 创建PDF,bac8734f5565424b92039ad18e9daa9f
+2022-04-12 17:53:59.390 | INFO     | modules.Project:ComparisonPDF:857 - ----------> 生成空文件
+2022-04-12 17:53:59.395 | INFO     | modules.Project:ComparisonPDF:977 - ---------->proimglist 处理完成
+2022-04-12 17:54:00.762 | INFO     | modules.Project:ComparisonPDF:1000 - ---------->page 1
+2022-04-12 17:54:16.619 | INFO     | modules.Project:GetPndComparison:97 - 创建PDF,bac8734f5565424b92039ad18e9daa9f
+2022-04-12 17:54:17.652 | INFO     | modules.Project:ComparisonPDF:857 - ----------> 生成空文件
+2022-04-12 17:54:17.656 | INFO     | modules.Project:ComparisonPDF:977 - ---------->proimglist 处理完成
+2022-04-12 17:54:22.184 | INFO     | modules.Project:GetPndComparison:97 - 创建PDF,bac8734f5565424b92039ad18e9daa9f
+2022-04-12 17:54:23.292 | INFO     | modules.Project:ComparisonPDF:857 - ----------> 生成空文件
+2022-04-12 17:54:23.296 | INFO     | modules.Project:ComparisonPDF:977 - ---------->proimglist 处理完成
+2022-04-12 17:54:32.456 | INFO     | modules.Project:GetPndComparison:97 - 创建PDF,bac8734f5565424b92039ad18e9daa9f
+2022-04-12 17:54:33.339 | INFO     | modules.Project:ComparisonPDF:857 - ----------> 生成空文件
+2022-04-12 17:54:33.342 | INFO     | modules.Project:ComparisonPDF:977 - ---------->proimglist 处理完成
+2022-04-12 17:54:33.360 | INFO     | modules.Project:ComparisonPDF:1000 - ---------->page 1
+2022-04-12 17:54:33.741 | INFO     | modules.Project:ComparisonPDF:1057 - ---------->page 2
+2022-04-12 17:54:33.744 | INFO     | modules.Project:ComparisonPDF:1060 - ---------->page 3
+2022-04-12 17:54:33.806 | INFO     | modules.Project:GetPndComparison:106 - ComparisonPDF创建成功=======>E:\新联国际\地产项目-C端\python\mixgo_py_pro\Comparison\02f84b66f27e4f899eb40e3abbfb007d.pdf
+2022-04-12 17:54:49.900 | INFO     | modules.Project:GetPndComparison:97 - 创建PDF,bac8734f5565424b92039ad18e9daa9f
+2022-04-12 17:54:50.730 | INFO     | modules.Project:ComparisonPDF:857 - ----------> 生成空文件
+2022-04-12 17:54:50.734 | INFO     | modules.Project:ComparisonPDF:977 - ---------->proimglist 处理完成
+2022-04-12 17:54:50.751 | INFO     | modules.Project:ComparisonPDF:1000 - ---------->page 1
+2022-04-12 17:54:50.922 | INFO     | modules.Project:ComparisonPDF:1057 - ---------->page 2
+2022-04-12 17:54:50.926 | INFO     | modules.Project:ComparisonPDF:1060 - ---------->page 3
+2022-04-12 17:54:50.991 | INFO     | modules.Project:GetPndComparison:106 - ComparisonPDF创建成功=======>E:\新联国际\地产项目-C端\python\mixgo_py_pro\Comparison\02f84b66f27e4f899eb40e3abbfb007d.pdf
+2022-04-12 17:55:01.194 | INFO     | modules.Project:GetPndComparison:97 - 创建PDF,bac8734f5565424b92039ad18e9daa9f
+2022-04-12 17:55:02.085 | INFO     | modules.Project:ComparisonPDF:857 - ----------> 生成空文件
+2022-04-12 17:55:02.088 | INFO     | modules.Project:ComparisonPDF:977 - ---------->proimglist 处理完成
+2022-04-12 17:55:02.108 | INFO     | modules.Project:ComparisonPDF:1000 - ---------->page 1
+2022-04-12 17:55:02.288 | INFO     | modules.Project:ComparisonPDF:1057 - ---------->page 2
+2022-04-12 17:55:02.291 | INFO     | modules.Project:ComparisonPDF:1060 - ---------->page 3
+2022-04-12 17:55:02.355 | INFO     | modules.Project:GetPndComparison:106 - ComparisonPDF创建成功=======>E:\新联国际\地产项目-C端\python\mixgo_py_pro\Comparison\02f84b66f27e4f899eb40e3abbfb007d.pdf
+2022-04-12 17:56:54.775 | INFO     | modules.Project:GetPndComparison:97 - 创建PDF,bac8734f5565424b92039ad18e9daa9f
+2022-04-12 17:56:55.691 | INFO     | modules.Project:ComparisonPDF:857 - ----------> 生成空文件
+2022-04-12 17:56:55.696 | INFO     | modules.Project:ComparisonPDF:977 - ---------->proimglist 处理完成
+2022-04-12 17:56:55.713 | INFO     | modules.Project:ComparisonPDF:1000 - ---------->page 1
+2022-04-12 17:56:55.895 | INFO     | modules.Project:ComparisonPDF:1057 - ---------->page 2
+2022-04-12 17:56:55.898 | INFO     | modules.Project:ComparisonPDF:1060 - ---------->page 3
+2022-04-12 17:56:55.953 | INFO     | modules.Project:GetPndComparison:106 - ComparisonPDF创建成功=======>E:\新联国际\地产项目-C端\python\mixgo_py_pro\Comparison\02f84b66f27e4f899eb40e3abbfb007d.pdf
+2022-04-12 17:57:18.574 | INFO     | modules.Project:GetPndComparison:97 - 创建PDF,bac8734f5565424b92039ad18e9daa9f
+2022-04-12 17:57:19.456 | INFO     | modules.Project:ComparisonPDF:857 - ----------> 生成空文件
+2022-04-12 17:57:19.460 | INFO     | modules.Project:ComparisonPDF:977 - ---------->proimglist 处理完成
+2022-04-12 17:57:19.478 | INFO     | modules.Project:ComparisonPDF:1000 - ---------->page 1
+2022-04-12 17:57:19.654 | INFO     | modules.Project:ComparisonPDF:1059 - ---------->page 2
+2022-04-12 17:57:19.657 | INFO     | modules.Project:ComparisonPDF:1062 - ---------->page 3
+2022-04-12 17:57:19.711 | INFO     | modules.Project:GetPndComparison:106 - ComparisonPDF创建成功=======>E:\新联国际\地产项目-C端\python\mixgo_py_pro\Comparison\02f84b66f27e4f899eb40e3abbfb007d.pdf
+2022-04-12 17:58:03.501 | INFO     | modules.Project:GetPndComparison:97 - 创建PDF,bac8734f5565424b92039ad18e9daa9f
+2022-04-12 17:58:04.436 | INFO     | modules.Project:ComparisonPDF:857 - ----------> 生成空文件
+2022-04-12 17:58:04.440 | INFO     | modules.Project:ComparisonPDF:977 - ---------->proimglist 处理完成
+2022-04-12 17:58:04.460 | INFO     | modules.Project:ComparisonPDF:1000 - ---------->page 1
+2022-04-12 17:58:04.647 | INFO     | modules.Project:ComparisonPDF:1059 - ---------->page 2
+2022-04-12 17:58:04.650 | INFO     | modules.Project:ComparisonPDF:1062 - ---------->page 3
+2022-04-12 17:58:04.708 | INFO     | modules.Project:GetPndComparison:106 - ComparisonPDF创建成功=======>E:\新联国际\地产项目-C端\python\mixgo_py_pro\Comparison\02f84b66f27e4f899eb40e3abbfb007d.pdf
+2022-04-12 17:58:47.718 | INFO     | modules.Project:GetPndComparison:97 - 创建PDF,bac8734f5565424b92039ad18e9daa9f
+2022-04-12 17:58:48.618 | INFO     | modules.Project:ComparisonPDF:857 - ----------> 生成空文件
+2022-04-12 17:58:48.622 | INFO     | modules.Project:ComparisonPDF:977 - ---------->proimglist 处理完成
+2022-04-12 17:58:48.648 | INFO     | modules.Project:ComparisonPDF:1000 - ---------->page 1
+2022-04-12 17:58:48.846 | INFO     | modules.Project:ComparisonPDF:1059 - ---------->page 2
+2022-04-12 17:58:48.849 | INFO     | modules.Project:ComparisonPDF:1062 - ---------->page 3
+2022-04-12 17:58:48.911 | INFO     | modules.Project:GetPndComparison:106 - ComparisonPDF创建成功=======>E:\新联国际\地产项目-C端\python\mixgo_py_pro\Comparison\02f84b66f27e4f899eb40e3abbfb007d.pdf
+2022-04-12 17:59:39.749 | INFO     | modules.Project:GetPndComparison:97 - 创建PDF,bac8734f5565424b92039ad18e9daa9f
+2022-04-12 17:59:40.631 | INFO     | modules.Project:ComparisonPDF:857 - ----------> 生成空文件
+2022-04-12 17:59:40.634 | INFO     | modules.Project:ComparisonPDF:977 - ---------->proimglist 处理完成
+2022-04-12 17:59:40.676 | INFO     | modules.Project:ComparisonPDF:1000 - ---------->page 1
+2022-04-12 17:59:40.862 | INFO     | modules.Project:ComparisonPDF:1059 - ---------->page 2
+2022-04-12 17:59:40.865 | INFO     | modules.Project:ComparisonPDF:1062 - ---------->page 3
+2022-04-12 17:59:40.933 | INFO     | modules.Project:GetPndComparison:106 - ComparisonPDF创建成功=======>E:\新联国际\地产项目-C端\python\mixgo_py_pro\Comparison\02f84b66f27e4f899eb40e3abbfb007d.pdf
+2022-04-12 18:00:18.016 | INFO     | modules.Project:GetPndComparison:97 - 创建PDF,bac8734f5565424b92039ad18e9daa9f
+2022-04-12 18:00:18.895 | INFO     | modules.Project:ComparisonPDF:857 - ----------> 生成空文件
+2022-04-12 18:00:18.900 | INFO     | modules.Project:ComparisonPDF:977 - ---------->proimglist 处理完成
+2022-04-12 18:00:18.918 | INFO     | modules.Project:ComparisonPDF:1000 - ---------->page 1
+2022-04-12 18:00:19.092 | INFO     | modules.Project:ComparisonPDF:1059 - ---------->page 2
+2022-04-12 18:00:19.095 | INFO     | modules.Project:ComparisonPDF:1062 - ---------->page 3
+2022-04-12 18:00:19.159 | INFO     | modules.Project:GetPndComparison:106 - ComparisonPDF创建成功=======>E:\新联国际\地产项目-C端\python\mixgo_py_pro\Comparison\02f84b66f27e4f899eb40e3abbfb007d.pdf
+2022-04-12 18:02:03.586 | INFO     | modules.Project:GetPndComparison:97 - 创建PDF,bac8734f5565424b92039ad18e9daa9f
+2022-04-12 18:02:04.507 | INFO     | modules.Project:ComparisonPDF:857 - ----------> 生成空文件
+2022-04-12 18:02:04.511 | INFO     | modules.Project:ComparisonPDF:977 - ---------->proimglist 处理完成
+2022-04-12 18:02:04.532 | INFO     | modules.Project:ComparisonPDF:1000 - ---------->page 1
+2022-04-12 18:02:04.783 | INFO     | modules.Project:ComparisonPDF:1059 - ---------->page 2
+2022-04-12 18:02:04.787 | INFO     | modules.Project:ComparisonPDF:1062 - ---------->page 3
+2022-04-12 18:02:04.845 | INFO     | modules.Project:GetPndComparison:106 - ComparisonPDF创建成功=======>E:\新联国际\地产项目-C端\python\mixgo_py_pro\Comparison\02f84b66f27e4f899eb40e3abbfb007d.pdf
+2022-04-12 18:03:12.436 | INFO     | modules.Project:GetPndComparison:97 - 创建PDF,bac8734f5565424b92039ad18e9daa9f
+2022-04-12 18:03:13.312 | INFO     | modules.Project:ComparisonPDF:857 - ----------> 生成空文件
+2022-04-12 18:03:13.317 | INFO     | modules.Project:ComparisonPDF:977 - ---------->proimglist 处理完成
+2022-04-12 18:03:13.341 | INFO     | modules.Project:ComparisonPDF:1000 - ---------->page 1
+2022-04-12 18:03:13.524 | INFO     | modules.Project:ComparisonPDF:1060 - ---------->page 2
+2022-04-12 18:03:13.527 | INFO     | modules.Project:ComparisonPDF:1063 - ---------->page 3
+2022-04-12 18:03:13.581 | INFO     | modules.Project:GetPndComparison:106 - ComparisonPDF创建成功=======>E:\新联国际\地产项目-C端\python\mixgo_py_pro\Comparison\02f84b66f27e4f899eb40e3abbfb007d.pdf
+2022-04-12 18:08:13.916 | INFO     | modules.Project:GetPndComparison:97 - 创建PDF,bac8734f5565424b92039ad18e9daa9f
+2022-04-12 18:08:14.796 | INFO     | modules.Project:ComparisonPDF:857 - ----------> 生成空文件
+2022-04-12 18:09:12.678 | INFO     | modules.Project:GetPndComparison:97 - 创建PDF,bac8734f5565424b92039ad18e9daa9f
+2022-04-12 18:09:13.539 | INFO     | modules.Project:ComparisonPDF:857 - ----------> 生成空文件
+2022-04-12 18:09:13.544 | INFO     | modules.Project:ComparisonPDF:978 - ---------->proimglist 处理完成
+2022-04-12 18:09:13.573 | INFO     | modules.Project:ComparisonPDF:1001 - ---------->page 1
+2022-04-12 18:09:13.815 | INFO     | modules.Project:ComparisonPDF:1061 - ---------->page 2
+2022-04-12 18:09:13.818 | INFO     | modules.Project:ComparisonPDF:1064 - ---------->page 3
+2022-04-12 18:09:13.877 | INFO     | modules.Project:GetPndComparison:106 - ComparisonPDF创建成功=======>E:\新联国际\地产项目-C端\python\mixgo_py_pro\Comparison\02f84b66f27e4f899eb40e3abbfb007d.pdf
+2022-04-12 18:10:38.981 | INFO     | modules.Project:GetPndComparison:97 - 创建PDF,bac8734f5565424b92039ad18e9daa9f
+2022-04-12 18:10:39.924 | INFO     | modules.Project:ComparisonPDF:857 - ----------> 生成空文件
+2022-04-12 18:10:39.928 | INFO     | modules.Project:ComparisonPDF:981 - ---------->proimglist 处理完成
+2022-04-12 18:10:39.947 | INFO     | modules.Project:ComparisonPDF:1004 - ---------->page 1
+2022-04-12 18:10:40.132 | INFO     | modules.Project:ComparisonPDF:1064 - ---------->page 2
+2022-04-12 18:10:40.135 | INFO     | modules.Project:ComparisonPDF:1067 - ---------->page 3
+2022-04-12 18:10:40.193 | INFO     | modules.Project:GetPndComparison:106 - ComparisonPDF创建成功=======>E:\新联国际\地产项目-C端\python\mixgo_py_pro\Comparison\02f84b66f27e4f899eb40e3abbfb007d.pdf
+2022-04-12 18:11:36.494 | INFO     | modules.Project:GetPndComparison:97 - 创建PDF,bac8734f5565424b92039ad18e9daa9f
+2022-04-12 18:11:37.458 | INFO     | modules.Project:ComparisonPDF:857 - ----------> 生成空文件
+2022-04-12 18:11:37.464 | INFO     | modules.Project:ComparisonPDF:982 - ---------->proimglist 处理完成
+2022-04-12 18:11:37.485 | INFO     | modules.Project:ComparisonPDF:1005 - ---------->page 1
+2022-04-12 18:11:37.680 | INFO     | modules.Project:ComparisonPDF:1065 - ---------->page 2
+2022-04-12 18:11:37.683 | INFO     | modules.Project:ComparisonPDF:1068 - ---------->page 3
+2022-04-12 18:11:37.748 | INFO     | modules.Project:GetPndComparison:106 - ComparisonPDF创建成功=======>E:\新联国际\地产项目-C端\python\mixgo_py_pro\Comparison\02f84b66f27e4f899eb40e3abbfb007d.pdf
+2022-04-12 18:12:03.650 | INFO     | modules.Project:GetPndComparison:97 - 创建PDF,bac8734f5565424b92039ad18e9daa9f
+2022-04-12 18:12:04.589 | INFO     | modules.Project:ComparisonPDF:857 - ----------> 生成空文件
+2022-04-12 18:12:04.593 | INFO     | modules.Project:ComparisonPDF:982 - ---------->proimglist 处理完成
+2022-04-12 18:12:04.633 | INFO     | modules.Project:ComparisonPDF:1005 - ---------->page 1
+2022-04-12 18:12:04.812 | INFO     | modules.Project:ComparisonPDF:1065 - ---------->page 2
+2022-04-12 18:12:04.815 | INFO     | modules.Project:ComparisonPDF:1068 - ---------->page 3
+2022-04-12 18:12:04.894 | INFO     | modules.Project:GetPndComparison:106 - ComparisonPDF创建成功=======>E:\新联国际\地产项目-C端\python\mixgo_py_pro\Comparison\02f84b66f27e4f899eb40e3abbfb007d.pdf
+2022-04-12 18:13:13.321 | INFO     | modules.Project:GetPndComparison:97 - 创建PDF,bac8734f5565424b92039ad18e9daa9f
+2022-04-12 18:13:14.262 | INFO     | modules.Project:ComparisonPDF:857 - ----------> 生成空文件
+2022-04-12 18:13:14.266 | INFO     | modules.Project:ComparisonPDF:982 - ---------->proimglist 处理完成
+2022-04-12 18:13:14.285 | INFO     | modules.Project:ComparisonPDF:1005 - ---------->page 1
+2022-04-12 18:13:14.463 | INFO     | modules.Project:ComparisonPDF:1065 - ---------->page 2
+2022-04-12 18:13:14.466 | INFO     | modules.Project:ComparisonPDF:1068 - ---------->page 3
+2022-04-12 18:13:14.523 | INFO     | modules.Project:GetPndComparison:106 - ComparisonPDF创建成功=======>E:\新联国际\地产项目-C端\python\mixgo_py_pro\Comparison\02f84b66f27e4f899eb40e3abbfb007d.pdf
