@@ -44,8 +44,8 @@ returnpaths = os.getcwd() # 当前文件路径
 if envs == "test":
     imgpath = 'http://192.168.0.145:8083'
     urlpath = 'http://192.168.0.145:9998' #API
-    filepath = '/home/upload/broke/pnd/file/report'
-    returnpaths = "/home/upload/broke/pnd/file/report"
+    # filepath = '/home/upload/broke/pnd/file/report'
+    # returnpaths = "/home/upload/broke/pnd/file/report"
 
 if envs == 'release':
     imgpath = 'https://img.singmap.com'
@@ -372,7 +372,7 @@ def MakePDF(agentId,projectId):
 
     # 底部内容
     page3_btm = [
-        ['Within Mrt.','[-]'],
+        ['Nearest MRT.','[-]'],
         ['School(s) Within 1 KM','[-]'],
         ['Project Brochure','[-]'],
         ['360 Panorama','[-]'],
@@ -388,11 +388,11 @@ def MakePDF(agentId,projectId):
         facilities = json.loads(prodatainfo['facilitiesMap'])
         for item in facilities:
             # print(item)
-            if item['type'] == 'subway_station':
+            if item['type'] == 'subway_station' and item['value']:
                 page3_btm[0][1] = item['value'][0]['name']
                 # for MRT in item['value']:
                 #     print(MRT['name'])
-            if item['type'] == 'school':
+            if item['type'] == 'school' and item['value']:
                 page3_btm[1][1] = item['value'][0]['name']
                 # for school in item['value']:
                 #     print(school['name'])
@@ -613,10 +613,10 @@ def MakePDF(agentId,projectId):
                                             makefunc.counts(Symbol,unitproce[3],0.05),makefunc.counts(Symbol,unitproce[3],0.05,0.0035),
                                             makefunc.counts(Symbol,unitproce[4],0.05),makefunc.counts(Symbol,unitproce[4],0.05,0.0035),],
         ['','',makefunc.counts(Symbol,unitproce[0],0.15),makefunc.counts(Symbol,unitproce[0],0.15,0.0035),
-                                          makefunc.counts(Symbol,unitproce[1],0.15),makefunc.counts(Symbol,unitproce[1],0.15,0.0035),
-                                          makefunc.counts(Symbol,unitproce[2],0.15),makefunc.counts(Symbol,unitproce[2],0.15,0.0035),
-                                          makefunc.counts(Symbol,unitproce[3],0.15),makefunc.counts(Symbol,unitproce[3],0.15,0.0035),
-                                          makefunc.counts(Symbol,unitproce[4],0.15),makefunc.counts(Symbol,unitproce[4],0.15,0.0035),],
+                                            makefunc.counts(Symbol,unitproce[1],0.15),makefunc.counts(Symbol,unitproce[1],0.15,0.0035),
+                                            makefunc.counts(Symbol,unitproce[2],0.15),makefunc.counts(Symbol,unitproce[2],0.15,0.0035),
+                                            makefunc.counts(Symbol,unitproce[3],0.15),makefunc.counts(Symbol,unitproce[3],0.15,0.0035),
+                                            makefunc.counts(Symbol,unitproce[4],0.15),makefunc.counts(Symbol,unitproce[4],0.15,0.0035),],
         ['','',makefunc.counts(Symbol,unitproce[0],0.35),makefunc.counts(Symbol,unitproce[0],0.35,0.0035),
                                                     makefunc.counts(Symbol,unitproce[1],0.35),makefunc.counts(Symbol,unitproce[1],0.35,0.0035),
                                                     makefunc.counts(Symbol,unitproce[2],0.35),makefunc.counts(Symbol,unitproce[2],0.35,0.0035),
@@ -713,8 +713,18 @@ def MakePDF(agentId,projectId):
     # 单位销量统计
     unittransactions = [
         ['Date','Floor','Size(Sqft)','Price','Price(psf)'],
+        ['','','','',''],
+        ['','','','',''],
+        ['','','','',''],
+        ['','','','',''],
+        ['','','','',''],
+        ['','','','',''],
+        ['','','','',''],
+        ['','','','',''],
+        ['','','','',''],
+        ['','','','',''],
     ]
-    for item in dealInfo:
+    for i,item in enumerate(dealInfo):
         date = '-'
         unitprice = 0
         transactionPrice = 0
@@ -724,7 +734,8 @@ def MakePDF(agentId,projectId):
             unitprice = item['price']
         if item['transactionPrice']:
             transactionPrice = item['transactionPrice']
-        unittransactions.append([date,item['floor'],item['area'],makefunc.priceset(transactionPrice),makefunc.priceset(unitprice),])
+        unittransactions[i+1] =  [date,item['floor'],item['area'],makefunc.priceset(transactionPrice),makefunc.priceset(unitprice)]
+        # unittransactions.append([date,item['floor'],item['area'],makefunc.priceset(transactionPrice),makefunc.priceset(unitprice),])
     
     t = Table(unittransactions,(pagesize[0]-560)/6,60, style={
     # ("FONT", (0, 0), (-1, -1), song, 22),
@@ -840,7 +851,7 @@ def ComparisonPDF(agentId,projectId):
         prolsit.append(proinfo)
         if not proinfo['agentInfo']:
             return 
-        # logger.info('---------->项目信息获取完成 %s'%proinfo)
+        logger.info('---------->项目信息获取完成 %s'%proinfo)
     Symbol = "$" #价格符
     pagesize = (1747,965) # 画布大小
     # pagesize = (A4[1],A4[0]) # 画布大小
@@ -922,6 +933,7 @@ def ComparisonPDF(agentId,projectId):
         procomparison[5][keys+1] = projectdata['brokeName']
         proimglist.append(projectdata['mainImage'])
         for unit in unitInfoinfo:
+            print(unit)
             # 项目单位处理
             if unit['bedrooms'] == 1 and unit['price']:
                 if unit['ivt']:
