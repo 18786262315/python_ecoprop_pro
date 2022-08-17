@@ -30,22 +30,30 @@ from starlette.responses import FileResponse
 
 
 router = APIRouter(prefix="/project",tags=['project'],responses={405: {"description": "Not found"}},)
+gettime = getDatetimes()
 
 
-
+envs = "cc" # 本地
 # envs = "test" # 测试
-envs = "release" # 发布
+# envs = "release" # 发布
 
 imgpath = 'http://192.168.0.145:8083'
 urlpath = 'http://192.168.0.145:9998' #API
 filepath = os.getcwd() # 当前文件路径 
 returnpaths = os.getcwd() # 当前文件路径 
 
+if envs == "cc":
+    imgpath = 'http://192.168.0.145:8083'
+    urlpath = 'http://192.168.0.145:9998' #API
+    # filepath = R'/新联国际/地产项目-C端/python/mixgo_py_pro'
+    # returnpaths = R"/新联国际/地产项目-C端/python/mixgo_py_pro"
+
+
 if envs == "test":
     imgpath = 'http://192.168.0.145:8083'
     urlpath = 'http://192.168.0.145:9998' #API
-    # filepath = '/home/upload/broke/pnd/file/report'
-    # returnpaths = "/home/upload/broke/pnd/file/report"
+    # filepath = '/home/mixgo_py_pro'
+    # returnpaths = "/home/mixgo_py_pro"
 
 if envs == 'release':
     imgpath = 'https://img.singmap.com'
@@ -167,12 +175,11 @@ def MakePDF(agentId,projectId):
     else:
         logger.info('项目信息查询失败--->>>projectId:%s,agentId:%s'%(projectId,agentId))
         raise HTTPException(status_code=404, detail="项目信息查询失败")
-
+    
     prodatainfo = proinfo['projectInfo'] # 项目信息
     unitInfo = proinfo['unitInfo'] # 单位信息
     userinfo = proinfo['agentInfo'] #用户信息
     dealInfo = proinfo['dealInfo'] # 房间-信息
-    
     Symbol = "$" #价格符
     if prodatainfo["currencySymbol"] != None:
         Symbol = prodatainfo["currencySymbol"]
@@ -252,8 +259,8 @@ def MakePDF(agentId,projectId):
     # page1  ===============================================
     # 背景
     makefunc.background('0.jpg')
+    if userinfo['logo'] and envs == 'release':
 
-    if userinfo['logo']:
         makefunc.AddURLImages(imgpath+userinfo['logo'],x=650,y=150,w=224,h=224) 
 
     agentdata4 = [
@@ -281,7 +288,6 @@ def MakePDF(agentId,projectId):
 
     # Page3 ===============================================
     makefunc.background('bgB.png')
-
     my_text = prodatainfo['projectName']
     doc.setFillColorRGB(0,0,0) #choose your font colour
     doc.setFont('msyhbd', 60)
@@ -294,7 +300,6 @@ def MakePDF(agentId,projectId):
     # 项目主图
     if prodatainfo['mainImage'] and envs != "test":
         makefunc.ImageAdaptive(imgpath+prodatainfo['mainImage'],x=pagesize[0]-400,y=pagesize[1]-400,w=400,h=200) 
-
     completionDate = ''
     if type(prodatainfo['completionDate']) is int:
         timeArray = time.strptime(prodatainfo['completionDate'], "%Y-%m-%d")
@@ -320,14 +325,19 @@ def MakePDF(agentId,projectId):
     # makefunc.addTesxts(fontsize=25,fontname='ARIALBD',x=70,y=550,text="UNIT PRICE",color=HexColor('#E37200'))
     prodataroombed = [
     ['UNIT PRICE'],
-    ["Types",'','Price From'],
+    ["Types",'','Size Range','Price From'],
     ]
     Pielist = []
     for item in unitInfo:
+        size = '-'
         if item['bedrooms'] == None or item['bedrooms'] < 1 or item['bedrooms'] > 5:
             continue
         elif item['price']:
-            prodataroombed.append([str(item['bedrooms'])+" Bedroom",':',makefunc.priceset(item['price']),])
+            
+            if item['minArea'] != 0 and item['maxArea'] != 0: # 户型最大最小面积
+                size = '{0}-{1}sqft'.format(item['minArea'],item['maxArea'])
+            prodataroombed.append([str(item['bedrooms'])+" Bedroom",':',size,makefunc.priceset(item['price'])])
+            # 
             if item['bedrooms'] == 1:
                 unitproce[0] = item['price']
             if item['bedrooms'] == 2:
@@ -339,17 +349,17 @@ def MakePDF(agentId,projectId):
             if item['bedrooms'] == 5:
                 unitproce[4] = item['price']
         else:
-            prodataroombed.append([str(item['bedrooms'])+" Bedroom",':',makefunc.priceset(item['price']),])
-            if item['bedrooms'] == 1:
-                unitproce[0] = 0
-            if item['bedrooms'] == 2:
-                unitproce[1] = 0
-            if item['bedrooms'] == 3:
-                unitproce[2] = 0
-            if item['bedrooms'] == 4:
-                unitproce[3] = 0
-            if item['bedrooms'] == 5:
-                unitproce[4] = 0
+            prodataroombed.append([str(item['bedrooms'])+" Bedroom",':',size,makefunc.priceset(item['price'])])
+            # if item['bedrooms'] == 1:
+            #     unitproce[0] = 0
+            # if item['bedrooms'] == 2:
+            #     unitproce[1] = 0
+            # if item['bedrooms'] == 3:
+            #     unitproce[2] = 0
+            # if item['bedrooms'] == 4:
+            #     unitproce[3] = 0
+            # if item['bedrooms'] == 5:
+            #     unitproce[4] = 0
     # makefunc.drawUserInfoTable(prodataroombed,70,300)
 
     t = Table(prodataroombed, style={
@@ -360,7 +370,7 @@ def MakePDF(agentId,projectId):
     ('ALIGN', (1, 0), (1, -1), 'CENTER')
     })
     t._argW[1] = 20
-    t._argW[2] = 200
+    t._argW[2] = 250
     t.wrapOn(doc, 0, 0)
     t.drawOn(doc, 70, 300)
     logger.info('============>> Pro unit Info OK !')
@@ -372,7 +382,7 @@ def MakePDF(agentId,projectId):
 
     # 底部内容
     page3_btm = [
-        ['Nearest MRT.','[-]'],
+        ['Nearby MRT.','[-]'],
         ['School(s) Within 1 KM','[-]'],
         ['Project Brochure','[-]'],
         ['360 Panorama','[-]'],
@@ -389,9 +399,12 @@ def MakePDF(agentId,projectId):
         for item in facilities:
             # print(item)
             if item['type'] == 'subway_station' and item['value']:
-                page3_btm[0][1] = item['value'][0]['name']
+                page3_btm[0][1] = item['value'][0]['name'] # 单个地铁
+                # m =[] #多个地铁
                 # for MRT in item['value']:
+                #     m.append(MRT)
                 #     print(MRT['name'])
+                # page3_btm[0][1] = '/'.join(m)
             if item['type'] == 'school' and item['value']:
                 page3_btm[1][1] = item['value'][0]['name']
                 # for school in item['value']:
@@ -406,7 +419,7 @@ def MakePDF(agentId,projectId):
     # 项目 IVT跳转\楼书跳转
     logger.info('============>> Pro Bottom OK !')
 
-
+    makefunc.addTesxts(fontsize=16,x=10,y=25,text="Source: Google Maps")
     # 页脚
     makefunc.addTesxts(fontsize=16,x=10,y=10,text="Personalised Property Analytics Report • Value-adding Your Home Purchase")
     doc.showPage()  # 保存当前画布页面
@@ -436,7 +449,7 @@ def MakePDF(agentId,projectId):
 
     # Page7 中介信息===========================================================================
     makefunc.background('6.jpg')
-    if userinfo['logo'] and envs != "test":
+    if userinfo['logo'] and envs == 'release' and envs != "test":
         makefunc.AddURLImages(imgpath+userinfo['logo'],x=650,y=200,w=224,h=224) 
 
     agentdata2 = [
@@ -505,7 +518,7 @@ def MakePDF(agentId,projectId):
 
     # 页脚
     # makefunc.addTesxts(fontsize=16,x=70,y=30,text=" PERSONALISED PROPERTY ANALYTICS REPORT. | 2022")
-    makefunc.addTesxts(fontsize=16,x=300,y=200,text=R"*Calculation based on 30 years tenure, 1.6% /bank interest rate. For your personal financial calculation, please approach our salesperson for assistance.")
+    makefunc.addTesxts(fontsize=16,x=300,y=200,text=R"*Calculation based on 30 years tenure, 3.5% /bank interest rate. For your personal financial calculation, please approach our salesperson for assistance.")
 
     doc.showPage()  # 保存当前画布页面
     logger.info('============>>Guide to Financial Wellness')
@@ -513,8 +526,7 @@ def MakePDF(agentId,projectId):
     # Page9 ===========================================================================
     # 背景
     makefunc.background('8.jpg')
-    if userinfo['logo']:
-        ...
+    if userinfo['logo'] and envs == 'release':
         makefunc.AddURLImages(imgpath+userinfo['logo'],x=100,y=250,w=224,h=224) 
 
     agentdata5 = [
@@ -549,7 +561,7 @@ def MakePDF(agentId,projectId):
         ['','','-','-','-','-','-'],
         ['','','','','',''],
         ['','','-','-','-','-','-'],
-        ["",'','-','-','-','-','-'],
+        ['','','-','-','-','-','-'],
         ['','','-','-','-','-','-'],
         ['','','-','-','-','-','-'],
         ['','','','','',''],
@@ -635,6 +647,7 @@ def MakePDF(agentId,projectId):
                     makefunc.counts(Symbol,unitproce[4],0.75),makefunc.counts(Symbol,unitproce[4],0.75,0.0035),],
 
     ]
+    logger.info('============>>Guide to Financial Wellness')
     
     unitcalculatortb1 = Table(unitcalculator1,110,35, style={
     ('SPAN', (0, 0), (1,0)), # 合并单元格(列,行)
@@ -655,17 +668,20 @@ def MakePDF(agentId,projectId):
     unitcalculatortb1._argW[1] = 200
     unitcalculatortb1.wrapOn(doc, 0, 0)
     unitcalculatortb1.drawOn(doc, 150, 160)
+    logger.info('============>>AAAAAAAAA')
+
     makefunc.AddImages('left_report.png',x=150,y=155,w=280,h=595)
+    logger.info('============>>BBBBBBBB')
 
     # 免责声明
-    makefunc.addTesxts(fontsize=16,x=600,y=100,text="*Calculation based on 30 years tenure, 1.6% bank interest rate. For your personal")
+    makefunc.addTesxts(fontsize=16,x=600,y=100,text="*Calculation based on 30 years tenure, 3.5% bank interest rate. For your personal")
     makefunc.addTesxts(fontsize=16,x=620,y=80,text=" financial calculation, please approach our salesperson for assistance.")
     doc.showPage()  # 保存当前画布页面
     logger.info('============>>PROGRESSIVE PAYMENT')
 
     # Page10 ===========================================================================
     makefunc.background('10.jpg')
-    if userinfo['logo']:
+    if userinfo['logo'] and envs == 'release':
         ...
         makefunc.AddURLImages(imgpath+userinfo['logo'],x=100,y=270,w=224,h=224) 
     agentdata6 = [
@@ -797,7 +813,7 @@ def MakePDF(agentId,projectId):
     # Page16 ===========================================================================
     makefunc.background('17.jpg')
 
-    if userinfo['logo']:
+    if userinfo['logo'] and envs == 'release':
         ...
         makefunc.AddURLImages(imgpath+userinfo['logo'],x=700,y=250,w=224,h=224) 
 
@@ -824,7 +840,31 @@ def MakePDF(agentId,projectId):
     logger.info('============>>add 17 page')
 
     # Page17 ===========================================================================
-    makefunc.background('18.jpg')
+    makefunc.background('overpage.png')
+    # makefunc.addTesxts(fontsize=40,x=pagesize[0]/4,y=800,text="DISCLAIMER")
+    # logger.info(gettime.getDates())
+    text_n1 = """
+    While Huttons has endeavoured to ensure that the information and materials contained
+    herein are accurate and up to date as at [{0}], Huttons is not responsible for any
+    errors or omissions,or for the results obtained from their use or the reliance placed
+    on them.All information is provided 'as is',with no guarantee of completeness,
+    and accuracy. In no event will Huttons and/or salespersons thereof be liable in contract
+        or in tort,to any party for any decision made or action taken in reliance on the information
+        in this document or for any direct, indirect, consequential, special or similar damages.
+    """.format(str(gettime.getDates()))
+    data_text = [['DISCLAIMER'],[makefunc.create_body_text(text_n1,font_size=35,color=colors.white,leading=36)]]
+    # makefunc.addTesxts(fontsize=40,x=pagesize[0]/5,y=700,text=)
+    t = Table(data_text, style={
+    ('TEXTCOLOR',(0,0),(-1,-1), colors.black),
+    ("FONT", (0, 0), (-1, -1), 'arial', 40,65),
+    # ('BACKGROUND',(0,0),(-1,0), colors.darkslateblue),
+    ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+    ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'), 
+    })
+    t._argW[0] = pagesize[0]-400
+    t.wrapOn(doc, 0, 0)
+    t.drawOn(doc, 200, 400)
+
     doc.showPage()  # 保存当前画布页面
     doc.save()  # 保存文件并关闭画布
     # time.sleep(3)
@@ -874,6 +914,7 @@ def ComparisonPDF(agentId,projectId):
     pdfmetrics.registerFont(TTFont('arial','arial.ttf')) #注册字体
     pdfmetrics.registerFont(TTFont('msyh','msyh.ttf')) #注册字体
     pdfmetrics.registerFont(TTFont('msyhbd','msyhbd.ttf')) #注册字体
+    pdfmetrics.registerFont(TTFont('dejavu','dejavu-sans.book.ttf')) #注册字体
     logger.info('----------> 生成空文件')
     styles = getSampleStyleSheet()["Normal"]
     styles.leading = 18
@@ -933,7 +974,7 @@ def ComparisonPDF(agentId,projectId):
         procomparison[5][keys+1] = projectdata['brokeName']
         proimglist.append(projectdata['mainImage'])
         for unit in unitInfoinfo:
-            print(unit)
+            # print(unit)
             # 项目单位处理
             if unit['bedrooms'] == 1 and unit['price']:
                 if unit['ivt']:
@@ -1003,7 +1044,7 @@ def ComparisonPDF(agentId,projectId):
     logger.info('---------->proimglist 处理完成')
     makefunc.background('comparisn0.jpg')
   
-    if userinfo['logo']:
+    if userinfo['logo'] and envs == 'release':
         ...
         makefunc.AddURLImages(imgpath+userinfo['logo'],x=720,y=250,w=224,h=224) 
     agentdata4 = [
@@ -1029,7 +1070,7 @@ def ComparisonPDF(agentId,projectId):
 
     itemx = 240
     for imgitem in proimglist:
-        makefunc.ImageAdaptive(imgpath+imgitem,x=itemx,y=pagesize[1]-250,w=200,h=100) 
+        # makefunc.ImageAdaptive(imgpath+imgitem,x=itemx,y=pagesize[1]-255,w=200,h=100) 
         itemx+=312
     t = Table(procomparison,312,42, style={
     # ("FONT", (0, 0), (0, -1), 'msyh', 18,25),
@@ -1057,16 +1098,16 @@ def ComparisonPDF(agentId,projectId):
     ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'), 
     })
     t._argH[11] = 43
-    t._argH[12] = 111
+    t._argH[12] = 105
     t._argH[13] = 43
     t._argH[14] = 43
     t._argW[0] = 150
     t.wrapOn(doc, 0, 0)
-    t.drawOn(doc, 20, 20)
+    t.drawOn(doc, 20, 25)
     # IVT 跳转链接 
     for keys,items in enumerate(prolsit):
         if items['projectInfo']['url'] != None:
-            print(items['projectInfo']['url'])
+            # print(items['projectInfo']['url'])
             doc.linkURL(imgpath+items['projectInfo']['url'], (170+(312*(keys)),62,170+(312*(keys))+312,62+42))
         if items['projectInfo']['ivtList'] != []:
             # print(items['ivtList'])
@@ -1084,9 +1125,35 @@ def ComparisonPDF(agentId,projectId):
                     doc.linkURL(ivt[0], (170+(312*(keys)),302,170+(312*(keys))+312,302+42))
                 if unit['bedrooms'] == 5:
                     doc.linkURL(ivt[0], (170+(312*(keys)),260,170+(312*(keys))+312,260+42))
+    makefunc.addTesxts(fontsize=18,x=20,y=10,color=colors.white,text="Source: Google Maps")
     doc.showPage()  # 保存当前画布页面
     logger.info('---------->page 2')
-    makefunc.background('18.jpg')
+    # makefunc.background('18.jpg')
+    makefunc.background('overpage.png')
+    # makefunc.addTesxts(fontsize=40,x=pagesize[0]/4,y=800,text="DISCLAIMER")
+    # logger.info(gettime.getDates())
+    text_n1 = """
+    While Huttons has endeavoured to ensure that the information and materials contained
+    herein are accurate and up to date as at [{0}], Huttons is not responsible for any
+    errors or omissions,or for the results obtained from their use or the reliance placed
+    on them.All information is provided 'as is',with no guarantee of completeness,
+    and accuracy. In no event will Huttons and/or salespersons thereof be liable in contract
+        or in tort,to any party for any decision made or action taken in reliance on the information
+        in this document or for any direct, indirect, consequential, special or similar damages.
+    """.format(str(gettime.getDates()))
+    data_text = [['DISCLAIMER'],[makefunc.create_body_text(text_n1,font_size=35,color=colors.white,leading=36)]]
+    # makefunc.addTesxts(fontsize=40,x=pagesize[0]/5,y=700,text=)
+    t = Table(data_text, style={
+    ('TEXTCOLOR',(0,0),(-1,-1), colors.black),
+    ("FONT", (0, 0), (-1, -1), 'arial', 40,65),
+    # ('BACKGROUND',(0,0),(-1,0), colors.darkslateblue),
+    ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+    ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'), 
+    })
+    t._argW[0] = pagesize[0]-400
+    t.wrapOn(doc, 0, 0)
+    t.drawOn(doc, 200, 400)
+
     doc.showPage()  # 保存当前画布页面
     logger.info('---------->page 3')
     doc.save()  # 保存文件并关闭画布

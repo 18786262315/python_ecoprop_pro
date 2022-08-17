@@ -1,4 +1,0 @@
-2022-04-14 14:49:37.480 | INFO     | modules.Project:GetPndPdfPro:170 - ----->>>创建 era_bedroom_pdf
-2022-04-14 14:49:37.904 | INFO     | modules.Project:GetPndPdfPro:175 - PDF创建成功=======><starlette.responses.FileResponse object at 0x000002A59C02AB48>
-2022-04-14 14:49:58.333 | INFO     | modules.Project:GetPndPdfPro:170 - ----->>>创建 era_bedroom_pdf
-2022-04-14 14:49:58.558 | INFO     | modules.Project:GetPndPdfPro:175 - PDF创建成功=======><starlette.responses.FileResponse object at 0x000002A59D927B08>

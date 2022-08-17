@@ -26,7 +26,8 @@ class getDatetimes():
         return datetime.datetime.now().strftime('%Y')
     def getDate(self):
         return datetime.datetime.now().strftime('%Y%m%d')
-
+    def getDates(self):
+        return datetime.datetime.now().strftime('%d/%m/%Y')
 
 
 class getAPI(): # 网络请求
@@ -376,13 +377,13 @@ class MakeReportlab():
         imgs = im(imgs,imgw,imgh)
         return imgs
 
-    def create_body_text(self,text, font_name="msyh", font_size=16, color=HexColor("0x335C72")):
+    def create_body_text(self,text, font_name="msyh", font_size=16, color=HexColor("0x335C72"),leading = 18):
         # 表格文本自动换行效果
         style = getSampleStyleSheet()['BodyText']
         style.fontSize = font_size
         style.fontName = font_name
         style.textColor = color
-        style.leading = 18
+        style.leading = leading
         return Paragraph(text, style=style)
 
     def counts(self,S,price,scale,scaletwo=0):
@@ -400,7 +401,7 @@ class MakeReportlab():
         Loan = 0.75
         LoanAmount = LoanAmount * Loan
         LoanTenure = 30 * 12
-        InterestRate = 1.6 / 100
+        InterestRate = 3.5 / 100
         data = round((
           (LoanAmount *
             (InterestRate / 12) *
@@ -416,7 +417,7 @@ class MakeReportlab():
         Loan = 0.75
         LoanAmount = LoanAmount * Loan
         LoanTenure = 30 * 12
-        InterestRate = 1.6 / 100
+        InterestRate = 3.5 / 100
         data = round((
           (LoanAmount *
             (InterestRate / 12) *
