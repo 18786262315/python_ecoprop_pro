@@ -33,9 +33,9 @@ router = APIRouter(prefix="/project",tags=['project'],responses={405: {"descript
 gettime = getDatetimes()
 
 
-envs = "cc" # 本地
+# envs = "cc" # 本地
 # envs = "test" # 测试
-# envs = "release" # 发布
+envs = "release" # 发布
 
 imgpath = 'http://192.168.0.145:8083'
 urlpath = 'http://192.168.0.145:9998' #API
@@ -247,8 +247,8 @@ def MakePDF(agentId,projectId):
     uppath = os.path.join(filepath,agentId)
     if not os.path.exists(uppath):
         os.makedirs(uppath)
-    savepath = os.path.join(uppath,projectId+'.pdf') 
-    returnPath = os.path.join(returnpaths,agentId,projectId+'.pdf')
+    savepath = os.path.join(uppath,str(int(time.time()))+'.pdf') 
+    returnPath = os.path.join(returnpaths,agentId,str(int(time.time()))+'.pdf')
     doc = canvas.Canvas(savepath,pagesize=pagesize)
     makefunc = MakeReportlab(doc,Imagepath,pagesize,Symbol) # 加载方法
     logger.info('---------->>>文档创建')
@@ -299,6 +299,7 @@ def MakePDF(agentId,projectId):
     makefunc.addTesxts(fontsize=25,fontname='ARIALBD',x=70,y=pagesize[1]-150,text="PROJECT SUMMARY",color=HexColor('#E37200'))
     # 项目主图
     if prodatainfo['mainImage'] and envs != "test":
+        ...
         makefunc.ImageAdaptive(imgpath+prodatainfo['mainImage'],x=pagesize[0]-400,y=pagesize[1]-400,w=400,h=200) 
     completionDate = ''
     if type(prodatainfo['completionDate']) is int:
@@ -329,13 +330,13 @@ def MakePDF(agentId,projectId):
     ]
     Pielist = []
     for item in unitInfo:
+        logger.info(item)
         size = '-'
+        if item['minArea'] != 0 and item['maxArea'] != 0: # 户型最大最小面积
+            size = '{0}-{1}sqft'.format(item['minArea'],item['maxArea'])
         if item['bedrooms'] == None or item['bedrooms'] < 1 or item['bedrooms'] > 5:
             continue
         elif item['price']:
-            
-            if item['minArea'] != 0 and item['maxArea'] != 0: # 户型最大最小面积
-                size = '{0}-{1}sqft'.format(item['minArea'],item['maxArea'])
             prodataroombed.append([str(item['bedrooms'])+" Bedroom",':',size,makefunc.priceset(item['price'])])
             # 
             if item['bedrooms'] == 1:
@@ -363,7 +364,8 @@ def MakePDF(agentId,projectId):
     # makefunc.drawUserInfoTable(prodataroombed,70,300)
 
     t = Table(prodataroombed, style={
-    ("FONT", (0, 0), (-1, 0), 'ARIALBD',25),
+    ("FONT", (0, 0), (-1, 1), 'ARIALBD',25),
+    # ("FONT", (0, 1), (-1, 1), 'ARIALBD',25),
     ("TEXTCOLOR", (0, 0), (-1, 0), HexColor('#E37200')),
     ("FONT", (0, 1), (-1, -1), 'arial', 26),
     ("TEXTCOLOR", (0, 1), (-1, -1), colors.black),
@@ -382,40 +384,43 @@ def MakePDF(agentId,projectId):
 
     # 底部内容
     page3_btm = [
-        ['Nearby MRT.','[-]'],
         ['School(s) Within 1 KM','[-]'],
         ['Project Brochure','[-]'],
         ['360 Panorama','[-]'],
+        ['Nearby MRT.','[-]'],
     ]
     if prodatainfo['url'] != None:
-        page3_btm[2][1] = 'CLICK HERE'
-        doc.linkURL(imgpath+prodatainfo['url'], (280,185,280+150,185+22))
+        page3_btm[1][1] = 'CLICK HERE'
+        doc.linkURL(imgpath+prodatainfo['url'], (280,215,280+150,215+22))
     if prodatainfo['ivtList'] != []:
-        page3_btm[3][1] = 'CLICK HERE'
+        page3_btm[2][1] = 'CLICK HERE'
         # print(prodatainfo['ivtList'][0])
-        doc.linkURL(prodatainfo['ivtList'][0], (280,150,280+150,150+22))
+        doc.linkURL(prodatainfo['ivtList'][0], (280,180,280+150,180+22))
     if prodatainfo['facilitiesMap']:
         facilities = json.loads(prodatainfo['facilitiesMap'])
         for item in facilities:
-            # print(item)
             if item['type'] == 'subway_station' and item['value']:
-                page3_btm[0][1] = item['value'][0]['name'] # 单个地铁
-                # m =[] #多个地铁
+                # print(item)
+                # page3_btm[3][1] = item['value'][0]['name']+('/'+item['value'][1]['name'] if len(item['value']) >=2 else "" ) # 单个地铁
+                # page3_btm[3][1] = item['value'][0]['name']+('/'+item['value'][1]['name'] if len(item['value']) >=2 else "" ) # 单个地铁
+                # page3_btm[0][1] = item['value'][1]['name'] # 单个地铁
+                m =[re.sub('MRT Station|Station','',MRT['name']) for MRT in item['value']] #多个地铁
                 # for MRT in item['value']:
-                #     m.append(MRT)
-                #     print(MRT['name'])
-                # page3_btm[0][1] = '/'.join(m)
+                    # m.append(re.sub('MRT Station|Station','',MRT['name']))
+                # print('/'.join(m))
+                page3_btm[3][1] = makefunc.create_body_text('/'.join(m))
             if item['type'] == 'school' and item['value']:
-                page3_btm[1][1] = item['value'][0]['name']
+                page3_btm[0][1] = item['value'][0]['name']
                 # for school in item['value']:
                 #     print(school['name'])
     t = Table(page3_btm, style={
     ("FONT", (0, 0), (-1, -1), "msyhbd", 20),
     ("TEXTCOLOR", (0, 0), (0, -1), HexColor('#E37200')),
     })
-
+    t._argW[1] = 900
+    t._argH[3] = 50 
     t.wrapOn(doc, 0, 0)
-    t.drawOn(doc, 70, 150)
+    t.drawOn(doc, 70, 130)
     # 项目 IVT跳转\楼书跳转
     logger.info('============>> Pro Bottom OK !')
 
@@ -431,11 +436,13 @@ def MakePDF(agentId,projectId):
     makefunc.addTesxts(fontsize=60,x=70,y=pagesize[1]-80,text=prodatainfo['projectName'],fontname='msyhbd')
     makefunc.addTesxts(fontsize=40,x=pagesize[0]/2.6,y=pagesize[1]-270,text="LOCATION HIGHLIGHT",color=HexColor('#E37200'))
     if prodatainfo['snapshotLogo'] :
-         # 地址Google 截图
+        # 地址Google 截图
         makefunc.AddURLImages(imgpath+prodatainfo['snapshotLogo'],x=100,y=100,w=700,h=550) 
     if propdfinfo != [] :
         # 周边截图
         makefunc.AddURLImages(imgpath+propdfinfo[0]['logo'],x=pagesize[0]/2,y=100,w=700,h=550)
+    makefunc.addTesxts(fontsize=18,x=100,y=50,text="Source: Google Maps")
+    makefunc.addTesxts(fontsize=18,x=pagesize[0]/2,y=50,text="Source: URA Map")
     doc.showPage()  # 保存当前画布页面
     logger.info('============>> LOCATION HIGHLIGHT')
 
@@ -518,7 +525,7 @@ def MakePDF(agentId,projectId):
 
     # 页脚
     # makefunc.addTesxts(fontsize=16,x=70,y=30,text=" PERSONALISED PROPERTY ANALYTICS REPORT. | 2022")
-    makefunc.addTesxts(fontsize=16,x=300,y=200,text=R"*Calculation based on 30 years tenure, 3.5% /bank interest rate. For your personal financial calculation, please approach our salesperson for assistance.")
+    makefunc.addTesxts(fontsize=16,x=300,y=200,text=R"*Calculation based on 30 years tenure, 75% LTV, 3.5% bank interest rate. For your personal financial calculation, please approach our sales person for assistance.")
 
     doc.showPage()  # 保存当前画布页面
     logger.info('============>>Guide to Financial Wellness')
@@ -668,11 +675,8 @@ def MakePDF(agentId,projectId):
     unitcalculatortb1._argW[1] = 200
     unitcalculatortb1.wrapOn(doc, 0, 0)
     unitcalculatortb1.drawOn(doc, 150, 160)
-    logger.info('============>>AAAAAAAAA')
 
     makefunc.AddImages('left_report.png',x=150,y=155,w=280,h=595)
-    logger.info('============>>BBBBBBBB')
-
     # 免责声明
     makefunc.addTesxts(fontsize=16,x=600,y=100,text="*Calculation based on 30 years tenure, 3.5% bank interest rate. For your personal")
     makefunc.addTesxts(fontsize=16,x=620,y=80,text=" financial calculation, please approach our salesperson for assistance.")
@@ -903,8 +907,8 @@ def ComparisonPDF(agentId,projectId):
     if not os.path.exists(uppath):
         os.makedirs(uppath)
     # filename = agentId+str(int(time.time()))
-    savepath = os.path.join(uppath,agentId+'.pdf') 
-    returnPath = os.path.join(uppath,agentId+'.pdf')
+    savepath = os.path.join(uppath,str(int(time.time()))+'.pdf') 
+    returnPath = os.path.join(uppath,str(int(time.time()))+'.pdf')
     doc = canvas.Canvas(savepath,pagesize=pagesize)
     makefunc = MakeReportlab(doc,Imagepath,pagesize,Symbol) # 加载方法
     
@@ -914,7 +918,7 @@ def ComparisonPDF(agentId,projectId):
     pdfmetrics.registerFont(TTFont('arial','arial.ttf')) #注册字体
     pdfmetrics.registerFont(TTFont('msyh','msyh.ttf')) #注册字体
     pdfmetrics.registerFont(TTFont('msyhbd','msyhbd.ttf')) #注册字体
-    pdfmetrics.registerFont(TTFont('dejavu','dejavu-sans.book.ttf')) #注册字体
+    # pdfmetrics.registerFont(TTFont('dejavu','dejavu-sans.book.ttf')) #注册字体
     logger.info('----------> 生成空文件')
     styles = getSampleStyleSheet()["Normal"]
     styles.leading = 18
@@ -943,8 +947,8 @@ def ComparisonPDF(agentId,projectId):
         ["3 BR",'-','-','-','-','-'],
         ["4 BR",'-','-','-','-','-'],
         ["5 BR",'-','-','-','-','-'],
-        [Paragraph("DISTANCE \n FRM MRT", style=styles),'','','','',''],
-        ["SCHOOLS",'','','','',''],
+        [Paragraph("DISTANCE \n FRM MRT¹", style=styles),'','','','',''],
+        ["SCHOOLS¹",'','','','',''],
         [Paragraph('DOWNLOAD \n BROCHURE', style=styles),'','','','',''],
         [Paragraph('360 \n PANORAMA', style=styles),'','','','',''],
     ]
@@ -1070,7 +1074,7 @@ def ComparisonPDF(agentId,projectId):
 
     itemx = 240
     for imgitem in proimglist:
-        # makefunc.ImageAdaptive(imgpath+imgitem,x=itemx,y=pagesize[1]-255,w=200,h=100) 
+        makefunc.ImageAdaptive(imgpath+imgitem,x=itemx,y=pagesize[1]-255,w=200,h=100) 
         itemx+=312
     t = Table(procomparison,312,42, style={
     # ("FONT", (0, 0), (0, -1), 'msyh', 18,25),
@@ -1125,7 +1129,7 @@ def ComparisonPDF(agentId,projectId):
                     doc.linkURL(ivt[0], (170+(312*(keys)),302,170+(312*(keys))+312,302+42))
                 if unit['bedrooms'] == 5:
                     doc.linkURL(ivt[0], (170+(312*(keys)),260,170+(312*(keys))+312,260+42))
-    makefunc.addTesxts(fontsize=18,x=20,y=10,color=colors.white,text="Source: Google Maps")
+    makefunc.addTesxts(fontsize=18,x=20,y=10,color=colors.white,text="¹Source: Google Maps")
     doc.showPage()  # 保存当前画布页面
     logger.info('---------->page 2')
     # makefunc.background('18.jpg')

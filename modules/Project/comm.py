@@ -70,7 +70,7 @@ class MakeReportlab():
         self.song = "simsun"
         self.S = S
         pdfmetrics.registerFont(TTFont(self.song, "simsun.ttc"))
-        pdfmetrics.registerFont(TTFont('ARIALBD','ARIALBD.TTF')) #注册字体
+        # pdfmetrics.registerFont(TTFont('ARIALBD','ARIALBD.TTF')) #注册字体
         pdfmetrics.registerFont(TTFont('arial','arial.ttf')) #注册字体
         pdfmetrics.registerFont(TTFont('msyh','msyh.ttf')) #注册字体
         pdfmetrics.registerFont(TTFont('msyhbd','msyhbd.ttf')) #注册字体
