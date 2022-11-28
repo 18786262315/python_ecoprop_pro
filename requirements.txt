@@ -5,9 +5,9 @@ loguru
 python-multipart
 fastapi
 importlib_metadata
-
-
-
+jinja2
+pdfkit
+ast
 starlette
 aiofiles
 

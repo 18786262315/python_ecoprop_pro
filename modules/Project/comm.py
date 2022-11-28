@@ -40,7 +40,7 @@ class getAPI(): # 网络请求
         keys = ''
         for item in a:
             if item[1] :
-                keys+= item[1]
+                keys+= str(item[1])
             else:
                 keys+= ''
         keys = keys+'c1d65f3667324592a071ebec5038f38c'
@@ -51,6 +51,16 @@ class getAPI(): # 网络请求
     def requsetAPI(self,path,params):
         params['signature'] = self.setmd5(params)
         res = requests.get(path,params=params)
+        value = json.loads(res.text)
+        # print(value)
+        if value['code'] == '0':
+            return value['datas']
+        else:
+            # print(value)
+            raise HTTPException(status_code=404, detail="参数错误")
+    def requsetAPI_POST(self,path,params):
+        params['signature'] = self.setmd5(params)
+        res = requests.post(path,data=params)
         value = json.loads(res.text)
         # print(value)
         if value['code'] == '0':

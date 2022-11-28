@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Pro Info</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    html,
+    body {
+      margin: 0px auto;
+      padding: 0px;
+      width: 794px;
+      font-family: Montserrat-Regular, Montserrat;
+    }
+
+    .commpay {
+      width: 100%;
+      height: 120px;
+      margin: 20px 0;
+    }
+
+    .fl-content {
+      width: 100%;
+    }
+
+    .pro-poto {
+      position: relative;
+      height: 300px;
+      width: 100%;
+      background-image: url({{'https://img.singmap.com'+proInfo.mainImage}});
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: 50%;
+      background-size: 100% auto;
+    }
+
+    .pro-name-content {
+      position: absolute;
+      top: 45%;
+      width: 100%;
+      text-align: center;
+      color: white;
+      font-weight: 800;
+
+    }
+
+    .fl-top {
+      margin: 50%;
+    }
+
+    .info-title {
+      float: left;
+      width: 20%;
+    }
+
+    .line-h {
+      line-height: 25px;
+    }
+
+    .hr-solid {
+      border: 0;
+      border-top: 1px solid #d0d0d5;
+      margin: 20px 0;
+    }
+
+    .descriptionDiv {
+      width: 100%;
+      color: #6c7b8a;
+      display: flex;
+      font-family: Montserrat-Regular, Montserrat;
+    }
+    .showflat-bontent{
+      color: #6c7b8a;
+      font-family: Montserrat-Regular, Montserrat;
+    }
+    .phone{
+      color: #00d2c8;
+    }
+    .titles {
+      width: 100%;
+      height: 35px;
+      margin-bottom: 20px;
+    }
+
+    .img-content {
+      border-radius: 15px;
+      width: 24%;
+      margin: 2px;
+    }
+
+    .img-content-icon {
+      border-radius: 12px;
+      /* margin: 2px; */
+    }
+
+    .logo-img {
+      position: absolute;
+      width: 45px;
+      height: 45px;
+      left: 38%;
+      top: 35%;
+    }
+
+    .max-content {
+      width: 100%;
+      height: 100%;
+    }
+
+    img {
+      max-width: 100%;
+      max-height: 100%;
+    }
+
+    ol,
+    ul {
+      /* margin: 0; */
+      margin-bottom: 40px;
+      padding: 0;
+      list-style: none;
+    }
+
+    td {
+      text-align: center;
+    }
+    td img{
+      max-width: 450px;
+      max-height: 300px;
+    }
+    a{
+      height: 100%;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- 公司LOGO+公司证件号码 -->
+  <div class="commpay" >
+    <div style="float: left;height:100%">
+      <img style="float: left;"
+      src="{{'https://img.singmap.com'+userInfo.logo}}"
+      alt="User Logo">
+      <div style="float:right;">
+        <h4 style="margin:0px;margin-left: 20px;margin-bottom: 2px;line-height: 35px;">{{userInfo.agentName}}</h4>
+        <p style="margin:0px;margin-left: 20px;margin-bottom: 2px;line-height: 35px;">{{userInfo.mobile}}</p>
+        <p style="margin:0px;margin-left: 20px;margin-bottom: 2px;line-height: 35px;">{{userInfo.email}}</p>
+      </div>
+    </div>
+
+    <div style="float: right;"> 
+      <img style="max-height: 75px;max-width: 75px;margin-top: 20px;" src="{{'https://img.singmap.com'+userInfo.brokeLogo}}" alt="">
+      <!-- <p style="margin: 0;">{{userInfo.brokeName}}</p> -->
+  
+    </div>
+  </div>
+  <div class="hr-solid"></div>
+
+  <!-- 项目信息 -->
+  <div class="pro-poto">
+    <h2 class="pro-name-content">{{proInfo.projectName}}</h2>
+  </div>
+  
+  <div class="info">
+    <h2>Project Information</h2>
+    <div class="line-h">
+      <div class="info-title">Developer</div><div>{{proInfo.projectName}}</div>
+    </div>
+    <div class="line-h">
+      <div class="info-title">Type</div><div>{{proInfo.projectType}}</div>
+    </div>
+    <div class="line-h">
+      <div class="info-title">Total</div><div>{{proInfo.unitsNum}}</div>
+    </div>
+    <div class="line-h">
+      <div class="info-title">EXP Top</div><div>{{proInfo.expTop}}</div>
+    </div>
+    <div class="line-h">
+      <div class="info-title">Address</div><div>{{proInfo.streetAddress}}</div>
+    </div>
+    <div class="line-h">
+      <div class="info-title">Location</div><div>{{proInfo.location}}</div>
+    </div>
+    <div class="line-h">
+      <div class="info-title">Country</div><div>{{proInfo.country}}</div>
+    </div>
+    <div class="line-h">
+      <div class="info-title">Tenure</div><div>{{proInfo.tenure}}</div>
+    </div>
+  </div>
+  <div class="hr-solid"></div>
+
+  <div>
+    <h2>DESCRIPTION</h2>
+    <div class="descriptionDiv" >
+      <table>
+        <tr>
+          <td style="text-align: start;">
+            {{proInfo.description}}
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+  <div class="hr-solid"></div>
+  {% if media_list.img %}
+  <div >
+    <div class="titles">
+      <h2 style="float: left;margin: 0;">Gallery</h2>
+      <a style="float: right;pointer-events: auto;" href="{{openlink}}">
+        <img  src="https://img.singmap.com/upload/broke/otherimg/pdf_more.png" alt="">
+      </a>
+    </div>
+    <table >
+      <tr>
+        {% for pro_img in media_list.img[0:4] %}
+        <td style="width: 198px;height: 150px;">
+          <div class="img-content-icon" 
+            style="width: 100%;
+                  height: 150px;
+                  background-image: url({{'https://img.singmap.com'+pro_img.url}});
+                  background-size: 100% 100%;">
+          </div>
+        </td>
+        {% endfor %}
+      </tr>
+    </table>
+  </div>
+  <div class="hr-solid"></div>
+  {% endif %}
+
+  {% if media_list.ivt %}
+  <div >
+    <div class="titles">
+      <h2 style="float: left;margin: 0;">Virtual Tour</h2>
+      <a style="float: right;pointer-events: auto;" href="{{openlink}}">
+        <img  src="https://img.singmap.com/upload/broke/otherimg/pdf_more.png" alt="">
+      </a>
+    </div>
+    <div >
+      <table >
+        <tr>
+          {% for pro_ivt in media_list.ivt[0:4] %}
+          <td style="width: 198px;height: 150px;">
+            <div class="img-content-icon" 
+            style="position: relative;width: 100%;height: 150px;
+            background-image: url({{'https://img.singmap.com'+pro_ivt.url}});
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: 50%;
+            background-size: 100% 100%;">
+              <img class="logo-img" src="https://share.ecoprop.com/static/img/virtual.ec1cf28.png" alt="">
+            </div>
+          </td>
+        {% endfor %}
+        </tr>
+      </table>
+    </div>
+  </div>
+  <div class="hr-solid"></div>
+  {% endif %}
+
+  {% if media_list.video %}
+  <div>
+    <div class="titles">
+      <h2 style="float: left;margin: 0;">Video</h2>
+      <a style="float: right;pointer-events: auto;" href="{{openlink}}">
+        <img  src="https://img.singmap.com/upload/broke/otherimg/pdf_more.png" alt="">
+      </a>
+    </div>
+    <div >
+      <table >
+        <tr>
+          {% for pro_video in media_list.video[0:4] %}
+          <td style="width: 198px;height: 150px;">
+            <div class="img-content-icon" style="position: relative;width: 100%;height: 150px;
+            background-image: url({{'https://img.singmap.com'+pro_video.logoUrl}});
+            background-size: 100% 100%;">
+              <img class="logo-img" src="https://share.ecoprop.com/static/img/video.03b9f7f.png" alt="">
+            </div>
+          </td>
+        {% endfor %}
+        </tr>
+      </table>
+    </div>
+  </div>
+  <div class="hr-solid"></div>
+  {% endif %}
+  {%if site_plan.siteplan %}
+  <div>
+    <div class="titles">
+      <h2 style="float: left;margin: 0;">Site and Floor Plan</h2>
+      <a style="float: right;pointer-events: auto;" href="{{openlink}}">
+        <img  src="https://img.singmap.com/upload/broke/otherimg/pdf_more.png" alt="">
+      </a>
+    </div>
+
+
+    <table >
+      <tr>
+        {% for pro_site_plan in site_plan.siteplan[0:2] %}
+        <td style="width: 385px;height: 385px;">
+          <div class="img-content-icon" style="position: relative;width: 100%;height: 100%;
+          background-image: url({{'https://img.singmap.com'+pro_site_plan}});
+          background-size: 100% 100%;">
+          </div>
+        </td>
+      {% endfor %}
+      </tr>
+    </table>
+
+    <!-- {% for pro_site_plan in site_plan.siteplan[0:2] %}
+    <div style="height: 200px;width: 48%;">
+      <img class="img-content-icon max-content"
+        src="{{'https://img.singmap.com'+pro_site_plan}}"
+        alt="">
+    </div>
+    {% endfor %} -->
+
+  </div>
+  <div class="hr-solid"></div>
+  {% endif %}
+
+  {% if site_plan.allbuilding %}
+  <div>
+    <div class="titles">
+      <h2 style="float: left;margin: 0;">Elevation chart</h2>
+      <a style="float: right;pointer-events: auto;" href="{{openlink}}">
+        <img  src="https://img.singmap.com/upload/broke/otherimg/pdf_more.png" alt="">
+      </a>
+    </div>
+
+    <table >
+      <tr>
+        {% for pro_building in site_plan.allbuilding[0:2] %}
+        <td style="width: 385px;height: 385px;">
+          <div class="img-content-icon" style="position: relative;width: 100%;height: 100%;
+          background-image: url({{'https://img.singmap.com'+pro_building}});
+          background-size: 100% 100%;">
+          </div>
+        </td>
+      {% endfor %}
+      </tr>
+    </table>
+
+
+
+
+    <!-- {% for pro_building in site_plan.allbuilding[0:2] %}
+    <div style="height: 200px;width: 48%;">
+      <img class="img-content-icon max-content"
+        src="{{'https://img.singmap.com'+pro_building}}"
+        alt="">
+    </div>
+    {% endfor %} -->
+
+  </div>
+  <div class="hr-solid"></div>
+  {% endif %}
+  <div>
+    <div class="titles">
+      <h2 style="float: left;margin: 0;">Nearby Amenities</h2>
+      <a style="float: right;pointer-events: auto;" href="{{openlink}}">
+        <img  src="https://img.singmap.com/upload/broke/otherimg/pdf_more.png" alt="">
+      </a>
+    </div>
+      {% for facilitiesMap in proInfo.facilitiesMap %}
+        {% if facilitiesMap.value %}
+          <div>
+          <span class="nearby-list-mark" style="float: left;width: 14px;height: 14px;background: #00d2c8;border-radius: 1px;margin-top: 4px;"></span>
+          <span style="margin-left: 10px;">{{facilitiesMap.type}}</span>
+        </div>
+        <ul style="height: 175px;overflow: hidden;">
+          {% for Amenities in facilitiesMap.value %}
+          <li style="float:left;margin-left: 30px"><span>{{Amenities.name}}</span></li>
+          {% endfor %}
+        </ul>
+        <br />
+        {% endif%}
+      {% endfor %}
+
+  </div>
+  <div class="hr-solid"></div>
+  <div>
+    <div class="titles">
+      <h2 style="float: left;margin: 0;">Floor Plan</h2>
+      <a style="float: right;pointer-events: auto;" href="{{openlink}}">
+        <img  src="https://img.singmap.com/upload/broke/otherimg/pdf_more.png" alt="">
+      </a>
+    </div>
+    <ul style="height: 500px;overflow: hidden;">
+      {% for floorplan in floor_plan_list.lists %}
+      <li style="float:left;width: 185px;height: 150px;padding: 2px;">
+        <div class="img-content-icon" style="clear:both;width: 100%;height: 100%;
+        background-image: url({{'https://img.singmap.com'+floorplan.img.replace(" ","%20")}});
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: 50%;
+        background-size: 100% 100%;">
+        </div>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+  <div class="hr-solid"></div>
+  <div>
+    <div class="titles">
+      <h2 style="float: left;margin: 0;">Available Units</h2>
+    </div>
+    <table border="1" cellspacing="0" style="width: 100%;border-color: #eee;">
+      <tr>
+        <td style="font-weight: 600;">Type</td>
+        <td style="font-weight: 600;">Size(sqft)</td>
+        <td style="font-weight: 600;">Floor Price</td>
+        <td style="font-weight: 600;">#Units</td>
+      </tr>
+      {% for unit in unit_price_list %}
+      <tr>
+        <td>{{unit.type}}</td>
+        <td>{{unit.minArea}}-{{unit.maxArea}}</td>
+        <td>{{unit.min_price}}</td>
+        <td>{{unit.allNum}}</td>
+      </tr>
+      {% endfor%}
+
+    </table>
+    <br />
+    Contact me for more information
+  </div>
+  <div class="hr-solid"></div>
+  
+  {% if proInfo.snapshotLogo%}
+  <div>
+    <div class="titles">
+      <h2 style="float: left;margin: 0;">{{proInfo.projectName}}</h2>
+    </div>
+    <div style="height: 150px;">
+      <div style="float: left;">
+        <p>{{proInfo.location}}</p>
+        <p>Address：{{proInfo.streetAddress}},{{proInfo.country}} {{proInfo.postalCode}}</p>
+        <!-- <p>Gallery Address：<a href="" target="_blank"> Sales Gallery Address</a></p> -->
+      </div>
+      <div style="float: right;height: 150px;">
+        <img src="https://img.singmap.com{{proInfo.snapshotLogo}}" alt="">
+      </div>
+    </div>
+
+  </div>
+  <div class="hr-solid"></div>
+  {% endif %}
+
+  <div>
+    <div class="titles">
+      <h2 style="float: left;margin: 0;">View Showflat</h2>
+    </div>
+    <div  class="showflat-bontent">
+      <p >Register Or Call Our Sales Hotline <span  class="phone">{{userInfo.mobile}}</span> for many precise information &amp; Priority accessibility for hassle-free experiences.</p>
+      <p >Due to the current situation, it is essential that you contact <span 
+          class="phone">{{userInfo.mobile}}</span> to confirm your showflat appointment.</p>
+      <p >Registered Parties will be eligible for our Immediate Developer Appointed Marketing Pricing
+        in addition to live updates of the advancement. Submit your Expression of Interest online and be a proud owner
+        at the Normanton Park (Demo)！</p>
+    </div>
+  </div>
+  <div class="hr-solid"></div>
+  <div>
+    <div class="titles">
+      <h2 style="float: left;margin: 0;">Disclaimer</h2>
+    </div>
+    <p>
+      The information contained on this website is for general information purposes only. Mixgo Pte Ltd (Company of Ecoprop) assumes no responsibility for errors or omissions in the contents of this website. In no event shall Ecoprop App be liable for any special, direct, indirect, consequential, or incidental damages or any damages whatsoever, whether in an action of contract, negligence or other tort, arising out of or in connection with the use of the information provided herein. Ecoprop App reserves the right to make additions, deletions, or modification to the contents of this website at any time without prior notice.
+    </p>
+  </div>
+
+</body>
+
+</html>

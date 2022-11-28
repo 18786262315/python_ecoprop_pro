@@ -1,14 +1,17 @@
 
 # import imp
+import jinja2,pdfkit,base64
 import imp
 from logging import exception
 import re
+from ast import literal_eval
+from urllib import parse
 # from msilib.schema import Error
 from fastapi import APIRouter,Form,HTTPException,Body
 import os
 from .comm import MakeReportlab,getAPI,getDatetimes
 from comm.logger import logger
-import ast
+# import ast
 # reportlab
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter, A4
@@ -33,9 +36,9 @@ router = APIRouter(prefix="/project",tags=['project'],responses={405: {"descript
 gettime = getDatetimes()
 
 
-# envs = "cc" # 本地
+envs = "cc" # 本地
 # envs = "test" # 测试
-envs = "release" # 发布
+# envs = "release" # 发布
 
 imgpath = 'http://192.168.0.145:8083'
 urlpath = 'http://192.168.0.145:9998' #API
@@ -52,8 +55,8 @@ if envs == "cc":
 if envs == "test":
     imgpath = 'http://192.168.0.145:8083'
     urlpath = 'http://192.168.0.145:9998' #API
-    # filepath = '/home/mixgo_py_pro'
-    # returnpaths = "/home/mixgo_py_pro"
+    filepath = '/home/mixgo_py_pro'
+    returnpaths = "/home/mixgo_py_pro"
 
 if envs == 'release':
     imgpath = 'https://img.singmap.com'
@@ -158,6 +161,33 @@ async def GetPndPdfPro(agentId: str=Form(...),
             }
             return rtdata
 
+
+@router.post('/ecoprop_shera_pro_pdf')
+async def EcopropSheraProPdf(agentId: str=Form(...) ,projectId:str=Form(...)):
+
+    logger.info('----->>>创建 ecoprop_shera_pro_pdf')
+    if not agentId or not projectId:
+        raise HTTPException(status_code=404, detail="参数错误")
+    try:
+        rentunpath = Shera_to_Pdf(agentId,projectId)
+        logger.info('PDF创建成功=======>{}'.format(rentunpath))
+        rtdata = {
+            'code':'0',
+            'msg':'succeed',
+            "datas":rentunpath
+        }
+        return rtdata
+    except BaseException as e:
+            logger.info('PDF创建异常=======>{}'.format(e))
+            rtdata = {
+            'code':'-1',
+            'msg':'error',
+            "datas":e
+            }
+            return rtdata
+
+
+
 def MakePDF(agentId,projectId):
 
     # 基础数据准备 =====================================================
@@ -186,51 +216,54 @@ def MakePDF(agentId,projectId):
     unitproce = [0,0,0,0,0] #单位售价
 
     # 项目PDF上传图片
-    propdfurls = urlpath+"/pnd-api/pdf/queryPdfProjectList"
-    propdfdatas = {
+    # propdfurls = urlpath+"/pnd-api/pdf/queryPdfProjectList"
+    # propdfdatas = {
+    #     "projectId":projectId,
+    #     "type":""
+    # }
+    propdfinfo = getapi.requsetAPI( urlpath+"/pnd-api/pdf/queryPdfProjectList",{
         "projectId":projectId,
         "type":""
-    }
-    propdfinfo = getapi.requsetAPI(propdfurls,propdfdatas)
-    if propdfinfo == None :
-        logger.info('项目PDF上传图片为空--->>>projectId:%s,agentId:%s'%(projectId,agentId))
+    })
+    # if propdfinfo == None :
+    #     logger.info('项目PDF上传图片为空--->>>projectId:%s,agentId:%s'%(projectId,agentId))
 
     # 项目区域
-    districturl = urlpath+"/pnd-api/pdf/queryPdfDistrictList"
-    districtdata = {
+    # districturl = urlpath+"/pnd-api/pdf/queryPdfDistrictList"
+    # districtdata = {
+    #     "district":prodatainfo['district'],
+    #     "type":"1"
+    # }
+    districtinfo = getapi.requsetAPI(urlpath+"/pnd-api/pdf/queryPdfDistrictList",{
         "district":prodatainfo['district'],
         "type":"1"
-    }
-    districtinfo = getapi.requsetAPI(districturl,districtdata)
+    })
     logger.info('项目区域销售图查询成功--->>>%s'%(districtinfo))
 
-    # PDF文件　页面图片查询
-    fileurl = urlpath+"/pnd-api/pdf/queryPdfList"
-    filedata = {
+    # PDF文件　
+    # fileurl = urlpath+"/pnd-api/pdf/queryPdfList"
+    # filedata = {
+    #     "fileName":"ProjectReport",
+    #     "page":""
+    # }
+    fileinfo = getapi.requsetAPI(urlpath+"/pnd-api/pdf/queryPdfList",{
         "fileName":"ProjectReport",
         "page":""
-    }
-    fileinfo = getapi.requsetAPI(fileurl,filedata)
+    })
     logger.info('PDF文件页面图片查询成功--->>>%s'%(fileinfo))
 
     #新加坡区间 销售统计
     regionurl = urlpath+"/pnd-api/project/queryRetailCount"
-    RCRdata = {
-        "region":"RCR"
-    }
-    RCRinfo = getapi.requsetAPI(regionurl,RCRdata)
-    logger.info('RCR查询成功--->>>%s'%(RCRdata))
+    # RCRdata = { "region":"RCR"}
+    RCRinfo = getapi.requsetAPI(regionurl,{ "region":"RCR"})
+    logger.info('RCR查询成功--->>>%s'%(RCRinfo))
 
-    CCRdata = {
-        "region":"CCR"
-    }
-    CCRinfo = getapi.requsetAPI(regionurl,CCRdata)
+    # CCRdata = { "region":"CCR"}
+    CCRinfo = getapi.requsetAPI(regionurl,{ "region":"CCR"})
     logger.info('CCR查询成功--->>>%s'%(CCRinfo))
 
-    OCRdata = {
-        "region":"OCR"
-    }
-    OCRinfo = getapi.requsetAPI(regionurl,OCRdata)
+    # OCRdata = {"region":"OCR"}
+    OCRinfo = getapi.requsetAPI(regionurl,{"region":"OCR"})
     logger.info('OCR查询成功--->>>%s'%(OCRinfo))
 
     # 创建PDF文档 =====================================================
@@ -384,33 +417,32 @@ def MakePDF(agentId,projectId):
 
     # 底部内容
     page3_btm = [
-        ['School(s) Within 1 KM','[-]'],
         ['Project Brochure','[-]'],
         ['360 Panorama','[-]'],
-        ['Nearby MRT.','[-]'],
+        ['School(s) Within 1 KM','[-]'],
+        ['Nearby MRT within 2KM','[-]'],
     ]
     if prodatainfo['url'] != None:
-        page3_btm[1][1] = 'CLICK HERE'
-        doc.linkURL(imgpath+prodatainfo['url'], (280,215,280+150,215+22))
+        page3_btm[0][1] = 'CLICK HERE'
+        doc.linkURL(imgpath+prodatainfo['url'], (280,240,280+150,240+22))
     if prodatainfo['ivtList'] != []:
-        page3_btm[2][1] = 'CLICK HERE'
+        page3_btm[1][1] = 'CLICK HERE'
         # print(prodatainfo['ivtList'][0])
-        doc.linkURL(prodatainfo['ivtList'][0], (280,180,280+150,180+22))
+        doc.linkURL(prodatainfo['ivtList'][0], (280,215,280+150,215+22))
     if prodatainfo['facilitiesMap']:
         facilities = json.loads(prodatainfo['facilitiesMap'])
         for item in facilities:
             if item['type'] == 'subway_station' and item['value']:
                 # print(item)
-                # page3_btm[3][1] = item['value'][0]['name']+('/'+item['value'][1]['name'] if len(item['value']) >=2 else "" ) # 单个地铁
-                # page3_btm[3][1] = item['value'][0]['name']+('/'+item['value'][1]['name'] if len(item['value']) >=2 else "" ) # 单个地铁
-                # page3_btm[0][1] = item['value'][1]['name'] # 单个地铁
                 m =[re.sub('MRT Station|Station','',MRT['name']) for MRT in item['value']] #多个地铁
                 # for MRT in item['value']:
                     # m.append(re.sub('MRT Station|Station','',MRT['name']))
                 # print('/'.join(m))
-                page3_btm[3][1] = makefunc.create_body_text('/'.join(m))
+                page3_btm[3][1] = makefunc.create_body_text('/'.join(m),color=colors.black) 
             if item['type'] == 'school' and item['value']:
-                page3_btm[0][1] = item['value'][0]['name']
+                school =[MRT['name'] for MRT in item['value']]
+                page3_btm[2][1] = makefunc.create_body_text('/'.join(school) if len(school)<3 else '/'.join(school[0:3]),color=colors.black)
+                # page3_btm[0][1] = item['value'][0]['name']
                 # for school in item['value']:
                 #     print(school['name'])
     t = Table(page3_btm, style={
@@ -418,9 +450,10 @@ def MakePDF(agentId,projectId):
     ("TEXTCOLOR", (0, 0), (0, -1), HexColor('#E37200')),
     })
     t._argW[1] = 900
-    t._argH[3] = 50 
+    t._argH[2] = 50 
+    t._argH[3] = 60 
     t.wrapOn(doc, 0, 0)
-    t.drawOn(doc, 70, 130)
+    t.drawOn(doc, 70, 100)
     # 项目 IVT跳转\楼书跳转
     logger.info('============>> Pro Bottom OK !')
 
@@ -435,7 +468,7 @@ def MakePDF(agentId,projectId):
     makefunc.background('bgB.png')
     makefunc.addTesxts(fontsize=60,x=70,y=pagesize[1]-80,text=prodatainfo['projectName'],fontname='msyhbd')
     makefunc.addTesxts(fontsize=40,x=pagesize[0]/2.6,y=pagesize[1]-270,text="LOCATION HIGHLIGHT",color=HexColor('#E37200'))
-    if prodatainfo['snapshotLogo'] :
+    if prodatainfo['snapshotLogo'] and envs != "test":
         # 地址Google 截图
         makefunc.AddURLImages(imgpath+prodatainfo['snapshotLogo'],x=100,y=100,w=700,h=550) 
     if propdfinfo != [] :
@@ -454,7 +487,7 @@ def MakePDF(agentId,projectId):
         doc.showPage()  # 保存当前画布页面
         logger.info('============>> District Pricing (Rental)')
 
-    # Page7 中介信息===========================================================================
+    # Page7 中介信息   ===========================================================================
     makefunc.background('6.jpg')
     if userinfo['logo'] and envs == 'release' and envs != "test":
         makefunc.AddURLImages(imgpath+userinfo['logo'],x=650,y=200,w=224,h=224) 
@@ -947,7 +980,7 @@ def ComparisonPDF(agentId,projectId):
         ["3 BR",'-','-','-','-','-'],
         ["4 BR",'-','-','-','-','-'],
         ["5 BR",'-','-','-','-','-'],
-        [Paragraph("DISTANCE \n FRM MRT¹", style=styles),'','','','',''],
+        [Paragraph("Nearby MRT \n within 2KM", style=styles),'','','','',''],
         ["SCHOOLS¹",'','','','',''],
         [Paragraph('DOWNLOAD \n BROCHURE', style=styles),'','','','',''],
         [Paragraph('360 \n PANORAMA', style=styles),'','','','',''],
@@ -1249,5 +1282,84 @@ def ERABedroomRports(agentId,brokeId,minPrice,maxPrice,projectArea,token,source)
     doc = SimpleDocTemplate(savepath,topMargin=0.5*inch,bottomMargin=0.5*inch)
     doc.build(elements)
     return retpaths
+
+
+
+def Shera_to_Pdf(agentId,projectId):
+
+    # 基础数据准备 =====================================================
+    getapi = getAPI()
+    datas = {} 
+    # agentId = "e73ca86d287143709c1450012bac9e9a"
+    # projectId = "26835e67a63f48aeb31750a3e8385a17"
+    datas['userInfo'] = getapi.requsetAPI('https://api.singmap.com/app-service/agent/queryShareAgentInfo',params={"agentId": agentId})
+
+    # # 项目信息 
+    datas['proInfo'] = getapi.requsetAPI('https://api.singmap.com/app-service/project/queryProjectInfo',params={"agentId": agentId,"projectId": projectId})
+    
+    # # 单位价格信息
+    datas['unit_price_list'] = getapi.requsetAPI('https://api.singmap.com/app-service/unit/unitTypeReport',params={"agentId": agentId,"projectId": projectId})
+    
+    # 项目Floor Plans
+    site_plan_list = getapi.requsetAPI_POST("https://api.singmap.com/app-service/siteplan/querySitePlanImg",params={"agentId": agentId,"projectId": projectId})
+    site_list = {
+        "siteplan":[],
+        "allbuilding":[]
+    }
+    for site in site_plan_list:
+        if site['type'] == "siteplan":
+            site_list['siteplan'].append(site['img'])
+        if site['type'] == "allbuilding":
+            site_list['allbuilding'].append(site['img'])
+    datas['site_plan'] = site_list
+    
+
+    # 项目媒体文件
+    datas['media_list'] = getapi.requsetAPI_POST("https://api.singmap.com/app-service/media/queryProjectShareMedia",params={"agentId": agentId,"projectId": projectId})
+    
+    # 项目户型图列表
+    datas['floor_plan_list'] = getapi.requsetAPI_POST("https://api.singmap.com/app-service/floor/queryFloorPlansByType",params={"type":"","projectId": projectId,"pageNo": 1,"pageSize":10})
+
+
+
+    
+
+    # Base64 转码
+    datas['proInfo']['description'] = base64.b64decode(datas['proInfo']['description']).decode("utf-8")
+    # logger.info(datas['proInfo']['description'])
+
+
+    # 周边设施数据处理
+    # Nearby_Amenities = {}
+    # for amenities in literal_eval(datas['proInfo']['facilitiesMap']):
+    #     Nearby_Amenities[amenities['type']] = amenities['value']
+    datas['proInfo']['facilitiesMap'] = literal_eval(datas['proInfo']['facilitiesMap'])
+
+
+
+    datas['openlink'] = "https://share.ecoprop.com/"+datas['proInfo']['abbreviation']+"/"+datas['userInfo']['regNum']
+
+
+    # 模板文件路径
+    temp_path = os.path.join(filepath,'temp','ecoprop_pro_shera_temp.html').replace('\\','/')
+    # 输出文件路径
+
+    new_file_name = str(datetime.datetime.now().strftime('%d-%m-%Y %H%M%S'))+'.pdf'
+    re_path = os.path.join(filepath,'broke',new_file_name).replace('\\','/')
+    if not os.path.exists(os.path.split(re_path)[0]):
+        os.makedirs(os.path.split(re_path)[0])
+    env = jinja2.Environment(loader=jinja2.FileSystemLoader(searchpath='',encoding='utf-8'))
+    template = env.get_template(temp_path)
+    # 模板填充参数
+    try:
+        
+        htmls = template.render(datas)
+        pdfkit.from_string(htmls,re_path)
+    except Exception as e:
+        logger.error(e)
+        raise HTTPException(status_code=404, detail="PDF Error")
+    return re_path
+
+
 
 
