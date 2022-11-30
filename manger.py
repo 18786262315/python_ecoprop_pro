@@ -3,12 +3,12 @@ from fastapi import Depends, HTTPException,FastAPI,Form,Query,UploadFile,File,Re
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
-
 # from sqlalchemy.orm import Session
 
 # 前置处理
 from comm.logger import logger
-# from config import Config
+from config import Config
+conf = Config
 # 模块引入
 
 # from sql import database,models

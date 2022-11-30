@@ -1,25 +1,25 @@
 
 # import imp
 import jinja2,pdfkit,base64
-import imp
-from logging import exception
+# from logging import exception
 import re
 from ast import literal_eval
-from urllib import parse
+# from urllib import parse
 # from msilib.schema import Error
 from fastapi import APIRouter,Form,HTTPException,Body
 import os
 from .comm import MakeReportlab,getAPI,getDatetimes
 from comm.logger import logger
+from config import Config
 # import ast
 # reportlab
 from reportlab.pdfgen import canvas
-from reportlab.lib.pagesizes import letter, A4
+# from reportlab.lib.pagesizes import letter, A4
 # from reportlab.graphics.charts.piecharts import Pie
 from reportlab.lib.units import mm,cm,inch
 from reportlab.lib import colors
 from reportlab.lib.colors import HexColor,black,red,PCMYKColor
-from reportlab.graphics.shapes import Drawing,Rect
+# from reportlab.graphics.shapes import Drawing,Rect
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 # from reportlab.graphics.charts.barcharts import HorizontalBarChart
@@ -27,45 +27,51 @@ from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image, Table, TableStyle,PageTemplate
 from reportlab.lib.styles import getSampleStyleSheet,ParagraphStyle
 import requests,json,time,datetime
-from hashlib import md5
-from typing import Dict, List, Set, Tuple
-from starlette.responses import FileResponse
+# from hashlib import md5
+# from typing import Dict, List, Set, Tuple
+# from starlette.responses import FileResponse
 
 
 router = APIRouter(prefix="/project",tags=['project'],responses={405: {"description": "Not found"}},)
 gettime = getDatetimes()
 
 
-envs = "cc" # 本地
-# envs = "test" # 测试
+# envs = "cc" # 本地
+envs = "test" # 测试
 # envs = "release" # 发布
 
-imgpath = 'http://192.168.0.145:8083'
-urlpath = 'http://192.168.0.145:9998' #API
-filepath = os.getcwd() # 当前文件路径 
-returnpaths = os.getcwd() # 当前文件路径 
+
 
 if envs == "cc":
     imgpath = 'http://192.168.0.145:8083'
     urlpath = 'http://192.168.0.145:9998' #API
-    # filepath = R'/新联国际/地产项目-C端/python/mixgo_py_pro'
-    # returnpaths = R"/新联国际/地产项目-C端/python/mixgo_py_pro"
-
+    now_host = "https://api.singmap.com"
+    filepath = os.getcwd() # 当前文件路径 
+    returnpaths = os.getcwd() # 当前文件路径 
+    ecoprop_temp_path = os.getcwd() # 当前文件路径 
+    ecoprop_return_path = os.getcwd() # 当前文件路径 
 
 if envs == "test":
     imgpath = 'http://192.168.0.145:8083'
     urlpath = 'http://192.168.0.145:9998' #API
+    now_host = "http://127.0.0.1:9998"
     filepath = '/home/mixgo_py_pro'
     returnpaths = "/home/mixgo_py_pro"
+    ecoprop_temp_path = "/home/upload/broke/ecoprop/temp"
+    ecoprop_return_path = "/home/upload/broke/ecoprop/pdf"
 
 if envs == 'release':
     imgpath = 'https://img.singmap.com'
     urlpath = 'https://api.singmap.com' #API
+    now_host = "http://127.0.0.1:9998" 
     filepath = '/home/upload/broke/pnd/file/report'
     returnpaths = "/home/upload/broke/pnd/file/report"
+    ecoprop_temp_path = "/home/upload/broke/ecoprop/temp"
+    ecoprop_return_path = "/home/upload/broke/ecoprop/pdf"
 
 @router.get("/")
 def read_users():
+    logger.info(Config.MYSQL_USER)
     return "res_data"
 
 @router.post('/pnd_pro_pdf')
@@ -170,6 +176,31 @@ async def EcopropSheraProPdf(agentId: str=Form(...) ,projectId:str=Form(...)):
         raise HTTPException(status_code=404, detail="参数错误")
     try:
         rentunpath = Shera_to_Pdf(agentId,projectId)
+        logger.info('PDF创建成功=======>{}'.format(rentunpath))
+        rtdata = {
+            'code':'0',
+            'msg':'succeed',
+            "datas":rentunpath
+        }
+        return rtdata
+    except BaseException as e:
+            logger.info('PDF创建异常=======>{}'.format(e))
+            rtdata = {
+            'code':'-1',
+            'msg':'error',
+            "datas":e
+            }
+            return rtdata
+
+@router.post('/ecoprop_shera_unit_pdf')
+async def EcopropSheraUnitPdf(agentId: str=Form(...) ,unitId:str=Form(...)):
+
+    logger.info('----->>>创建 ecoprop_shera_unit_pdf'+agentId+unitId)
+    if not agentId or not unitId:
+        raise HTTPException(status_code=404, detail="参数错误")
+
+    try:
+        rentunpath = Share_Unit_Pdf(agentId,unitId)
         logger.info('PDF创建成功=======>{}'.format(rentunpath))
         rtdata = {
             'code':'0',
@@ -1292,16 +1323,33 @@ def Shera_to_Pdf(agentId,projectId):
     datas = {} 
     # agentId = "e73ca86d287143709c1450012bac9e9a"
     # projectId = "26835e67a63f48aeb31750a3e8385a17"
-    datas['userInfo'] = getapi.requsetAPI('https://api.singmap.com/app-service/agent/queryShareAgentInfo',params={"agentId": agentId})
+    logger.info('get User Info ====>>>>'+agentId)
+    datas['userInfo'] = getapi.requsetAPI(now_host+'/app-service/agent/queryShareAgentInfo',params={"agentId": agentId})
 
     # # 项目信息 
-    datas['proInfo'] = getapi.requsetAPI('https://api.singmap.com/app-service/project/queryProjectInfo',params={"agentId": agentId,"projectId": projectId})
+    logger.info('get Pro Info ====>>>>'+projectId)
+    datas['proInfo'] = getapi.requsetAPI(now_host+'/app-service/project/queryProjectInfo',params={"agentId": agentId,"projectId": projectId})
+    if not datas['proInfo'] or not datas['userInfo']:
+        raise HTTPException(status_code=404, detail="Get Pro Or User Info Error")
+    # Base64 转码
+    logger.info('description Base64====>>>>')
+    datas['proInfo']['description'] = base64.b64decode(datas['proInfo']['description']).decode("utf-8")
+
+    # 周边设施数据处理
+    # Nearby_Amenities = {}
+    # for amenities in literal_eval(datas['proInfo']['facilitiesMap']):
+    #     Nearby_Amenities[amenities['type']] = amenities['value']
+    logger.info('facilitiesMap  literal_eval====>>>>')
+    datas['proInfo']['facilitiesMap'] = literal_eval(datas['proInfo']['facilitiesMap'])
+
     
-    # # 单位价格信息
-    datas['unit_price_list'] = getapi.requsetAPI('https://api.singmap.com/app-service/unit/unitTypeReport',params={"agentId": agentId,"projectId": projectId})
+    # 单位价格信息
+    logger.info('get unit_price_list ====>>>>')
+    datas['unit_price_list'] = getapi.requsetAPI(now_host+'/app-service/unit/unitTypeReport',params={"agentId": agentId,"projectId": projectId})
     
     # 项目Floor Plans
-    site_plan_list = getapi.requsetAPI_POST("https://api.singmap.com/app-service/siteplan/querySitePlanImg",params={"agentId": agentId,"projectId": projectId})
+    logger.info('get site_plan_list ====>>>>')
+    site_plan_list = getapi.requsetAPI_POST(now_host+"/app-service/siteplan/querySitePlanImg",params={"agentId": agentId,"projectId": projectId})
     site_list = {
         "siteplan":[],
         "allbuilding":[]
@@ -1312,54 +1360,95 @@ def Shera_to_Pdf(agentId,projectId):
         if site['type'] == "allbuilding":
             site_list['allbuilding'].append(site['img'])
     datas['site_plan'] = site_list
-    
 
     # 项目媒体文件
-    datas['media_list'] = getapi.requsetAPI_POST("https://api.singmap.com/app-service/media/queryProjectShareMedia",params={"agentId": agentId,"projectId": projectId})
+    logger.info('get Pro_media_list ====>>>>')
+    datas['media_list'] = getapi.requsetAPI_POST(now_host+"/app-service/media/queryProjectShareMedia",params={"agentId": agentId,"projectId": projectId})
     
     # 项目户型图列表
-    datas['floor_plan_list'] = getapi.requsetAPI_POST("https://api.singmap.com/app-service/floor/queryFloorPlansByType",params={"type":"","projectId": projectId,"pageNo": 1,"pageSize":10})
+    logger.info('get floor_plan_list ====>>>>')
+    datas['floor_plan_list'] = getapi.requsetAPI_POST(now_host+"/app-service/floor/queryFloorPlansByType",params={"type":"","projectId": projectId,"pageNo": 1,"pageSize":10})
 
-
-
-    
-
-    # Base64 转码
-    datas['proInfo']['description'] = base64.b64decode(datas['proInfo']['description']).decode("utf-8")
-    # logger.info(datas['proInfo']['description'])
-
-
-    # 周边设施数据处理
-    # Nearby_Amenities = {}
-    # for amenities in literal_eval(datas['proInfo']['facilitiesMap']):
-    #     Nearby_Amenities[amenities['type']] = amenities['value']
-    datas['proInfo']['facilitiesMap'] = literal_eval(datas['proInfo']['facilitiesMap'])
-
-
-
+    # 文件内部的所有跳转全部将跳转到指定的分享页面
+    logger.info('set openlink====>>>>')
     datas['openlink'] = "https://share.ecoprop.com/"+datas['proInfo']['abbreviation']+"/"+datas['userInfo']['regNum']
 
 
     # 模板文件路径
-    temp_path = os.path.join(filepath,'temp','ecoprop_pro_shera_temp.html').replace('\\','/')
+    # logger.info('Set Tmp Info ====>>>>'+agentId)
+    # temp_path = os.path.join(ecoprop_temp_path,'ecoprop_pro_share_temp.html').replace('\\','/')
     # 输出文件路径
+    logger.info('Set return Path ====>>>>')
+    new_file_name = datas['proInfo']['abbreviation']+"-"+str(datetime.datetime.now().strftime('%d-%m-%Y'))+'.pdf'
+    re_path = os.path.join(ecoprop_return_path,'pro_share_pdf',new_file_name).replace('\\','/')
 
-    new_file_name = str(datetime.datetime.now().strftime('%d-%m-%Y %H%M%S'))+'.pdf'
-    re_path = os.path.join(filepath,'broke',new_file_name).replace('\\','/')
-    if not os.path.exists(os.path.split(re_path)[0]):
-        os.makedirs(os.path.split(re_path)[0])
-    env = jinja2.Environment(loader=jinja2.FileSystemLoader(searchpath='',encoding='utf-8'))
-    template = env.get_template(temp_path)
+    # 文件夹检查
+    if not os.path.exists(os.path.split(re_path)[0]): os.makedirs(os.path.split(re_path)[0])
+
+    logger.info('Get Jinja2 Temp ====>>>>')
+    env = jinja2.Environment(loader=jinja2.FileSystemLoader(searchpath=ecoprop_temp_path,encoding='utf-8'))
+    template = env.get_template('ecoprop_pro_share_temp.html')
+
     # 模板填充参数
     try:
-        
+        logger.info('Add tmp Info ====>>>>')
         htmls = template.render(datas)
         pdfkit.from_string(htmls,re_path)
     except Exception as e:
         logger.error(e)
         raise HTTPException(status_code=404, detail="PDF Error")
+    logger.info('PDF ADD Over ====>>>>')
     return re_path
 
+def Share_Unit_Pdf(agentId,unitId):
+    # 创建 单位对比PDF文件
+    getapi = getAPI()
+    datas = {} 
+    # agentId = "e73ca86d287143709c1450012bac9e9a"
+    # unitId = "7da0db34a0f34d969049a4b22a768b39,7e078477280b4abfb639ab79661c4400,70911a06985b44549380cc04839a7f14,b67eaef41f224acb919852e9b98ca81a"
+    logger.info('get User Info ====>>>>'+agentId)
+    datas['userInfo'] = getapi.requsetAPI(now_host+'/app-service/agent/queryShareAgentInfo',params={"agentId": agentId})
 
+    UnitIdList = unitId.split(',')
+    datas['unit_list'] = []
+    logger.info('get Unit Info ====>>>>'+UnitIdList)
+    for i in UnitIdList:
+        unitInfo = getapi.requsetAPI(now_host+'/app-service/unit/getUnitInfo',params={"agentId": agentId,"unitId":i})
+        if unitInfo : datas['unit_list'].append(unitInfo)
+    if not datas['unit_list'] :
+        logger.error('Unit List Is None')
+        raise HTTPException(status_code=404, detail="Unit Get Error")
 
-
+    # 模板文件路径
+    # temp_path = os.path.join(ecoprop_temp_path,'ecoprop_unit_share_temp.html').replace('\\','/')
+    # 输出文件路径
+    # str(datetime.datetime.now().strftime('%d-%m-%Y-%H%M%S'))
+    new_file_name = datas['userInfo']['regNum']+"-"+str(datetime.datetime.now().strftime('%d-%m-%Y'))+'.pdf'
+    re_path = os.path.join(ecoprop_return_path,'user_unit_compare',new_file_name).replace('\\','/')
+    if not os.path.exists(os.path.split(re_path)[0]):
+        logger.info('ADD New folder ====>>>>'+os.path.split(re_path)[0])
+        os.makedirs(os.path.split(re_path)[0])
+        
+    env = jinja2.Environment(loader=jinja2.FileSystemLoader(searchpath=ecoprop_temp_path,encoding='utf-8'))
+    template = env.get_template('ecoprop_unit_share_temp.html')
+    # 模板填充参数
+    options = {
+        'page-size': 'A4',
+        'margin-top': '5mm',
+        'margin-right': '5mm',
+        'margin-bottom': '5mm',
+        'margin-left': '5mm',
+        'orientation':'Landscape', #横向
+        'encoding': "UTF-8",
+        'no-outline': None,
+    }
+    try:
+        logger.info('Set tmp Info ====>>>>'+datas)
+        htmls = template.render(datas)
+        pdfkit.from_string(htmls,re_path,options=options)
+    except Exception as e:
+        logger.error("File Padding Err ===>>>"+e)
+        raise HTTPException(status_code=404, detail="PDF ADD Error")
+        
+    logger.info('PDF ADD Over ====>>>>')
+    return re_path

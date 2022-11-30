@@ -32,7 +32,7 @@ class getDatetimes():
 
 class getAPI(): # 网络请求
     def __init__(self):
-        self = self
+        ...
     def setmd5(self,data):
         # logger.info('Md5加密',data)
         a = list(data.items()) # 转列表

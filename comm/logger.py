@@ -18,8 +18,8 @@ log_path_error = os.path.join(log_path, f'{time.strftime("%Y-%m-%d")}_error.log'
 
 # 日志简单配置
 # 具体其他配置 可自行参考 https://github.com/Delgan/loguru
-logger.add(log_path_all, rotation="12:00", retention="5 days", enqueue=True)
-logger.add(log_path_error, rotation="12:00", retention="5 days", enqueue=True,level='ERROR')
+logger.add(log_path_all, rotation="12:00", retention="5 days", enqueue=True,encoding='utf-8')
+logger.add(log_path_error, rotation="12:00", retention="5 days", enqueue=True,level='ERROR',encoding='utf-8')
 # format 参数： {time} {level} {message}、  {time:YYYY-MM-DD at HH:mm:ss} | {level} | {message} 记录参数
 #  level 日志等级
 # rotation 参数：1 week 一周、00:00每天固定时间、 500 MB 固定文件大小
