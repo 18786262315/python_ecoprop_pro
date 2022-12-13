@@ -94,43 +94,47 @@
         </table>
       </td>
       {% for unit in unit_list %}
-      <td >
-        <table >
-          <tr>
-            <td class="img-content info-td" style="border-bottom: 1px solid #f4f4f4;border-right: 1px solid #f4f4f4;">
-              <p style="color: black;font-size: 14px;font-weight: 600;">{{unit.unitName}}</p>
-              <img style="max-height: 120px;max-width: 120px;" src="https://img.singmap.com{{unit.img}}" alt="">
-            </td>
-          </tr>
-          <tr>
-            <td class="info-td">{{unit.projectName}}</td>
-          </tr>
-          <tr>
-            <td class="info-td">{{unit.purchaseStatus}}</td>
-          </tr>
-          <tr>
-            <td class="info-td">{{unit.area}}</td>
-          </tr>
-          <tr>
-            <td class="info-td">{{unit.currencySymbol}}{{unit.price}}</td>
-          </tr>
-          <tr>
-            <td class="info-td">{{unit.currencySymbol}}{{unit.avg}}</td>
-          </tr>
-          <tr>
-            <td class="info-td">{{unit.room}}</td>
-          </tr>
-          <tr>
-            <td class="info-td">{{unit.type}}</td>
-          </tr>
-          <tr>
-            <td class="info-td">{{unit.building}}</td>
-          </tr>
-          <tr>
-            <td class="info-td">{{unit.floor}}</td>
-          </tr>
-        </table>
-      </td>
+        <td >
+          <table >
+            <tr>
+              <td class="img-content info-td" style="border-bottom: 1px solid #f4f4f4;border-right: 1px solid #f4f4f4;">
+                <p style="color: black;font-size: 14px;font-weight: 600;">{{unit.unitName}}</p>
+                {% if unit.img %}
+                <img style="max-height: 120px;max-width: 120px;" src="{{imgpath}}{{unit.img | urlencode}}" alt="">
+                {% else %}
+                <img style="max-height: 120px;max-width: 120px;" src="https://img.singmap.com/upload/broke/otherimg/not_img.jpg" alt="">
+                {% endif %}
+              </td>
+            </tr>
+            <tr>
+              <td class="info-td">{{unit.projectName}}</td>
+            </tr>
+            <tr>
+              <td class="info-td">{{unit.purchaseStatus}}</td>
+            </tr>
+            <tr>
+              <td class="info-td">{{unit.area}}</td>
+            </tr>
+            <tr>
+              <td class="info-td">{{unit.currencySymbol}}{{unit.price}}</td>
+            </tr>
+            <tr>
+              <td class="info-td">{{unit.currencySymbol}}{{unit.avg}}</td>
+            </tr>
+            <tr>
+              <td class="info-td">{{unit.room}}</td>
+            </tr>
+            <tr>
+              <td class="info-td">{{unit.type}}</td>
+            </tr>
+            <tr>
+              <td class="info-td">{{unit.building}}</td>
+            </tr>
+            <tr>
+              <td class="info-td">{{unit.floor}}</td>
+            </tr>
+          </table>
+        </td>
       {% endfor %}
     </tr>
   </table>

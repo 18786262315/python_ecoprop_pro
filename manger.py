@@ -7,8 +7,8 @@ from fastapi.responses import JSONResponse
 
 # 前置处理
 from comm.logger import logger
-from config import Config
-conf = Config
+# from config import Config
+# conf = Config
 # 模块引入
 
 # from sql import database,models

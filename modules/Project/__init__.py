@@ -10,7 +10,7 @@ from fastapi import APIRouter,Form,HTTPException,Body
 import os
 from .comm import MakeReportlab,getAPI,getDatetimes
 from comm.logger import logger
-from config import Config
+# from config import Config
 # import ast
 # reportlab
 from reportlab.pdfgen import canvas
@@ -37,8 +37,8 @@ gettime = getDatetimes()
 
 
 # envs = "cc" # 本地
-envs = "test" # 测试
-# envs = "release" # 发布
+# envs = "test" # 测试
+envs = "release" # 发布
 
 
 
@@ -48,8 +48,8 @@ if envs == "cc":
     now_host = "https://api.singmap.com"
     filepath = os.getcwd() # 当前文件路径 
     returnpaths = os.getcwd() # 当前文件路径 
-    ecoprop_temp_path = os.getcwd() # 当前文件路径 
-    ecoprop_return_path = os.getcwd() # 当前文件路径 
+    ecoprop_temp_path = os.path.join(os.getcwd(),'temp') # 当前文件路径 
+    ecoprop_return_path = os.path.join(os.getcwd(),'pdf') # 当前文件路径 
 
 if envs == "test":
     imgpath = 'http://192.168.0.145:8083'
@@ -71,7 +71,6 @@ if envs == 'release':
 
 @router.get("/")
 def read_users():
-    logger.info(Config.MYSQL_USER)
     return "res_data"
 
 @router.post('/pnd_pro_pdf')
@@ -216,6 +215,33 @@ async def EcopropSheraUnitPdf(agentId: str=Form(...) ,unitId:str=Form(...)):
             "datas":e
             }
             return rtdata
+
+
+@router.post('/ecoprop_shera_pro_cmpare_pdf')
+async def EcopropSheraProComparePdf(agentId: str=Form(...) ,projectId:str=Form(...)):
+
+    logger.info('----->>>创建 ecoprop_shera_unit_pdf'+agentId+projectId)
+    if not agentId or not projectId:
+        raise HTTPException(status_code=404, detail="参数错误")
+
+    try:
+        rentunpath = Share_Pro_compare_Pdf(agentId,projectId)
+        logger.info('PDF创建成功=======>{}'.format(rentunpath))
+        rtdata = {
+            'code':'0',
+            'msg':'succeed',
+            "datas":rentunpath
+        }
+        return rtdata
+    except BaseException as e:
+            logger.info('PDF创建异常=======>{}'.format(e))
+            rtdata = {
+            'code':'-1',
+            'msg':'error',
+            "datas":e
+            }
+            return rtdata
+
 
 
 
@@ -1315,33 +1341,36 @@ def ERABedroomRports(agentId,brokeId,minPrice,maxPrice,projectArea,token,source)
     return retpaths
 
 
-
 def Shera_to_Pdf(agentId,projectId):
 
     # 基础数据准备 =====================================================
     getapi = getAPI()
     datas = {} 
+    datas['imgpath'] = imgpath
     # agentId = "e73ca86d287143709c1450012bac9e9a"
     # projectId = "26835e67a63f48aeb31750a3e8385a17"
     logger.info('get User Info ====>>>>'+agentId)
     datas['userInfo'] = getapi.requsetAPI(now_host+'/app-service/agent/queryShareAgentInfo',params={"agentId": agentId})
 
     # # 项目信息 
-    logger.info('get Pro Info ====>>>>'+projectId)
     datas['proInfo'] = getapi.requsetAPI(now_host+'/app-service/project/queryProjectInfo',params={"agentId": agentId,"projectId": projectId})
     if not datas['proInfo'] or not datas['userInfo']:
         raise HTTPException(status_code=404, detail="Get Pro Or User Info Error")
+    logger.info('get Pro Info ====>>>>{0}'.format(projectId))
     # Base64 转码
-    logger.info('description Base64====>>>>')
     datas['proInfo']['description'] = base64.b64decode(datas['proInfo']['description']).decode("utf-8")
+    logger.info('description Base64====>>>>{0}'.format(projectId))
 
     # 周边设施数据处理
     # Nearby_Amenities = {}
     # for amenities in literal_eval(datas['proInfo']['facilitiesMap']):
     #     Nearby_Amenities[amenities['type']] = amenities['value']
-    logger.info('facilitiesMap  literal_eval====>>>>')
-    datas['proInfo']['facilitiesMap'] = literal_eval(datas['proInfo']['facilitiesMap'])
+    logger.info('facilitiesMap  literal_eval====>>>>{0}'.format(type(datas['proInfo']['facilitiesMap'])))
 
+    if datas['proInfo']['facilitiesMap']:
+        datas['proInfo']['facilitiesMap'] = literal_eval(datas['proInfo']['facilitiesMap'])
+    else:
+        datas['proInfo']['facilitiesMap'] = []
     
     # 单位价格信息
     logger.info('get unit_price_list ====>>>>')
@@ -1371,7 +1400,7 @@ def Shera_to_Pdf(agentId,projectId):
 
     # 文件内部的所有跳转全部将跳转到指定的分享页面
     logger.info('set openlink====>>>>')
-    datas['openlink'] = "https://share.ecoprop.com/"+datas['proInfo']['abbreviation']+"/"+datas['userInfo']['regNum']
+    datas['openlink'] = "http://share.ecoprop.com/"+datas['proInfo']['abbreviation']+"/"+datas['userInfo']['regNum']
 
 
     # 模板文件路径
@@ -1383,17 +1412,29 @@ def Shera_to_Pdf(agentId,projectId):
     re_path = os.path.join(ecoprop_return_path,'pro_share_pdf',new_file_name).replace('\\','/')
 
     # 文件夹检查
-    if not os.path.exists(os.path.split(re_path)[0]): os.makedirs(os.path.split(re_path)[0])
+    if not os.path.exists(os.path.split(re_path)[0]): 
+        os.makedirs(os.path.split(re_path)[0])
 
     logger.info('Get Jinja2 Temp ====>>>>')
     env = jinja2.Environment(loader=jinja2.FileSystemLoader(searchpath=ecoprop_temp_path,encoding='utf-8'))
     template = env.get_template('ecoprop_pro_share_temp.html')
 
     # 模板填充参数
+    options = {
+        'page-size': 'A4',
+        'margin-top': '5mm',
+        'margin-right': '5mm',
+        'margin-bottom': '5mm',
+        'margin-left': '5mm',
+        'orientation':'Landscape', #横向
+        'encoding': "UTF-8",
+        'no-outline': None,
+    }
     try:
         logger.info('Add tmp Info ====>>>>')
         htmls = template.render(datas)
-        pdfkit.from_string(htmls,re_path)
+        # config = pdfkit.configuration(wkhtmltopdf='/usr/local/bin/wkhtmltopdf') 
+        pdfkit.from_string(htmls,re_path,options=options)
     except Exception as e:
         logger.error(e)
         raise HTTPException(status_code=404, detail="PDF Error")
@@ -1403,7 +1444,9 @@ def Shera_to_Pdf(agentId,projectId):
 def Share_Unit_Pdf(agentId,unitId):
     # 创建 单位对比PDF文件
     getapi = getAPI()
-    datas = {} 
+    datas = {
+        "imgpath":imgpath
+    } 
     # agentId = "e73ca86d287143709c1450012bac9e9a"
     # unitId = "7da0db34a0f34d969049a4b22a768b39,7e078477280b4abfb639ab79661c4400,70911a06985b44549380cc04839a7f14,b67eaef41f224acb919852e9b98ca81a"
     logger.info('get User Info ====>>>>'+agentId)
@@ -1411,14 +1454,13 @@ def Share_Unit_Pdf(agentId,unitId):
 
     UnitIdList = unitId.split(',')
     datas['unit_list'] = []
-    logger.info('get Unit Info ====>>>>'+UnitIdList)
+    logger.info('get Unit Info ====>>>>')
     for i in UnitIdList:
         unitInfo = getapi.requsetAPI(now_host+'/app-service/unit/getUnitInfo',params={"agentId": agentId,"unitId":i})
         if unitInfo : datas['unit_list'].append(unitInfo)
     if not datas['unit_list'] :
         logger.error('Unit List Is None')
         raise HTTPException(status_code=404, detail="Unit Get Error")
-
     # 模板文件路径
     # temp_path = os.path.join(ecoprop_temp_path,'ecoprop_unit_share_temp.html').replace('\\','/')
     # 输出文件路径
@@ -1443,11 +1485,74 @@ def Share_Unit_Pdf(agentId,unitId):
         'no-outline': None,
     }
     try:
-        logger.info('Set tmp Info ====>>>>'+datas)
+        logger.info('Set tmp Info ====>>>>{0}'.format(datas))
         htmls = template.render(datas)
+        # config = pdfkit.configuration(wkhtmltopdf='/usr/local/bin/wkhtmltopdf') 
         pdfkit.from_string(htmls,re_path,options=options)
     except Exception as e:
-        logger.error("File Padding Err ===>>>"+e)
+        logger.error("File Padding Err ===>>>{0}".format(e))
+        raise HTTPException(status_code=404, detail="PDF ADD Error")
+        
+    logger.info('PDF ADD Over ====>>>>')
+    return re_path
+
+
+def Share_Pro_compare_Pdf(agentId,projectId):
+    # 创建 项目对比PDF文件
+    getapi = getAPI()
+    datas = {
+        "imgpath":imgpath
+    } 
+    # agentId = "e73ca86d287143709c1450012bac9e9a"
+    # projectId = "5b2216e95ef446bf853113450a0642f1,0c3cef5e77f547a99d61d6a2ccd37885"
+    logger.info('get User Info ====>>>>'+agentId)
+    datas['userInfo'] = getapi.requsetAPI(now_host+'/app-service/agent/queryShareAgentInfo',params={"agentId": agentId})
+
+    UnitIdList = projectId.split(',')
+    datas['pro_list'] = []
+    logger.info('get Pro Info ====>>>>')
+    proinfourl = urlpath+"/app-service/project/queryProjectInfo"
+    for item in UnitIdList:
+        proinfo = getapi.requsetAPI(proinfourl,{"projectId":item,"agentId":agentId})
+        if proinfo: datas['pro_list'].append(proinfo) 
+        
+    if not datas['pro_list'] :
+        logger.error('Pro List Is None')
+        raise HTTPException(status_code=404, detail="Pro Get Error")
+
+    # 模板文件路径
+    # temp_path = os.path.join(ecoprop_temp_path,'ecoprop_pro_compare_share_temp.html').replace('\\','/')
+    # 输出文件路径
+    # str(datetime.datetime.now().strftime('%d-%m-%Y-%H%M%S'))
+    new_file_name = datas['userInfo']['regNum']+"-"+str(datetime.datetime.now().strftime('%d-%m-%Y'))+'.pdf'
+    re_path = os.path.join(ecoprop_return_path,'user_pro_compare',new_file_name).replace('\\','/')
+    if not os.path.exists(os.path.split(re_path)[0]):
+        logger.info('ADD New folder ====>>>>'+os.path.split(re_path)[0])
+        os.makedirs(os.path.split(re_path)[0])
+        
+    env = jinja2.Environment(loader=jinja2.FileSystemLoader(searchpath=ecoprop_temp_path,encoding='utf-8'))
+    template = env.get_template('ecoprop_pro_compare_share_temp.html')
+    datas['openlink'] = "https://app.singmap.com/share/index.html#/vsProject?projectIds={0}&agentId={1}".format(projectId,agentId)
+
+
+    # 模板填充参数
+    options = {
+        'page-size': 'A4',
+        'margin-top': '5mm',
+        'margin-right': '5mm',
+        'margin-bottom': '5mm',
+        'margin-left': '5mm',
+        'orientation':'Landscape', #横向
+        'encoding': "UTF-8",
+        'no-outline': None,
+    }
+    try:
+        logger.info('Set tmp Info ====>>>>{0}'.format(datas))
+        htmls = template.render(datas)
+        # config = pdfkit.configuration(wkhtmltopdf='/usr/local/bin/wkhtmltopdf') 
+        pdfkit.from_string(htmls,re_path,options=options)
+    except Exception as e:
+        logger.error("File Padding Err ===>>>{0}".format(e))
         raise HTTPException(status_code=404, detail="PDF ADD Error")
         
     logger.info('PDF ADD Over ====>>>>')

@@ -1,0 +1,2 @@
+2022-12-02 18:37:29.021 | ERROR    | modules.Project:Share_Pro_compare_Pdf:1560 - File Padding Err ===>>>No wkhtmltopdf executable found: "/usr/local/bin/wkhtmltopdf"
+If this file exists please check that this process can read it or you can pass path to it manually in method call, check README. Otherwise please install wkhtmltopdf - https://github.com/JazzCore/python-pdfkit/wiki/Installing-wkhtmltopdf

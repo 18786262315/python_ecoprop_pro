@@ -28,7 +28,7 @@
       position: relative;
       height: 300px;
       width: 100%;
-      background-image: url({{'https://img.singmap.com'+proInfo.mainImage}});
+      background-image: url({{imgpath}}{{proInfo.mainImage}});
       background-size: cover;
       background-repeat: no-repeat;
       background-position: 50%;
@@ -138,7 +138,7 @@
   <div class="commpay" >
     <div style="float: left;height:100%">
       <img style="float: left;"
-      src="{{'https://img.singmap.com'+userInfo.logo}}"
+      src="{{imgpath}}{{userInfo.logo}}"
       alt="User Logo">
       <div style="float:right;">
         <h4 style="margin:0px;margin-left: 20px;margin-bottom: 2px;line-height: 35px;">{{userInfo.agentName}}</h4>
@@ -148,7 +148,7 @@
     </div>
 
     <div style="float: right;"> 
-      <img style="max-height: 75px;max-width: 75px;margin-top: 20px;" src="{{'https://img.singmap.com'+userInfo.brokeLogo}}" alt="">
+      <img style="max-height: 75px;max-width: 75px;margin-top: 20px;" src="{{imgpath}}{{userInfo.brokeLogo}}" alt="">
       <!-- <p style="margin: 0;">{{userInfo.brokeName}}</p> -->
   
     </div>
@@ -217,7 +217,7 @@
           <div class="img-content-icon" 
             style="width: 100%;
                   height: 150px;
-                  background-image: url({{'https://img.singmap.com'+pro_img.url}});
+                  background-image: url({{imgpath}}{{pro_img.url | urlencode}});
                   background-size: 100% 100%;">
           </div>
         </td>
@@ -243,12 +243,12 @@
           <td style="width: 198px;height: 150px;">
             <div class="img-content-icon" 
             style="position: relative;width: 100%;height: 150px;
-            background-image: url({{'https://img.singmap.com'+pro_ivt.url}});
+            background-image: url({{imgpath}}{{pro_ivt.url | urlencode}});
             background-size: cover;
             background-repeat: no-repeat;
             background-position: 50%;
             background-size: 100% 100%;">
-              <img class="logo-img" src="https://share.ecoprop.com/static/img/virtual.ec1cf28.png" alt="">
+              <img class="logo-img" src="https://img.singmap.com/upload/broke/otherimg/pdf_ivt.png" alt="">
             </div>
           </td>
         {% endfor %}
@@ -272,11 +272,19 @@
         <tr>
           {% for pro_video in media_list.video[0:4] %}
           <td style="width: 198px;height: 150px;">
+            {% if pro_video.logoUrl %}
             <div class="img-content-icon" style="position: relative;width: 100%;height: 150px;
-            background-image: url({{'https://img.singmap.com'+pro_video.logoUrl}});
+            background-image: url({{imgpath}}{{pro_video.logoUrl | urlencode}});
             background-size: 100% 100%;">
-              <img class="logo-img" src="https://share.ecoprop.com/static/img/video.03b9f7f.png" alt="">
+              <img class="logo-img" src="https://img.singmap.com/upload/broke/otherimg/pdf_video.png" alt="">
             </div>
+            {% else %}
+            <div class="img-content-icon" style="position: relative;width: 100%;height: 150px;
+            background-image: url('https://img.singmap.com/upload/broke/otherimg/not_img.jpg');
+            background-size: 100% 100%;">
+              <img class="logo-img" src="https://img.singmap.com/upload/broke/otherimg/pdf_video.png" alt="">
+            </div>
+            {% endif %}
           </td>
         {% endfor %}
         </tr>
@@ -285,6 +293,7 @@
   </div>
   <div class="hr-solid"></div>
   {% endif %}
+  
   {%if site_plan.siteplan %}
   <div>
     <div class="titles">
@@ -294,13 +303,12 @@
       </a>
     </div>
 
-
     <table >
       <tr>
         {% for pro_site_plan in site_plan.siteplan[0:2] %}
         <td style="width: 385px;height: 385px;">
           <div class="img-content-icon" style="position: relative;width: 100%;height: 100%;
-          background-image: url({{'https://img.singmap.com'+pro_site_plan}});
+          background-image: url({{imgpath}}{{pro_site_plan | urlencode}});
           background-size: 100% 100%;">
           </div>
         </td>
@@ -311,7 +319,7 @@
     <!-- {% for pro_site_plan in site_plan.siteplan[0:2] %}
     <div style="height: 200px;width: 48%;">
       <img class="img-content-icon max-content"
-        src="{{'https://img.singmap.com'+pro_site_plan}}"
+        src="https://img.singmap.com{{pro_site_plan}}"
         alt="">
     </div>
     {% endfor %} -->
@@ -334,24 +342,13 @@
         {% for pro_building in site_plan.allbuilding[0:2] %}
         <td style="width: 385px;height: 385px;">
           <div class="img-content-icon" style="position: relative;width: 100%;height: 100%;
-          background-image: url({{'https://img.singmap.com'+pro_building}});
+          background-image: url({{imgpath}}{{pro_building | urlencode}});
           background-size: 100% 100%;">
           </div>
         </td>
       {% endfor %}
       </tr>
     </table>
-
-
-
-
-    <!-- {% for pro_building in site_plan.allbuilding[0:2] %}
-    <div style="height: 200px;width: 48%;">
-      <img class="img-content-icon max-content"
-        src="{{'https://img.singmap.com'+pro_building}}"
-        alt="">
-    </div>
-    {% endfor %} -->
 
   </div>
   <div class="hr-solid"></div>
@@ -363,6 +360,7 @@
         <img  src="https://img.singmap.com/upload/broke/otherimg/pdf_more.png" alt="">
       </a>
     </div>
+    {% if proInfo.facilitiesMap %}
       {% for facilitiesMap in proInfo.facilitiesMap %}
         {% if facilitiesMap.value %}
           <div>
@@ -377,7 +375,7 @@
         <br />
         {% endif%}
       {% endfor %}
-
+    {% endif%}
   </div>
   <div class="hr-solid"></div>
   <div>
@@ -391,7 +389,7 @@
       {% for floorplan in floor_plan_list.lists %}
       <li style="float:left;width: 185px;height: 150px;padding: 2px;">
         <div class="img-content-icon" style="clear:both;width: 100%;height: 100%;
-        background-image: url({{'https://img.singmap.com'+floorplan.img.replace(" ","%20")}});
+        background-image: url({{imgpath}}{{floorplan.img | urlencode}});
         background-size: cover;
         background-repeat: no-repeat;
         background-position: 50%;
