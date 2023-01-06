@@ -103,7 +103,6 @@ async def GetPndPdfPro(agentId: str=Form(...) ,projectId:str=Form(...)):
             }
             return rtdata
 
-
 @router.post('/pnd_pro_pdf_Comparison')
 async def GetPndComparison(agentId: str=Form(...) ,projectId:str=Form(...)):
     """
@@ -135,7 +134,6 @@ async def GetPndComparison(agentId: str=Form(...) ,projectId:str=Form(...)):
             }
             return rtdata
 
-
 @router.post('/era_bedroom_pdf')
 async def GetPndPdfPro(agentId: str=Form(...),
                 brokeId: str=Form(...),
@@ -165,7 +163,6 @@ async def GetPndPdfPro(agentId: str=Form(...),
             "datas":e
             }
             return rtdata
-
 
 @router.post('/ecoprop_shera_pro_pdf')
 async def EcopropSheraProPdf(agentId: str=Form(...) ,projectId:str=Form(...)):
@@ -216,7 +213,6 @@ async def EcopropSheraUnitPdf(agentId: str=Form(...) ,unitId:str=Form(...)):
             }
             return rtdata
 
-
 @router.post('/ecoprop_shera_pro_cmpare_pdf')
 async def EcopropSheraProComparePdf(agentId: str=Form(...) ,projectId:str=Form(...)):
 
@@ -241,9 +237,6 @@ async def EcopropSheraProComparePdf(agentId: str=Form(...) ,projectId:str=Form(.
             "datas":e
             }
             return rtdata
-
-
-
 
 def MakePDF(agentId,projectId):
 
@@ -424,6 +417,7 @@ def MakePDF(agentId,projectId):
         size = '-'
         if item['minArea'] != 0 and item['maxArea'] != 0: # 户型最大最小面积
             size = '{0}-{1}sqft'.format(item['minArea'],item['maxArea'])
+
         if item['bedrooms'] == None or item['bedrooms'] < 1 or item['bedrooms'] > 5:
             continue
         elif item['price']:
@@ -964,8 +958,6 @@ def MakePDF(agentId,projectId):
     # time.sleep(3)
     return returnPath
     # return savepath 
-
-
 def ComparisonPDF(agentId,projectId):
     ##################################################################
     # 项目对比报表
@@ -1253,8 +1245,6 @@ def ComparisonPDF(agentId,projectId):
     doc.save()  # 保存文件并关闭画布
     return returnPath
 
-
-
 def ERABedroomRports(agentId,brokeId,minPrice,maxPrice,projectArea,token,source):
     # ERA 项目可售单位报表 生成
     gettime = getDatetimes()
@@ -1339,7 +1329,6 @@ def ERABedroomRports(agentId,brokeId,minPrice,maxPrice,projectArea,token,source)
     doc = SimpleDocTemplate(savepath,topMargin=0.5*inch,bottomMargin=0.5*inch)
     doc.build(elements)
     return retpaths
-
 
 def Shera_to_Pdf(agentId,projectId):
 
@@ -1496,7 +1485,6 @@ def Share_Unit_Pdf(agentId,unitId):
     logger.info('PDF ADD Over ====>>>>')
     return re_path
 
-
 def Share_Pro_compare_Pdf(agentId,projectId):
     # 创建 项目对比PDF文件
     getapi = getAPI()
@@ -1557,3 +1545,6 @@ def Share_Pro_compare_Pdf(agentId,projectId):
         
     logger.info('PDF ADD Over ====>>>>')
     return re_path
+
+
+
