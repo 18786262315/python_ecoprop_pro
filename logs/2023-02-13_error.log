@@ -1,0 +1,8 @@
+2023-02-13 19:23:00.299 | ERROR    | modules.Project.comparison_pro:XHORIZON_Comparison_PDF:114 - File Padding Err ===>>>wkhtmltopdf exited with non-zero code 1. error:
+QPainter::begin(): Returned false
+Exit with code 1, due to unknown error.
+
+2023-02-13 19:27:19.610 | ERROR    | modules.Project.comparison_pro:XHORIZON_Comparison_PDF:113 - File Padding Err ===>>>wkhtmltopdf exited with non-zero code 1. error:
+QPainter::begin(): Returned false
+Exit with code 1, due to unknown error.
+

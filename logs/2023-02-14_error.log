@@ -1,0 +1,28 @@
+2023-02-14 15:13:18.995 | ERROR    | modules.Project.comparison_pro:XHORIZON_Comparison_PDF:115 - File Padding Err ===>>>wkhtmltopdf exited with non-zero code 1. error:
+QPainter::begin(): Returned false
+Exit with code 1, due to unknown error.
+
+2023-02-14 15:14:08.754 | ERROR    | modules.Project.comparison_pro:XHORIZON_Comparison_PDF:116 - File Padding Err ===>>>wkhtmltopdf exited with non-zero code 1. error:
+QPainter::begin(): Returned false
+Exit with code 1, due to unknown error.
+
+2023-02-14 15:15:09.737 | ERROR    | modules.Project.comparison_pro:XHORIZON_Comparison_PDF:116 - File Padding Err ===>>>wkhtmltopdf exited with non-zero code 1. error:
+QPainter::begin(): Returned false
+Exit with code 1, due to unknown error.
+
+2023-02-14 15:26:28.981 | ERROR    | modules.Project.comparison_pro:XHORIZON_Comparison_PDF:116 - File Padding Err ===>>>wkhtmltopdf exited with non-zero code 1. error:
+QPainter::begin(): Returned false
+Exit with code 1, due to unknown error.
+
+2023-02-14 15:50:34.560 | ERROR    | modules.Project.comparison_pro:XHORIZON_Comparison_PDF:116 - File Padding Err ===>>>wkhtmltopdf exited with non-zero code 1. error:
+QPainter::begin(): Returned false
+Exit with code 1, due to unknown error.
+
+2023-02-14 15:50:50.112 | ERROR    | modules.Project.comparison_pro:XHORIZON_Comparison_PDF:116 - File Padding Err ===>>>wkhtmltopdf exited with non-zero code 1. error:
+QPainter::begin(): Returned false
+Exit with code 1, due to unknown error.
+
+2023-02-14 15:55:31.794 | ERROR    | modules.Project.comparison_pro:XHORIZON_Comparison_PDF:116 - File Padding Err ===>>>wkhtmltopdf exited with non-zero code 1. error:
+QPainter::begin(): Returned false
+Exit with code 1, due to unknown error.
+

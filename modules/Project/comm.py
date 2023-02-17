@@ -1,9 +1,9 @@
 from hashlib import md5
-from importlib_metadata import re
-from modules import Project
-from reportlab.lib.colors import HexColor,black,red,PCMYKColor
-from reportlab.graphics.shapes import Drawing,Rect
-from reportlab.platypus import Paragraph,PageBreak,Table,Image as im
+# from importlib_metadata import re
+# from modules import Project
+from reportlab.lib.colors import HexColor
+from reportlab.graphics.shapes import Drawing
+from reportlab.platypus import Paragraph,Table,Image as im
 from reportlab.lib import colors
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
@@ -16,8 +16,9 @@ from PIL import Image
 import os,time,math,datetime
 import requests,json
 from io import BytesIO
-from comm.logger import logger
+# from comm.logger import logger
 from reportlab.lib.utils import ImageReader
+from config import Config
 
 class getDatetimes():
     def __init__(self):
@@ -50,19 +51,19 @@ class getAPI(): # 网络请求
         return signature
     def requsetAPI(self,path,params):
         params['signature'] = self.setmd5(params)
+        # print(path,params)
         res = requests.get(path,params=params)
         value = json.loads(res.text)
         # print(value)
         if value['code'] == '0':
             return value['datas']
         else:
-            # print(value)
             raise HTTPException(status_code=404, detail="参数错误")
     def requsetAPI_POST(self,path,params):
         params['signature'] = self.setmd5(params)
         res = requests.post(path,data=params)
         value = json.loads(res.text)
-        # print(value)
+        print(value)
         if value['code'] == '0':
             return value['datas']
         else:
@@ -84,6 +85,7 @@ class MakeReportlab():
         pdfmetrics.registerFont(TTFont('arial','arial.ttf')) #注册字体
         pdfmetrics.registerFont(TTFont('msyh','msyh.ttf')) #注册字体
         pdfmetrics.registerFont(TTFont('msyhbd','msyhbd.ttf')) #注册字体
+    
     def priceBSD(self,price):
         ...
         BSD = 0
@@ -140,6 +142,34 @@ class MakeReportlab():
         self.doc.setFillColor(HexColor(color)) # RGB
         self.doc.rect(x,y,w,h,stroke=0, fill=1) #x,y,w,h,stroke=边框,fill=颜色透明度
 
+
+
+    def img_circle(self,img_path):
+        # 图片切圆角
+        im = Image.open(img_path).convert("RGBA")
+        im.convert('RGB')
+        ima = im.resize((320, 320))
+        size = ima.size
+        # 要使用圆形，所以使用刚才处理好的正方形的图片
+        r2 = min(size[0], size[1])
+        if size[0] != size[1]:
+            ima = ima.resize((r2, r2), Image.ANTIALIAS)
+        # 最后生成圆的半径
+        r3 = int(r2/2)
+        imb = Image.new('RGBA', (r3*2, r3*2),(255,255,255,0))
+        pima = ima.load() # 像素的访问对象
+        pimb = imb.load()
+        r = float(r2/2) #圆心横坐标
+        for i in range(r2):
+            for j in range(r2):
+                lx = abs(i-r) #到圆心距离的横坐标
+                ly = abs(j-r) #到圆心距离的纵坐标
+                l = (pow(lx,2) + pow(ly,2))** 0.5 # 三角函数 半径
+                if l < r3:
+                    pimb[i-(r-r3),j-(r-r3)] = pima[i,j]
+
+        return imb
+
     def AddImages(self,imgName,x=0,y=0,w=None,h=None):
         """
         向文档添加图片
@@ -153,6 +183,12 @@ class MakeReportlab():
             self.doc.drawImage(I_path,x,y,width=image.width,height=image.height,mask='auto')
         else:
             self.doc.drawImage(I_path,x,y,width=w,height=h,mask='auto') #mask=auto 背景透明
+    
+    def AddRightIMG(self,imgName,x=0,y=0):
+        # 圆形图片
+        imgdata = self.img_circle(self.requsetImg(imgName))
+        self.doc.drawImage(ImageReader(imgdata),x,y,width=120,height=120,mask='auto')
+
     def AddURLImages(self,imgName,x=0,y=0,w=None,h=None):
         """
         向文档添加网络图片
@@ -247,7 +283,7 @@ class MakeReportlab():
         t.wrapOn(self.doc, 0, 0)
         t.drawOn(self.doc, x, y)
 
-    def make_drawing(self,drawdata):
+    def make_drawing(self,drawdata,make_drawing_color=HexColor('#A68E42')):
         # 横向柱状图 
         datas = [] # 数据初始集
         data =[(),()]
@@ -311,7 +347,7 @@ class MakeReportlab():
 
         # chart bars 数据颜色、展示内容等 #041e42 #e57200
         bc.bars[1].fillColor = 	HexColor('0x041e42')
-        bc.bars[0].fillColor = HexColor('0xe57200')
+        bc.bars[0].fillColor = make_drawing_color
         bc.bars.strokeColor = None
 
         # 数据名称
@@ -322,8 +358,8 @@ class MakeReportlab():
 
         drawing.add(bc)
         return drawing
-    def MakePie(self,dataold):
-
+    def MakePie_PND(self,dataold,w=350,h=350):
+  
         """ 饼图"""
         # print(datas)
         datas = []
@@ -350,8 +386,52 @@ class MakeReportlab():
         pc = Pie()
         pc.x = 0
         pc.y = 0
-        pc.width = 350 
-        pc.height = 350
+        pc.width = w 
+        pc.height = h
+        pc.data = pie_data
+        pc.labels = pie_label
+
+        pc.slices.strokeWidth=0.5
+        pc.slices.fontSize = 16
+
+
+        for i,keys in enumerate(datas):
+            pc.slices[i].fillColor = my_colors[i]
+            pc.slices[i].strokeColor = my_colors[i]
+            # pc.slices[i].labelRadius =sizedata[i]
+
+        d.add(pc)
+        return d
+    def MakePie(self,dataold,w=350,h=350):
+
+        """ 饼图"""
+        # print(datas)
+        datas = []
+        for item in dataold:
+            if item['type'] == None or item['type'] <1 or item['type'] > 5:
+                continue
+            else:
+                datas.append(item)
+        my_colors = [
+            HexColor(0xe3c84c),
+            HexColor(0xd87e33),
+            HexColor(0x3075c7),
+            HexColor(0x58a045),
+            HexColor(0x7751a1)
+            ]
+        pie_data = []
+        pie_label = []
+        # sizedata = [0.6,0.6,0.6,0.6,0.6]
+        for item in datas:
+            pie_data.append(item['number'])
+            pie_label.append(str(item['type'])+' Bedroom (' +str(item['number'])+')')
+
+        d = Drawing(0,0)
+        pc = Pie()
+        pc.x = 0
+        pc.y = 0
+        pc.width = w 
+        pc.height = h
         pc.data = pie_data
         pc.labels = pie_label
 
@@ -405,13 +485,13 @@ class MakeReportlab():
             return S+format(round(price*scale),',')
 
 
-    def stages(self,LoanAmount,S='$'):
+    def stages(self,LoanAmount,Interest_nb=3.5):
         if LoanAmount == None or LoanAmount == 0 :
             return '-'
         Loan = 0.75
         LoanAmount = LoanAmount * Loan
         LoanTenure = 30 * 12
-        InterestRate = 3.5 / 100
+        InterestRate = Interest_nb / 100
         data = round((
           (LoanAmount *
             (InterestRate / 12) *
@@ -420,14 +500,14 @@ class MakeReportlab():
         ))
         return self.S+format(data, ',')
 
-    def stages_numb(self,LoanAmount):
+    def stages_numb(self,LoanAmount,Interest_nb=3.5):
         # 计算 每月还款金额 不做格式化
         if LoanAmount == None or LoanAmount == 0 :
             return '-'
         Loan = 0.75
         LoanAmount = LoanAmount * Loan
         LoanTenure = 30 * 12
-        InterestRate = 3.5 / 100
+        InterestRate = Interest_nb / 100
         data = round((
           (LoanAmount *
             (InterestRate / 12) *

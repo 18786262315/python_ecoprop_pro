@@ -30,6 +30,8 @@ import requests,json,time,datetime
 # from hashlib import md5
 # from typing import Dict, List, Set, Tuple
 # from starlette.responses import FileResponse
+from .pro_info_page import XHORIZON_APP_PRO_PDF
+from .comparison_pro import XHORIZON_Comparison_PDF
 
 
 router = APIRouter(prefix="/project",tags=['project'],responses={405: {"description": "Not found"}},)
@@ -71,7 +73,7 @@ if envs == 'release':
 
 @router.get("/")
 def read_users():
-    return "res_data"
+    return "Mixgo Make PDF API !"
 
 @router.post('/pnd_pro_pdf')
 async def GetPndPdfPro(agentId: str=Form(...) ,projectId:str=Form(...)):
@@ -134,8 +136,71 @@ async def GetPndComparison(agentId: str=Form(...) ,projectId:str=Form(...)):
             }
             return rtdata
 
+
+@router.post('/xhoapp_pro_pdf')
+async def GetxhoappPdfPro(agentId: str=Form(...) ,projectId:str=Form(...)):
+    """
+    项目ID
+    用户ID
+    """
+    logger.info('创建PDF,%s'%projectId)
+    if not agentId and not projectId :
+        raise HTTPException(status_code=404, detail="参数错误")
+
+    # rentunpath = MakePDF(agentId,projectId)
+    # return rentunpath
+
+    try:
+        rentunpath = XHORIZON_APP_PRO_PDF(agentId,projectId)
+        logger.info('PDF创建成功=======>{}'.format(rentunpath))
+        rtdata = {
+            'code':'0',
+            'msg':'succeed',
+            "datas":rentunpath
+        }
+        return rtdata
+    except BaseException as e:
+            rtdata = {
+            'code':'-1',
+            'msg':'error',
+            "datas":e
+            }
+            return rtdata
+
+@router.post('/xhoapp_pro_pdf_Comparison')
+async def GetxhoappComparison(agentId: str=Form(...) ,projectId:str=Form(...)):
+    """
+    项目ID
+    用户ID
+    """
+    # print(agentId,projectId)
+    logger.info('创建PDF,%s'%projectId)
+    if not agentId or not projectId :
+        raise HTTPException(status_code=404, detail="参数错误")
+
+    # rentunpath = MakePDF(agentId,projectId)
+    # return rentunpath
+
+    try:
+        rentunpath = XHORIZON_Comparison_PDF(agentId,projectId)
+        logger.info('ComparisonPDF创建成功=======>{}'.format(rentunpath))
+        rtdata = {
+            'code':'0',
+            'msg':'succeed',
+            "datas":rentunpath
+        }
+        return rtdata
+    except BaseException as e:
+            rtdata = {
+            'code':'-1',
+            'msg':'error',
+            "datas":e
+            }
+            return rtdata
+
+
 @router.post('/era_bedroom_pdf')
-async def GetPndPdfPro(agentId: str=Form(...),
+async def GeteraPdfPro(agentId: str=Form(...),
                 brokeId: str=Form(...),
                 token: str=Form(...),
                 minPrice: str=Form(None),
@@ -463,7 +528,7 @@ def MakePDF(agentId,projectId):
 
     makefunc.addTesxts(fontsize=25,fontname='ARIALBD',x=pagesize[0]-930,y=pagesize[1]-250,text="BEDROOM UNITS SHARES",color=HexColor('#E37200'))
     # 饼图
-    makefunc.MakePie(unitInfo).drawOn(doc,830,250)
+    makefunc.MakePie_PND(unitInfo).drawOn(doc,830,250)
     logger.info('============>> Pro MakePie OK !')
 
     # 底部内容

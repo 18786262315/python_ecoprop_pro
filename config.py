@@ -1,4 +1,6 @@
 
+import os
+
 class Config:
     # SECRET_KEY = os.urandom (24)
     MYSQL_USER = 'root'
@@ -18,6 +20,40 @@ class Config:
     # JSONIFY_MIMETYPE = "application/json"
     JSON_AS_ASCII = False  # support Chinese
     JSON_SORT_KEYS = False  # don't sort when jsonify （ref）
+
+
+
+    # PDF Set
+    # 本地调试
+    # envs = "cc" # 本地
+    # imgpath = 'https://img.singmap.com'
+    # urlpath = 'http://192.168.0.145:9998'
+    # now_host = "http://192.168.0.145:9998"
+    # filepath = os.getcwd() # 当前文件路径 
+    # returnpaths = os.getcwd() # 当前文件路径 
+    # ecoprop_temp_path = os.path.join(os.getcwd(),'temp') # 当前文件路径 
+    # ecoprop_return_path = os.path.join(os.getcwd(),'pdf') # 当前文件路径 
+
+    # 测试环境
+    # envs = "test" # 测试
+    # imgpath = 'http://192.168.0.145:8083'
+    # urlpath = 'http://192.168.0.145:9998'
+    # now_host = "http://127.0.0.1:9998"
+    # filepath = '/home/mixgo_py_pro'
+    # returnpaths = "/home/mixgo_py_pro"
+    # ecoprop_temp_path = "/home/upload/broke/ecoprop/temp"
+    # ecoprop_return_path = "/home/upload/broke/ecoprop/pdf"
+
+    # 线上
+    envs = "release" # 发布
+    imgpath = 'https://img.singmap.com'
+    urlpath = 'https://127.0.0.1:9998' # https://api.singmap.com
+    now_host = "http://127.0.0.1:9998" 
+    filepath = '/home/upload/broke/pnd/file/report'
+    returnpaths = "/home/upload/broke/pnd/file/report"
+    ecoprop_temp_path = "/home/upload/broke/ecoprop/temp"
+    ecoprop_return_path = "/home/upload/broke/ecoprop/pdf"
+
     @staticmethod
     def init_app(app):
         pass
