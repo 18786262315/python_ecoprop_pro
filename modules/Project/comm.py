@@ -102,13 +102,13 @@ class MakeReportlab():
         #     BSD += (price-1000000) * 0.04
         if price > 180000 and price <= 360000:
             BSD = 1800 +(price-180000)*0.02
-        if price > 360000 and price <= 1000000:
+        elif price > 360000 and price <= 1000000:
             BSD = 5400 + (price-360000)*0.03
-        if price > 1000000 and price <= 1500000:
+        elif price > 1000000 and price <= 1500000:
             BSD = 24600 + (price-1000000)*0.04
-        if price >1500000 and price <= 3000000:
+        elif price >1500000 and price <= 3000000:
             BSD = 44600 + (price-1500000)*0.05
-        if price > 3000000:
+        elif price > 3000000:
             BSD = 119600 + (price-3000000)*0.06
         # print(BSD)
         return round(BSD)
