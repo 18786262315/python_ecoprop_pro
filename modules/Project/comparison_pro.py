@@ -9,7 +9,7 @@ from reportlab.lib.units import cm
 # from reportlab.lib import colors
 # from reportlab.lib.colors import HexColor
 # from reportlab.lib.styles import getSampleStyleSheet
-import os
+import os,re
 from fastapi import APIRouter,Form,HTTPException,Body
 import json,time,datetime
 import jinja2,pdfkit,base64
@@ -34,12 +34,13 @@ def XHORIZON_Comparison_PDF(agentId,projectId):
     # 创建 项目对比PDF文件
     getapi = getAPI()
     datas = {
-        "imgpath":Config.imgpath
+        "imgpath":Config.imgpath,
+        "userInfo":None
     } 
     # agentId = "e73ca86d287143709c1450012bac9e9a"
     # projectId = "5b2216e95ef446bf853113450a0642f1,0c3cef5e77f547a99d61d6a2ccd37885"
-    logger.info('get User Info ====>>>>'+agentId)
     datas['userInfo'] = getapi.requsetAPI(Config.now_host+'/app-service/agent/queryShareAgentInfo',params={"agentId": agentId})
+    logger.info('get User Info ====>>>>{0}',format(datas['userInfo']))
 
     UnitIdList = projectId.split(',')
     datas['pro_list'] = []
@@ -77,7 +78,7 @@ def XHORIZON_Comparison_PDF(agentId,projectId):
     logger.info(datas)
     datas['openlink'] = "https://app.singmap.com/share/index.html#/vsProject?projectIds={0}&agentId={1}".format(projectId,agentId)
     datas['roomNo'] = no_room * 75
-    print(datas['roomNo'])
+    # print(datas['roomNo'])
 
     # 模板填充参数
     options = {
@@ -92,6 +93,7 @@ def XHORIZON_Comparison_PDF(agentId,projectId):
     }
     try:
         logger.info('Set tmp Info ====>>>>')
+        datas = eval(re.sub('None','\'\'',str(datas))) # 去除None值
         htmls = template.render(datas)
         # config = pdfkit.configuration(wkhtmltopdf='/usr/local/bin/wkhtmltopdf') 
         pdfkit.from_string(htmls,re_path,options=options)

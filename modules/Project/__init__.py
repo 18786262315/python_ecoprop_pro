@@ -398,6 +398,8 @@ def MakePDF(agentId,projectId):
     savepath = os.path.join(uppath,str(int(time.time()))+'.pdf') 
     returnPath = os.path.join(returnpaths,agentId,str(int(time.time()))+'.pdf')
     doc = canvas.Canvas(savepath,pagesize=pagesize)
+    doc.setTitle(prodatainfo['projectName'])
+
     makefunc = MakeReportlab(doc,Imagepath,pagesize,Symbol) # 加载方法
     logger.info('---------->>>文档创建')
 
@@ -1023,6 +1025,7 @@ def MakePDF(agentId,projectId):
     # time.sleep(3)
     return returnPath
     # return savepath 
+
 def ComparisonPDF(agentId,projectId):
     ##################################################################
     # 项目对比报表
@@ -1057,6 +1060,7 @@ def ComparisonPDF(agentId,projectId):
     savepath = os.path.join(uppath,str(int(time.time()))+'.pdf') 
     returnPath = os.path.join(uppath,str(int(time.time()))+'.pdf')
     doc = canvas.Canvas(savepath,pagesize=pagesize)
+    doc.setTitle("ProJect Comparison")
     makefunc = MakeReportlab(doc,Imagepath,pagesize,Symbol) # 加载方法
     
     song = "simsun"
@@ -1486,6 +1490,7 @@ def Shera_to_Pdf(agentId,projectId):
     }
     try:
         logger.info('Add tmp Info ====>>>>')
+        datas = eval(re.sub('None','\'\'',str(datas))) # 去除None值
         htmls = template.render(datas)
         # config = pdfkit.configuration(wkhtmltopdf='/usr/local/bin/wkhtmltopdf') 
         pdfkit.from_string(htmls,re_path,options=options)
@@ -1540,6 +1545,7 @@ def Share_Unit_Pdf(agentId,unitId):
     }
     try:
         logger.info('Set tmp Info ====>>>>{0}'.format(datas))
+        datas = eval(re.sub('None','\'\'',str(datas))) # 去除None值
         htmls = template.render(datas)
         # config = pdfkit.configuration(wkhtmltopdf='/usr/local/bin/wkhtmltopdf') 
         pdfkit.from_string(htmls,re_path,options=options)
@@ -1601,6 +1607,7 @@ def Share_Pro_compare_Pdf(agentId,projectId):
     }
     try:
         logger.info('Set tmp Info ====>>>>{0}'.format(datas))
+        datas = eval(re.sub('None','\'\'',str(datas))) # 去除None值
         htmls = template.render(datas)
         # config = pdfkit.configuration(wkhtmltopdf='/usr/local/bin/wkhtmltopdf') 
         pdfkit.from_string(htmls,re_path,options=options)

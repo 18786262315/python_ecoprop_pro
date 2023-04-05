@@ -26,7 +26,7 @@ class Config:
     # PDF Set
     # 本地调试
     # envs = "cc" # 本地
-    # imgpath = 'https://img.singmap.com'
+    # imgpath = 'http://192.168.0.145:8083'
     # urlpath = 'http://192.168.0.145:9998'
     # now_host = "http://192.168.0.145:9998"
     # filepath = os.getcwd() # 当前文件路径 
@@ -47,7 +47,7 @@ class Config:
     # 线上
     envs = "release" # 发布
     imgpath = 'https://img.singmap.com'
-    urlpath = 'https://127.0.0.1:9998' # https://api.singmap.com
+    urlpath = 'http://127.0.0.1:9998' # https://api.singmap.com
     now_host = "http://127.0.0.1:9998" 
     filepath = '/home/upload/broke/pnd/file/report'
     returnpaths = "/home/upload/broke/pnd/file/report"

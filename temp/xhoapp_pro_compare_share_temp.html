@@ -21,7 +21,7 @@
       box-shadow: 0 0 5px #ddd;
     }
     td{
-      height: 60px;
+      height: 85px;
     }
     .img-content{
       height: 255px !important;
@@ -38,6 +38,21 @@
     }
     .text-conter{
       text-align: center;
+    }
+    .text-two-line{
+      width:220px;
+      margin: auto;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space:nowrap;
+      /* display: -webkit-box;
+      -webkit-line-clamp: 1;
+      -webkit-box-orient: vertical; */
+      /* height: 100%;
+      margin: auto;
+      display: flex;
+      justify-content: center;
+      align-items: center; */
     }
   </style>
 </head>
@@ -148,10 +163,10 @@
             <td class="info-td text-conter">{{pro.projectInfo.expTop}}</td>
           </tr>
           <tr>
-            <td class="info-td text-conter">{{pro.projectInfo.location}}</td>
+            <td class="info-td text-conter" ><p class="text-two-line">{{pro.projectInfo.location}}</p></td>
           </tr>
           <tr>
-            <td class="info-td text-conter">{{pro.projectInfo.streetAddress}}</td>
+            <td class="info-td text-conter" ><p class="text-two-line">{{pro.projectInfo.streetAddress}}</p></td>
           </tr>
           <tr>
             <td class="info-td text-conter">{{pro.blocks}}</td>

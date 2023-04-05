@@ -16,7 +16,7 @@ from PIL import Image
 import os,time,math,datetime
 import requests,json
 from io import BytesIO
-# from comm.logger import logger
+from comm.logger import logger
 from reportlab.lib.utils import ImageReader
 from config import Config
 
@@ -55,15 +55,18 @@ class getAPI(): # 网络请求
         res = requests.get(path,params=params)
         value = json.loads(res.text)
         # print(value)
+        logger.info('data=======>{0}'.format(value['datas']))
         if value['code'] == '0':
+            # eval(re.sub('None','\'\'',str(value['datas']))) # 去除None值
             return value['datas']
         else:
             raise HTTPException(status_code=404, detail="参数错误")
+        
     def requsetAPI_POST(self,path,params):
         params['signature'] = self.setmd5(params)
         res = requests.post(path,data=params)
         value = json.loads(res.text)
-        print(value)
+        # print(value)
         if value['code'] == '0':
             return value['datas']
         else:

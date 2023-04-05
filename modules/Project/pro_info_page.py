@@ -97,6 +97,7 @@ def XHORIZON_APP_PRO_PDF(agentId,projectId):
     savepath = os.path.join(uppath,str(int(time.time()))+'.pdf')
     returnPath = os.path.join(Config.returnpaths,agentId,str(int(time.time()))+'.pdf')
     doc = canvas.Canvas(savepath,pagesize=pagesize)
+    doc.setTitle(prodatainfo['projectName'])
     makefunc = MakeReportlab(doc,Imagepath,pagesize,Symbol) # 加载方法
     # logger.info('---------->>>文档创建')
 
@@ -318,9 +319,9 @@ def XHORIZON_APP_PRO_PDF(agentId,projectId):
             if stage != '-':
                 unittype2.append([str(item['type'])+\
                     " Bedroom",makefunc.priceset(item['min_price1']),\
-                        makefunc.stages(item['min_price1']), \
-                            makefunc.priceset(makefunc.stages_numb(item['min_price1'])/0.55), \
-                                makefunc.priceset((makefunc.stages_numb(item['min_price1'])/0.55)/0.7)])
+                        makefunc.stages(item['min_price1'],4), \
+                            makefunc.priceset(makefunc.stages_numb(item['min_price1'],4)/0.55), \
+                                makefunc.priceset((makefunc.stages_numb(item['min_price1'],4)/0.55)/0.7)])
             else:
                 unittype2.append([str(item['type'])+\
                     " Bedroom",makefunc.priceset(item['min_price1']),\
@@ -372,13 +373,13 @@ def XHORIZON_APP_PRO_PDF(agentId,projectId):
         if item['type'] == None  or item['type'] < 1 or item['type'] > 5:
             continue
         elif item['min_price1'] :
-            stage = makefunc.stages_numb(item['min_price1'],2.5)
+            stage = makefunc.stages_numb(item['min_price1'],4)
             if stage != '-':
                 unittype2.append([str(item['type'])+\
                     " Bedroom",makefunc.priceset(item['min_price1']),\
-                        makefunc.stages(item['min_price1'],2.5), \
-                            makefunc.priceset(makefunc.stages_numb(item['min_price1'],2.5)/0.55), \
-                                makefunc.priceset((makefunc.stages_numb(item['min_price1'],2.5)/0.55)/0.7)])
+                        makefunc.stages(item['min_price1'],4), \
+                            makefunc.priceset(makefunc.stages_numb(item['min_price1'],4)/0.55), \
+                                makefunc.priceset((makefunc.stages_numb(item['min_price1'],4)/0.55)/0.7)])
             else:
                 unittype2.append([str(item['type'])+\
                     " Bedroom",makefunc.priceset(item['min_price1']),\
@@ -435,9 +436,9 @@ def XHORIZON_APP_PRO_PDF(agentId,projectId):
             if stage != '-':
                 unittype2.append([str(item['type'])+\
                     " Bedroom",makefunc.priceset(item['min_price1']),\
-                        makefunc.stages(item['min_price1'],1.5), \
-                            makefunc.priceset(makefunc.stages_numb(item['min_price1'],1.5)/0.55), \
-                                makefunc.priceset((makefunc.stages_numb(item['min_price1'],1.5)/0.55)/0.7)])
+                        makefunc.stages(item['min_price1'],4), \
+                            makefunc.priceset(makefunc.stages_numb(item['min_price1'],4)/0.55), \
+                                makefunc.priceset((makefunc.stages_numb(item['min_price1'],4)/0.55)/0.7)])
             else:
                 unittype2.append([str(item['type'])+\
                     " Bedroom",makefunc.priceset(item['min_price1']),\
