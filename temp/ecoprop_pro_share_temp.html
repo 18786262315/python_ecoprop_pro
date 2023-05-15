@@ -137,9 +137,12 @@
   <!-- 公司LOGO+公司证件号码 -->
   <div class="commpay" >
     <div style="float: left;height:100%">
-      <img style="float: left;"
-      src="{{imgpath}}{{userInfo.logo}}"
-      alt="User Logo">
+      <img style="float: left;" src="{{imgpath}}{{userInfo.logo}}" alt="User Logo">
+      {% if userInfo.logo %}
+      <img style="float: left;" src="{{imgpath}}{{userInfo.logo}}" alt="User Logo">
+      {% else %}
+      <img style="float: left;" src="https://img.singmap.com/upload/broke/otherimg/not_img.jpg" alt="">
+      {% endif %}
       <div style="float:right;">
         <h4 style="margin:0px;margin-left: 20px;margin-bottom: 2px;line-height: 35px;">{{userInfo.agentName}}</h4>
         <p style="margin:0px;margin-left: 20px;margin-bottom: 2px;line-height: 35px;">{{userInfo.mobile}}</p>

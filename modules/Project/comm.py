@@ -296,7 +296,7 @@ class MakeReportlab():
         t.wrapOn(self.doc, 0, 0)
         t.drawOn(self.doc, x, y)
 
-    def make_drawing(self,drawdata,make_drawing_color=HexColor('#A68E42')):
+    def make_drawing(self,drawdata,make_drawing_color=HexColor('#e57200')):
         # 横向柱状图 
         datas = [] # 数据初始集
         data =[(),()]
