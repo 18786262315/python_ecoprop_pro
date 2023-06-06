@@ -372,7 +372,6 @@ class MakeReportlab():
         drawing.add(bc)
         return drawing
     def MakePie_PND(self,dataold,w=350,h=350):
-  
         """ 饼图"""
         # print(datas)
         datas = []
