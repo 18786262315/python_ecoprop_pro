@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PND Pro</title>
+  <style>
+    html,body,.pdfinfo{
+      margin: 0px;
+      padding: 0px;
+    }
+    .content{
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .pageSize{
+      width: 1747px;
+      height: 965px;
+      position: relative;
+    }
+    .conter{
+      display: flex;
+    }
+    img{
+      max-width: 100%;
+    max-height: 100%;
+    }
+    .userinfo{
+      display: flex;
+      flex-direction: row;
+    }
+    .userinfo img{
+      width: 85px;
+    }
+    .userinfodata{
+      display: flex;
+    flex-direction: column;
+    margin: auto;
+    margin-left: 10px;
+    font-size: 45px;
+    }
+    .page3-2{
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+
+      /* height: 300px; */
+      /* position: absolute; */
+      /* top: 20%;
+      left: 0px; */
+    }
+    .page3-2,.page3-3,.page3-4{
+      width: 60%;
+      margin-left: 5%;
+    }
+    .title-text{
+      font-size: 18px;
+      font-weight: bold;
+      color: #e37206;
+      width: 245px;
+    }
+    .link-text{
+      display: flex;
+      flex-wrap: nowrap;
+      margin: 5px 0;
+    }
+    .page-3-3-data div{
+      width: 30%;
+    }
+    .page4-2{
+      display: inline-flex;
+      flex-direction: row;
+      justify-content: space-evenly;
+      width: 100%;
+    }
+
+    .col{
+      display: flex;
+      flex-direction: column;
+    }
+    .row{
+      display: flex;
+      flex-direction: row;
+    }
+    .table-col{
+      display: flex;
+      width: 60%;
+      flex-wrap: nowrap;
+      
+    }
+    .table-col div{
+      flex: 1;
+      border: 1px solid black;
+      text-align: center;
+    }
+    .table-row{
+
+    }
+  </style>
+</head>
+<body>
+  <div class="pdfinfo">
+    <div class="pageSize" style="background-image: url(../file/0.jpg);background-size: cover;">
+      <!-- page1 -->
+      <div class="userinfo" style="position: absolute;left: 625px;top: 555px;width: 950px;height: 275px;">
+        <img src="../file/0.jpg" style="width: 315px;" alt="">
+        <div class="userinfodata">
+          <div>NAME:cc</div>
+          <div>MOBILE:cc</div>
+          <div>EMAIL:cc</div>
+          <div>CEA:cc</div>
+        </div>
+      </div>
+
+    </div>
+    <div class="pageSize" style="background-image: url(../file/1.jpg);background-size: cover;">
+      <!-- page2 -->
+    </div>
+    <div class="pageSize" style="background-image: url(../file/bgB.png);background-size: cover;">
+      <!-- page3 -->
+      <h2 style="margin-left: 5%;padding-top: 5%;font-size: xxx-large;">183 Longhaus</h2>
+
+      <div class="page3-2" style="margin-top: 5%;">
+        <div>
+          <div class="title-text" style="margin-bottom: 20px;">PROJECT SUMMARY</div>
+          <div style="margin-top: 5px;"><p style="width: 100px;float: left;margin: 0px;">Developer</p> : Tee Land</div>
+          <div style="margin-top: 5px;"><p style="width: 100px;float: left;margin: 0px;">Tenure</p> : Freehold</div>
+          <div style="margin-top: 5px;"><p style="width: 100px;float: left;margin: 0px;">District</p> : D20</div>
+          <div style="margin-top: 5px;"><p style="width: 100px;float: left;margin: 0px;">Region</p> : RCR</div>
+          <div style="margin-top: 5px;"><p style="width: 100px;float: left;margin: 0px;">Top</p> : 2020</div>
+          <div style="margin-top: 5px;"><p style="width: 100px;float: left;margin: 0px;">Total Units</p> : 50</div>
+        </div>
+        <div>
+          <div class="title-text" style="margin-bottom: 20px;">BEDROOM UNITS SHARES</div>
+        </div>
+        <!-- <div class="page3-2-img">
+          <img src="../file/0.jpg" alt="">
+        </div> -->
+      </div>
+      <div class="page3-3" style="margin-top: 5%;width: 30%;">
+        <div class="title-text" style="margin-bottom: 20px;">UNIT PRICE</div>
+        <div class="link-text page-3-3-data"><div>Types</div><div>Size Range</div><div>Price From</div></div>
+        <div class="link-text page-3-3-data"><div>AAA</div><div>BBB</div><div>CCC</div></div>
+        <div class="link-text page-3-3-data"><div>AAA</div><div>BBB</div><div>CCC</div></div>
+        <div class="link-text page-3-3-data"><div>AAA</div><div>BBB</div><div>CCC</div></div>
+        <div class="link-text page-3-3-data"><div>AAA</div><div>BBB</div><div>CCC</div></div>
+        <div class="link-text page-3-3-data"><div>AAA</div><div>BBB</div><div>CCC</div></div>
+        
+      </div>
+
+      <div class="page3-4" style="margin-top: 5%;">
+        <div class="link-text"><div class="title-text">Project Brochure</div> <div><a href="#">CLICK HERE</a></div></div>
+        <div class="link-text"><div class="title-text">360 Panorama</div> <div>[-]</div></div>
+        <div class="link-text"><div class="title-text">School(s) Within 1 KM</div> <div>Raffles Institution/Catholic High School/Modern Montessori Preschool Centre Bishan/Thomson</div></div>
+        <div class="link-text"><div class="title-text">Nearby MRT within 2KM</div> <div>Marymount/Bishan /Braddell/Caldecott</div></div>
+      </div>
+      <p style="margin-left: 5%;">
+        Source: Google Maps<br/>
+        Personalised Property Analytics Report • Value-adding Your Home Purchase
+      </p>
+
+    </div>
+    <div class="pageSize" style="background-image: url(../file/bgB.png);background-size: cover;">
+      <!-- page4 -->
+        <h2 style="margin-left: 5%;padding-top: 5%;font-size: xxx-large;">183 Longhaus</h2>
+      <div style="text-align: center;font-size: xxx-large;color: #e37206;margin: 50px 0;">
+        LOCATION HIGHLIGHT
+      </div>
+      <div class="page4-2">
+        <div class="col" style="width: 45%;">
+          <img  src="../file/0.jpg" alt="">
+          Source: Google Maps
+        </div>
+        <div class="col" style="width: 45%;">
+          <img  src="../file/0.jpg" alt="">
+          Source: URA Map
+        </div>
+      </div>
+    </div>
+    <div class="pageSize" style="background-image: url(../file/6.jpg);background-size: cover;">
+      <!-- page5 -->
+      <div class="userinfo" style="position: absolute;left: 625px;top: 515px;width: 950px;height: 275px;">
+        <img src="../file/0.jpg" style="width: 315px;" alt="">
+        <div class="userinfodata">
+          <div>NAME:cc</div>
+          <div>MOBILE:cc</div>
+          <div>EMAIL:cc</div>
+          <div>CEA:cc</div>
+        </div>
+      </div>
+    </div>
+    <div class="pageSize content" style="background-image: url(../file/bgA.png);background-size: cover;flex-direction: column;">
+      <!-- page6 -->
+      <h2>Guide to Financial Wellness</h2>
+      <div class="table-col"><div>Unit Type</div><div>Unit Type</div><div>Unit Type</div><div style="flex: 2;">Unit Type</div></div>
+      <div class="table-col"><div>Unit Type</div><div>Unit Type</div><div>Unit Type</div><div>Unit Type</div><div>Unit Type</div></div>
+    </div>
+    <div class="pageSize" style="background-image: url(../file/8.jpg);background-size: cover;">
+      page7
+    </div>
+    <div class="pageSize" style="background-image: url(../file/9.jpg);background-size: cover;">
+      page8
+      <img src="../file/bgA.png" alt="">
+    </div>
+    <div class="pageSize" style="background-image: url(../file/10.jpg);background-size: cover;">
+      page9
+      <!-- <img src="../file/bgA.png" alt=""> -->
+    </div>
+    <div class="pageSize" style="background-image: url(../file/11.jpg);background-size: cover;">
+      page10
+      <!-- <img src="../file/bgA.png" alt=""> -->
+    </div>
+    <div class="pageSize" style="background-image: url(../file/bgA.png);background-size: cover;">
+      page11
+    </div>
+    <div class="pageSize" style="background-image: url(../file/bgA.png);background-size: cover;">
+      page12
+    </div>
+    <div class="pageSize" style="background-image: url(../file/bgA.png);background-size: cover;">
+      page13
+    </div>
+    <div class="pageSize" style="background-image: url(../file/bgA.png);background-size: cover;">
+      page14
+    </div>
+    <div class="pageSize" style="background-image: url(../file/16.jpg);background-size: cover;">
+      page15
+    </div>
+    <div class="pageSize" style="background-image: url(../file/17.jpg);background-size: cover;">
+      page16
+    </div>
+    <div class="pageSize" style="background-image: url(../file/overpage.png);background-size: cover;">
+      page17
+    </div>
+  </div>
+</body>
+</html>

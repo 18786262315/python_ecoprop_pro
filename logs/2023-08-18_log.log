@@ -1,0 +1,8 @@
+2023-08-18 15:42:02.865 | INFO     | modules.Transaction.Picture_recognition:set_signature:31 - signature start=======>
+2023-08-18 15:43:23.478 | INFO     | modules.Transaction.Picture_recognition:set_signature:31 - signature start=======>userId='aaa' token='bbb' brokeId='ccc' sitePlanId='ddd' content='content'
+2023-08-18 15:44:47.793 | INFO     | modules.Transaction.Picture_recognition:set_signature:31 - signature start=======>{'userId': 'aaa', 'token': 'bbb', 'brokeId': 'ccc', 'sitePlanId': 'ddd', 'content': 'content'}
+2023-08-18 15:44:47.796 | INFO     | modules.Transaction.Picture_recognition:set_signature:44 - signature end=======>4fa698aef11c827160ff14f5542f002d
+2023-08-18 16:15:11.694 | INFO     | modules.Transaction.Picture_recognition:FileDown:12 - 网络文件保存到本地=====>http://192.168.0.145:8083/upload/broke/0c5d80359cc5416a9ea953fdebcbfc20/0c3cef5e77f547a99d61d6a2ccd37885/siteplanImg/20230814/Elevation Chart.png
+2023-08-18 16:15:12.483 | INFO     | modules.Transaction.Picture_recognition:Picture_table_recognition:128 - 完成识别=======>
+2023-08-18 16:15:12.497 | INFO     | modules.Transaction.Picture_recognition:set_signature:31 - signature start=======>{'userId': 'aaa', 'token': 'bbb', 'brokeId': 'ccc', 'sitePlanId': 'ddd', 'content': '[]'}
+2023-08-18 16:15:12.500 | INFO     | modules.Transaction.Picture_recognition:set_signature:44 - signature end=======>e4a854dc0c888f7169bb533118f551ac

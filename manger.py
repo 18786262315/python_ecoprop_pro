@@ -1,8 +1,8 @@
 from typing import List
-from fastapi import Depends, HTTPException,FastAPI,Form,Query,UploadFile,File,Request,Header,Cookie
+from fastapi import Depends, HTTPException,FastAPI,Form,Query,UploadFile,File,Request,Header,Cookie,WebSocket
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse,HTMLResponse
 # from sqlalchemy.orm import Session
 
 # 前置处理
@@ -12,7 +12,7 @@ from comm.logger import logger
 # 模块引入
 
 # from sql import database,models
-from modules import Project
+from modules import Project,Transaction
 
 
 '''
@@ -33,6 +33,7 @@ app = FastAPI()
 
 # app.include_router(Users.router)
 # app.include_router(Company.router)
+# app.include_router(Transaction.router)
 app.include_router(Project.router)
 
 
@@ -72,7 +73,67 @@ async def request_validation_exception_handler(request: Request, exc: RequestVal
 
 # 模块引入
 
+# @app.get("/")
+# def read_users():
+#     logger.info('audax_admin')
+#     return "audax_admin"
+
+
+
+
+
+
+# WebSocket
+
+
+html = """
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Chat</title>
+    </head>
+    <body>
+        <h1>WebSocket Chat</h1>
+        <form action="" onsubmit="sendMessage(event)">
+            <input type="text" id="messageText" autocomplete="off"/>
+            <button>Send</button>
+        </form>
+        <ul id='messages'>
+        </ul>
+        <script>
+            var ws = new WebSocket("ws://localhost:7777/ws");
+            ws.onmessage = function(event) {
+                var messages = document.getElementById('messages')
+                var message = document.createElement('li')
+                var content = document.createTextNode(event.data)
+                message.appendChild(content)
+                messages.appendChild(message)
+            };
+            function sendMessage(event) {
+                var input = document.getElementById("messageText")
+                ws.send(input.value)
+                input.value = ''
+                event.preventDefault()
+            }
+        </script>
+    </body>
+</html>
+"""
+
+
 @app.get("/")
-def read_users():
-    logger.info('audax_admin')
-    return "audax_admin"
+async def get():
+    return HTMLResponse(html)
+
+
+@app.websocket("/ws")
+async def websocket_endpoint(websocket: WebSocket):
+    await websocket.accept()
+    while True:
+        # 接收前端发送的图像数据
+        image_data_url = await websocket.receive_text()
+        print(image_data_url)
+        # 处理图像数据，这里可以保存、转换等，根据你的需求来实现
+        
+        # 将处理后的数据发送回前端
+        await websocket.send_text("Image data received and processed")
