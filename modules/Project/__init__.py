@@ -45,8 +45,8 @@ envs = "release" # 发布
 
 
 if envs == "cc":
-    imgpath = 'http://192.168.0.145:8083'
-    urlpath = 'http://192.168.0.145:9998' #API
+    imgpath = 'https://img.singmap.com'
+    urlpath = 'https://api.singmap.com' #API
     now_host = "https://api.singmap.com"
     filepath = os.getcwd() # 当前文件路径 
     returnpaths = os.getcwd() # 当前文件路径 
@@ -304,7 +304,6 @@ async def EcopropSheraProComparePdf(agentId: str=Form(...) ,projectId:str=Form(.
             return rtdata
 
 def MakePDF(agentId,projectId):
-
     # 基础数据准备 =====================================================
     getapi = getAPI()
     # 项目信息
@@ -313,6 +312,7 @@ def MakePDF(agentId,projectId):
         "projectId":projectId,
         "agentId":agentId
     }
+
     proinfo = getapi.requsetAPI(proinfourl,proinfodata)
 
     if "projectInfo" in proinfo and "unitInfo" in proinfo and "agentInfo" in proinfo:
@@ -606,28 +606,28 @@ def MakePDF(agentId,projectId):
         logger.info('============>> District Pricing (Rental)')
 
     # Page7 中介信息   ===========================================================================
-    makefunc.background('6.jpg')
-    if userinfo['logo'] and envs == 'release' and envs != "test":
-        makefunc.AddURLImages(imgpath+userinfo['logo'],x=650,y=200,w=224,h=224) 
+    # makefunc.background('6.jpg')
+    # if userinfo['logo'] and envs == 'release' and envs != "test":
+    #     makefunc.AddURLImages(imgpath+userinfo['logo'],x=650,y=200,w=224,h=224) 
 
-    agentdata2 = [
-    ["NAME",':', userinfo['agentName']],
-    ["MOBILE",':', userinfo['mobile']],
-    ["EMAIL",':',userinfo['email']],
-    ["CEA",':', userinfo['regNum']]
-    ]
-    t = Table(agentdata2, style={
-    ("FONT", (0, 0), (-1, -1), "arial", 35,50),
-    ("TEXTCOLOR", (0, 0), (-1, -1), colors.black),
-    ('ALIGN', (1, 0), (1, -1), 'CENTER')
-    })
-    t._argW[1] = 20
-    t.wrapOn(doc, 0, 0)
-    t.drawOn(doc, 880, 195)
-    # WhatsApp 聊天跳转按钮
-    doc.linkURL('https://api.whatsapp.com/send?phone= '+userinfo['mobile'], (1250,90,1250+447,150))
-    doc.showPage()  # 保存当前画布页面
-    logger.info('============>> Agent Info OK !')
+    # agentdata2 = [
+    # ["NAME",':', userinfo['agentName']],
+    # ["MOBILE",':', userinfo['mobile']],
+    # ["EMAIL",':',userinfo['email']],
+    # ["CEA",':', userinfo['regNum']]
+    # ]
+    # t = Table(agentdata2, style={
+    # ("FONT", (0, 0), (-1, -1), "arial", 35,50),
+    # ("TEXTCOLOR", (0, 0), (-1, -1), colors.black),
+    # ('ALIGN', (1, 0), (1, -1), 'CENTER')
+    # })
+    # t._argW[1] = 20
+    # t.wrapOn(doc, 0, 0)
+    # t.drawOn(doc, 880, 195)
+    # # WhatsApp 聊天跳转按钮
+    # doc.linkURL('https://api.whatsapp.com/send?phone= '+userinfo['mobile'], (1250,90,1250+447,150))
+    # doc.showPage()  # 保存当前画布页面
+    # logger.info('============>> Agent Info OK !')
 
     # Page8 ===========================================================================
     makefunc.background('bgA.png')
@@ -683,29 +683,29 @@ def MakePDF(agentId,projectId):
     
     # Page9 ===========================================================================
     # 背景
-    makefunc.background('8.jpg')
-    if userinfo['logo'] and envs == 'release':
-        makefunc.AddURLImages(imgpath+userinfo['logo'],x=100,y=250,w=224,h=224) 
+    # makefunc.background('8.jpg')
+    # if userinfo['logo'] and envs == 'release':
+    #     makefunc.AddURLImages(imgpath+userinfo['logo'],x=100,y=250,w=224,h=224) 
 
-    agentdata5 = [
-    ["NAME",':', userinfo['agentName']],
-    ["MOBILE",':', userinfo['mobile']],
-    ["EMAIL",':',userinfo['email']],
-    ["CEA",':', userinfo['regNum']]
-    ]
+    # agentdata5 = [
+    # ["NAME",':', userinfo['agentName']],
+    # ["MOBILE",':', userinfo['mobile']],
+    # ["EMAIL",':',userinfo['email']],
+    # ["CEA",':', userinfo['regNum']]
+    # ]
 
-    t = Table(agentdata5, style={
-    ("FONT", (0, 0), (-1, -1), 'arial', 35,50),
-    ("TEXTCOLOR", (0, 0), (-1, -1), colors.black),
-    ('ALIGN', (1, 0), (1, -1), 'CENTER')
-    })
-    t._argW[1] = 20
-    t.wrapOn(doc, 0, 0)
-    t.drawOn(doc, 350, 250)
-    # WhatsApp 聊天跳转按钮
-    doc.linkURL('https://api.whatsapp.com/send?phone='+userinfo['mobile'], (600,120,600+447,196))
+    # t = Table(agentdata5, style={
+    # ("FONT", (0, 0), (-1, -1), 'arial', 35,50),
+    # ("TEXTCOLOR", (0, 0), (-1, -1), colors.black),
+    # ('ALIGN', (1, 0), (1, -1), 'CENTER')
+    # })
+    # t._argW[1] = 20
+    # t.wrapOn(doc, 0, 0)
+    # t.drawOn(doc, 350, 250)
+    # # WhatsApp 聊天跳转按钮
+    # doc.linkURL('https://api.whatsapp.com/send?phone='+userinfo['mobile'], (600,120,600+447,196))
 
-    doc.showPage()  # 保存当前画布页面
+    # doc.showPage()  # 保存当前画布页面
 
     # Page10 ===========================================================================
     makefunc.background('9.jpg')
@@ -835,28 +835,28 @@ def MakePDF(agentId,projectId):
     logger.info('============>>PROGRESSIVE PAYMENT')
 
     # Page10 ===========================================================================
-    makefunc.background('10.jpg')
-    if userinfo['logo'] and envs == 'release':
-        ...
-        makefunc.AddURLImages(imgpath+userinfo['logo'],x=100,y=270,w=224,h=224) 
-    agentdata6 = [
-    ["NAME",':', userinfo['agentName']],
-    ["MOBILE",':', userinfo['mobile']],
-    ["EMAIL",':',userinfo['email']],
-    ["CEA",':', userinfo['regNum']]
-    ]
+    # makefunc.background('10.jpg')
+    # if userinfo['logo'] and envs == 'release':
+    #     ...
+    #     makefunc.AddURLImages(imgpath+userinfo['logo'],x=100,y=270,w=224,h=224) 
+    # agentdata6 = [
+    # ["NAME",':', userinfo['agentName']],
+    # ["MOBILE",':', userinfo['mobile']],
+    # ["EMAIL",':',userinfo['email']],
+    # ["CEA",':', userinfo['regNum']]
+    # ]
 
-    t = Table(agentdata6, style={
-    # ("FONT", (0, 0), (-1, -1), song, 35,50),
-    ("FONT", (0, 0), (-1, -1), 'arial', 35,50),
-    ("TEXTCOLOR", (0, 0), (-1, -1), colors.black),
-    ('ALIGN', (1, 0), (1, -1), 'CENTER')
-    })
-    t._argW[1] = 20
-    t.wrapOn(doc, 0, 0)
-    t.drawOn(doc, 350, 270)
-    doc.linkURL('https://api.whatsapp.com/send?phone= '+userinfo['mobile'], (50,160,50+630,230))
-    doc.showPage()  # 保存当前画布页面
+    # t = Table(agentdata6, style={
+    # # ("FONT", (0, 0), (-1, -1), song, 35,50),
+    # ("FONT", (0, 0), (-1, -1), 'arial', 35,50),
+    # ("TEXTCOLOR", (0, 0), (-1, -1), colors.black),
+    # ('ALIGN', (1, 0), (1, -1), 'CENTER')
+    # })
+    # t._argW[1] = 20
+    # t.wrapOn(doc, 0, 0)
+    # t.drawOn(doc, 350, 270)
+    # doc.linkURL('https://api.whatsapp.com/send?phone= '+userinfo['mobile'], (50,160,50+630,230))
+    # doc.showPage()  # 保存当前画布页面
 
     # Page11 ===========================================================================
     if fileinfo:
@@ -989,8 +989,11 @@ def MakePDF(agentId,projectId):
     t.wrapOn(doc, 0, 0)
     t.drawOn(doc, 920, 250)
 
-    # WhatsApp 聊天跳转按钮
-    doc.linkURL('https://api.whatsapp.com/send?phone= '+userinfo['mobile'], (1250,130,1250+350,200))
+    # 跳转到 项目分享页面
+    doc.linkURL('https://share.ecoprop.com/{0}/{1}'.format(prodatainfo['abbreviation'],userinfo['regNum']), (1250,130,1250+350,200))
+
+    # 跳转到 whatsapp
+    # doc.linkURL('https://api.whatsapp.com/send?phone= '+userinfo['mobile'], (1250,130,1250+350,200))
     doc.showPage()  # 保存当前画布页面
     logger.info('============>>add 17 page')
 

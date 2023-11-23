@@ -26,9 +26,9 @@ class Config:
     # PDF Set
     # 本地调试
     # envs = "cc" # 本地
-    # imgpath = 'http://192.168.0.145:8083'
-    # urlpath = 'http://192.168.0.145:9998'
-    # now_host = "http://192.168.0.145:9998"
+    # imgpath = 'https://img.singmap.com'
+    # urlpath = 'https://api.singmap.com' #API
+    # now_host = "https://api.singmap.com"
     # filepath = os.getcwd() # 当前文件路径 
     # returnpaths = os.getcwd() # 当前文件路径 
     # ecoprop_temp_path = os.path.join(os.getcwd(),'temp') # 当前文件路径 
