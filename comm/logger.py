@@ -10,8 +10,8 @@ log_path = os.path.join(basedir, 'logs')
 
 if not os.path.exists(log_path):
     os.mkdir(log_path)
-if not os.path.exists(log_path):
-    os.mkdir(log_path)
+# if not os.path.exists(log_path):
+#     os.mkdir(log_path)
 
 log_path_all = os.path.join(log_path, f'{time.strftime("%Y-%m-%d")}_log.log')
 log_path_error = os.path.join(log_path, f'{time.strftime("%Y-%m-%d")}_error.log')

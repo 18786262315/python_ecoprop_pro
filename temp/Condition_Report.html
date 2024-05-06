@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- 导出反馈信息PDF 模板 -->
+  <title>Property Condition Report</title>
+  <style>
+    html,body {
+      /* background-color: bisque; */
+      margin: 0 auto;
+      padding: 0;
+      width: 820px;
+      font-family: Montserrat-Regular, Montserrat;
+      letter-spacing: 0.1rem; /* 使用 em 单位设置间距 */
+      /* background-image: url('https://image.singmap.com/upload/broke/otherimg/commpayBg.png'); */
+    }
+    .container{
+      margin-top: 200px;
+      width: 100%;
+      page-break-after: always; 
+    }
+    h2,h4,p{
+      margin: 5px 0;
+    }
+    .font-bold{
+      font-weight: bold;
+    }
+    .header{
+      width: 100%;
+      display: flex;
+      flex-wrap: wrap;
+      flex-direction: column;
+      border-bottom: 2px solid black;
+    }
+  </style>
+</head>
+<body>
+  <div>
+    <!-- <div class="header">
+      <table style="width: 100%;">
+        <tr>
+          <td><span class="font-bold">Company</span>: Landplus Property Network Pte Ltd</td>
+          <td><span class="font-bold">Email</span>: sieweng@landplusgroup.com</td>
+          <td><span class="font-bold">No. Items</span>: 24</td>
+        </tr>
+        <tr>
+          <td><span class="font-bold">Contact</span>: Lim Siew Eng</td>
+          <td><span class="font-bold">Title</span>: Report: 11/7/2023 21:35</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td><span class="font-bold">Phone</span>: 90250572</td>
+          <td><span class="font-bold">Created</span>: Tue, 11/7/2023</td>
+          <td></td>
+        </tr>
+      </table>
+    </div> -->
+    <div style="color: white;">.</div>
+    <div class="container">
+      <!-- 房间信息 -->
+      <p class="font-bold" style="font-size: 4rem;">207 River Valley Road #05-51 UE Square Singapore 238275</p>
+      <p>Property Condition Report</p>
+      <div style="width: 100%;height: 1px;background-color: black;"></div>
+      <p>Company Name : Landplus Property Network Pte Ltd</p>
+      <p>Contact : Lim Siew Eng</p>
+      <p>Phone : 90250572</p>
+      <p>Email : sieweng@landplusgroup.com</p>
+      <p>Created : Tue, 11/7/2023</p>
+      <div style="width: 100%;height: 1px;background-color: black;"></div>
+    </div>
+    <table style="border-collapse: collapse;">
+      <!-- 内容 -->
+      {% for Condition in range(0,20) %}
+      <tr height="400px" >
+        <td style="display: block;">
+          ({{loop.index}})
+        </td>
+        <td style="width: 400px;
+        height: 400px;
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-image: url('https://img.singmap.com/upload/broke/0c5d80359cc5416a9ea953fdebcbfc20/7474b1724023430aa9eb0a05e5000ee1/imgs/92c85daf7bad4982a4a2d33884dcd470.jpg');">
+          <!-- <img height="300px" style="object-fit: contain;" src="https://img.singmap.com/upload/broke/0c5d80359cc5416a9ea953fdebcbfc20/7474b1724023430aa9eb0a05e5000ee1/imgs/d0b4b24a77474e6b9d9cdbadf2ad77b1.jpg" alt=""> -->
+        </td>
+        <td style="display: block;margin-left: 20px;">
+          <h2>Foyer</h2>
+          <p>Created: Tue, 11/7/2023</p>
+          <p>Artificial plant removed Artificial plant removed Artificial plant removed</p>
+        </td>
+      </tr>
+      {%endfor%}
+    </table>
+  </div>
+</body>
+</html>

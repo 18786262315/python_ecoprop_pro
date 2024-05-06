@@ -1,2 +1,0 @@
-2023-08-16 15:38:40.349 | ERROR    | manger:request_validation_exception_handler:62 - 参数错误GET http://127.0.0.1:7777/Transaction/mapping
-2023-08-16 15:38:51.595 | ERROR    | manger:request_validation_exception_handler:62 - 参数错误GET http://127.0.0.1:7777/Transaction/mapping

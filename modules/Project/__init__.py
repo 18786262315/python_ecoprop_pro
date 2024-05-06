@@ -38,9 +38,9 @@ router = APIRouter(prefix="/project",tags=['project'],responses={405: {"descript
 gettime = getDatetimes()
 
 
-# envs = "cc" # 本地
+envs = "cc" # 本地
 # envs = "test" # 测试
-envs = "release" # 发布
+# envs = "release" # 发布
 
 
 
@@ -136,7 +136,6 @@ async def GetPndComparison(agentId: str=Form(...) ,projectId:str=Form(...)):
             }
             return rtdata
 
-
 @router.post('/xhoapp_pro_pdf')
 async def GetxhoappPdfPro(agentId: str=Form(...) ,projectId:str=Form(...)):
     """
@@ -198,7 +197,6 @@ async def GetxhoappComparison(agentId: str=Form(...) ,projectId:str=Form(...)):
             }
             return rtdata
 
-
 @router.post('/era_bedroom_pdf')
 async def GeteraPdfPro(agentId: str=Form(...),
                 brokeId: str=Form(...),
@@ -229,9 +227,9 @@ async def GeteraPdfPro(agentId: str=Form(...),
             }
             return rtdata
 
-@router.post('/ecoprop_shera_pro_pdf')
-async def EcopropSheraProPdf(agentId: str=Form(...) ,projectId:str=Form(...)):
-
+@router.get('/ecoprop_shera_pro_pdf')
+async def EcopropSheraProPdf(agentId: str ,projectId:str):
+    # 生成Ecoprop shera pro pdf
     logger.info('----->>>创建 ecoprop_shera_pro_pdf')
     if not agentId or not projectId:
         raise HTTPException(status_code=404, detail="参数错误")
@@ -255,7 +253,7 @@ async def EcopropSheraProPdf(agentId: str=Form(...) ,projectId:str=Form(...)):
 
 @router.post('/ecoprop_shera_unit_pdf')
 async def EcopropSheraUnitPdf(agentId: str=Form(...) ,unitId:str=Form(...)):
-
+    # ecoprop pro 单位 pdf
     logger.info('----->>>创建 ecoprop_shera_unit_pdf'+agentId+unitId)
     if not agentId or not unitId:
         raise HTTPException(status_code=404, detail="参数错误")
@@ -302,6 +300,160 @@ async def EcopropSheraProComparePdf(agentId: str=Form(...) ,projectId:str=Form(.
             "datas":e
             }
             return rtdata
+
+@router.get('/Download_Re_Itinerary_to_Pdf')
+async def Re_Itinerary():
+    """
+    Re Lo Sg 项目 
+    行程导出PDF功能
+    参数：用户ID、行程ID（多个）/日期？
+    """
+    logger.info('----->>>创建行程导出PDF')
+    # if not agentId or not projectId:
+    #     raise HTTPException(status_code=404, detail="参数错误")
+    try:
+        datas = {} # 模板填充数据集
+        datas['Itinerarylist'] = [
+            {
+            "dsp_service":"LandPLUS Mobility Solutions",
+            "dsp_agent_name":"Lili Heng",
+            "viewing_date":"11 April 2024",
+            "client_name":"Jeff Gains & Jana Mihaylova",
+            "dsp_agent_contant":"+65 9022 3236 / lili@landplusgroup.com",
+            "client_company":"Abbott",
+            "pickup_location":"Scotts Highpark",
+            "pickup_time":"1.45pm",
+            "day_list":[
+                {"Appt_time":"2.00pm (11 April 2024)","District":"09 Central / Tanglin","Address":"Address","Area":"3251","Bedrooms":"3","Rental":"$26,000 Partially Furnished","Facilities":"Gym & Pooll","Remarks":"Single level Penthouse.",},
+                {"Appt_time":"3.00pm (12 April 2024)","District":"09 Central / Tanglin","Address":"Address","Area":"3251","Bedrooms":"3","Rental":"$26,000 Partially Furnished","Facilities":"Gym & Pooll","Remarks":"Single level Penthouse.",},
+                {"Appt_time":"4.00pm (13 April 2024)","District":"09 Central / Tanglin","Address":"Address","Area":"3251","Bedrooms":"3","Rental":"$26,000 Partially Furnished","Facilities":"Gym & Pooll","Remarks":"Single level Penthouse.",},
+                {"Appt_time":"5.00pm (14 April 2024)","District":"09 Central / Tanglin","Address":"Address","Area":"3251","Bedrooms":"3","Rental":"$26,000 Partially Furnished","Facilities":"Gym & Pooll","Remarks":"Single level Penthouse.",},
+                {"Appt_time":"6.00pm (15 April 2024)","District":"09 Central / Tanglin","Address":"Address","Area":"3251","Bedrooms":"3","Rental":"$26,000 Partially Furnished","Facilities":"Gym & Pooll","Remarks":"Single level Penthouse.",},
+            ],
+            }
+        ]
+
+        # 输出文件路径
+        new_file_name ="Viewing Schedule"+str(datetime.datetime.now().strftime('%d-%m-%Y'))+'.pdf'
+        re_path = os.path.join(ecoprop_return_path,'re_itinerary',new_file_name).replace('\\','/')
+        logger.info('Set return Path ====>>>>'+re_path)
+        # 文件夹检查
+        if not os.path.exists(os.path.split(re_path)[0]): 
+            os.makedirs(os.path.split(re_path)[0])
+
+        logger.info('Get Temp ====>>>> re_Schedule.html')
+        env = jinja2.Environment(loader=jinja2.FileSystemLoader(searchpath=ecoprop_temp_path,encoding='utf-8'))
+        template = env.get_template('re_Schedule.html')
+
+        # 模板填充参数
+        options = {
+            'page-size': ['A4'],
+            'margin-top': '5mm',
+            'margin-right': '5mm',
+            'margin-bottom': '5mm',
+            'margin-left': '5mm',
+            'orientation':'Landscape',
+            'encoding': "UTF-8",
+            'no-outline': None,
+        }
+        try:
+            logger.info('Add tmp Info ====>>>>')
+            datas = eval(re.sub('None','\'\'',str(datas))) # 去除None值
+            htmls = template.render(datas)
+            # config = pdfkit.configuration(wkhtmltopdf='/usr/local/bin/wkhtmltopdf')
+            pdfkit.from_string(htmls,re_path,options=options)
+        except Exception as e:
+            logger.error(e)
+            raise HTTPException(status_code=404, detail="PDF Error")
+        logger.info('PDF创建成功=======>{}'.format(re_path))
+        # rtdata = {'code':'0','msg':'succeed',"datas":re_path}
+        return {'code':'0','msg':'succeed',"datas":re_path}
+    except BaseException as e:
+        logger.info('PDF创建异常=======>{}'.format(e))
+        # rtdata = {'code':'-1','msg':'error',"datas":e}
+        return {'code':'-1','msg':'error',"datas":e}
+
+
+@router.get('/Download_Re_Condition_Report_to_Pdf')
+async def Condition_Report():
+    """
+    Re Lo Sg 项目 
+    反馈信息导出PDF功能
+    参数：
+    """
+    logger.info('----->>>创建行程导出PDF')
+    # if not agentId or not projectId:
+    #     raise HTTPException(status_code=404, detail="参数错误")
+    try:
+        datas = {} # 模板填充数据集
+        datas['Conditionlist'] = {
+            "dsp_service":"LandPLUS Mobility Solutions",
+            "dsp_agent_name":"Lili Heng",
+            "viewing_date":"11 April 2024",
+            "client_name":"Jeff Gains & Jana Mihaylova",
+            "dsp_agent_contant":"+65 9022 3236 / lili@landplusgroup.com",
+            "client_company":"Abbott",
+            "pickup_location":"Scotts Highpark",
+            "pickup_time":"1.45pm",
+            "day_list":[
+                {"Appt_time":"2.00pm (11 April 2024)","District":"09 Central / Tanglin","Address":"Address","Area":"3251","Bedrooms":"3","Rental":"$26,000 Partially Furnished","Facilities":"Gym & Pooll","Remarks":"Single level Penthouse.",},
+                {"Appt_time":"3.00pm (12 April 2024)","District":"09 Central / Tanglin","Address":"Address","Area":"3251","Bedrooms":"3","Rental":"$26,000 Partially Furnished","Facilities":"Gym & Pooll","Remarks":"Single level Penthouse.",},
+                {"Appt_time":"4.00pm (13 April 2024)","District":"09 Central / Tanglin","Address":"Address","Area":"3251","Bedrooms":"3","Rental":"$26,000 Partially Furnished","Facilities":"Gym & Pooll","Remarks":"Single level Penthouse.",},
+                {"Appt_time":"5.00pm (14 April 2024)","District":"09 Central / Tanglin","Address":"Address","Area":"3251","Bedrooms":"3","Rental":"$26,000 Partially Furnished","Facilities":"Gym & Pooll","Remarks":"Single level Penthouse.",},
+                {"Appt_time":"6.00pm (15 April 2024)","District":"09 Central / Tanglin","Address":"Address","Area":"3251","Bedrooms":"3","Rental":"$26,000 Partially Furnished","Facilities":"Gym & Pooll","Remarks":"Single level Penthouse.",},
+            ],
+            }
+        
+
+        # 输出文件路径
+        new_file_name ="Condition_Report"+str(datetime.datetime.now().strftime('%d-%m-%Y'))+'.pdf'
+        re_path = os.path.join(ecoprop_return_path,'re_itinerary',new_file_name).replace('\\','/')
+        logger.info('Set return Path ====>>>>'+re_path)
+        # 文件夹检查
+        if not os.path.exists(os.path.split(re_path)[0]): 
+            os.makedirs(os.path.split(re_path)[0])
+
+        logger.info('Get Temp ====>>>> Condition_Report.html')
+        env = jinja2.Environment(loader=jinja2.FileSystemLoader(searchpath=ecoprop_temp_path,encoding='utf-8'))
+        template = env.get_template('Condition_Report.html')
+
+        # 模板填充参数
+        options = {
+            'page-size': ['A4'],
+            'margin-top': '15mm',
+            'margin-right': '5mm',
+            'margin-bottom': '10mm',
+            'margin-left': '5mm',
+            'orientation':'portrait',
+            'encoding': "UTF-8",
+            'no-outline': None,
+            # 'header-html':ecoprop_temp_path+'/pdfHeader.html', #设置页眉数据，作为页眉的html页面必须有<!DOCTYPE html>
+            # '--header-center':'Condition Report',
+            '--header-left':'Condition Report',
+            '--header-line':'--header-line',
+            '--header-spacing':5,
+            '--footer-right':'[page]/[topage]',
+            # '--footer-line':'--footer-line',
+            '--footer-spacing':5,
+        }
+        try:
+            logger.info('Add tmp Info ====>>>>')
+            datas = eval(re.sub('None','\'\'',str(datas))) # 去除None值
+            htmls = template.render(datas)
+            # config = pdfkit.configuration(wkhtmltopdf='/usr/local/bin/wkhtmltopdf')
+            pdfkit.from_string(htmls,re_path,options=options)
+        except Exception as e:
+            logger.error(e)
+            raise HTTPException(status_code=404, detail="PDF Error")
+        logger.info('PDF创建成功=======>{}'.format(re_path))
+        # rtdata = {'code':'0','msg':'succeed',"datas":re_path}
+        return {'code':'0','msg':'succeed',"datas":re_path}
+    except BaseException as e:
+        logger.info('PDF创建异常=======>{}'.format(e))
+        # rtdata = {'code':'-1','msg':'error',"datas":e}
+        return {'code':'-1','msg':'error',"datas":e}
+
+
 
 def MakePDF(agentId,projectId):
     # 基础数据准备 =====================================================
@@ -1482,11 +1634,13 @@ def Shera_to_Pdf(agentId,projectId):
 
     # 模板填充参数
     options = {
-        'page-size': 'A4',
-        'margin-top': '5mm',
-        'margin-right': '5mm',
-        'margin-bottom': '5mm',
-        'margin-left': '5mm',
+        # 'page-width': '842px',
+        # 'page-height': '595px',
+        'page-size': ['A4'],
+        'margin-top': '0mm',
+        'margin-right': '0mm',
+        'margin-bottom': '0mm',
+        'margin-left': '0mm',
         'orientation':'Landscape', #横向
         'encoding': "UTF-8",
         'no-outline': None,
@@ -1620,6 +1774,10 @@ def Share_Pro_compare_Pdf(agentId,projectId):
         
     logger.info('PDF ADD Over ====>>>>')
     return re_path
+
+
+
+
 
 
 

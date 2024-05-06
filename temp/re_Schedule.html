@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Schedule</title>
+  <style>
+    html,
+    body {
+      /* background-color: bisque; */
+      margin: 0 auto;
+      padding: 0;
+      width: 1400px;
+      font-family: Montserrat-Regular, Montserrat;
+      /* background-image: url('https://image.singmap.com/upload/broke/otherimg/commpayBg.png'); */
+    }
+
+    .content {
+      width: 100%;
+      page-break-after: always; 
+    }
+    td{
+      padding: 0;
+      border: 0;
+      border: 1px solid black; /* 设置表格外边框为黑色实线，宽度为1像素 */
+      padding: 10px;
+      text-align: center;
+    }
+    .text-start{
+      text-align: start;
+    }
+    .text-bold{
+      font-weight: bold;
+    }
+    .table-box{
+      width: 25%;
+    }
+    .content-header{
+      background-color: azure;
+    }
+  </style>
+</head>
+
+<body>
+  {% for Itinerary in Itinerarylist %}
+  <div class="content">
+    <table style="border-collapse: collapse;width: 100%;">
+      <tr>
+        <td class="text-start text-bold table-box">Destination Service Provider (DSP)</td><td class="text-start">{{Itinerary.dsp_service}}</td>
+        <td class="text-start text-bold table-box">Viewing Date</td><td class="text-start">{{Itinerary.viewing_date}}</td>
+      </tr>
+      <tr>
+        <td class="text-start text-bold table-box">DSP Agent Name</td><td class="text-start">{{Itinerary.dsp_agent_name}}</td>
+        <td class="text-start text-bold table-box">DSP Agent Contact & Email</td><td class="text-start">{{Itinerary.dsp_agent_contant}}</td>
+      </tr>
+      <tr>
+        <td class="text-start text-bold table-box">Client Name</td><td class="text-start">{{Itinerary.client_name}}</td>
+        <td class="text-start text-bold table-box">Client Company</td><td class="text-start">{{Itinerary.client_company}}</td>
+      </tr>
+      <tr>
+        <td class="text-start text-bold table-box">Pickup Location</td><td class="text-start">{{Itinerary.pickup_location}}</td>
+        <td class="text-start text-bold table-box">Pickup Time</td><td class="text-start">{{Itinerary.pickup_time}}</td>
+      </tr>
+    </table>
+    <div class="text-bold" style="padding: 20px 0;">Note:  The following properties are subject to contract & availability</div>
+    <table style="border-collapse: collapse;">
+      <tr class="content-header">
+        <td class="text-bold">S/N</td>
+        <td class="text-bold">Appt Time</td>
+        <td class="text-bold">District / Area</td>
+        <td class="text-bold">Name of Development (If apartment) & Address with Unit Number</td>
+        <td class="text-bold">Approx. Land/Built-In Area (Square Feet)</td>
+        <td class="text-bold">No. Of Bedrooms</td>
+        <td class="text-bold">Asking Rental ($p/m) & partially or fully furnished</td>
+        <td class="text-bold">Facilities</td>
+        <td class="text-bold">Remarks</td>
+      </tr>
+      {% for Info in Itinerary.day_list %}
+      <tr>
+        <td>{{loop.index}}</td>
+        <td>{{Info.Appt_time}}</td>
+        <td>{{Info.District}}</td>
+        <td>{{Info.Address}}</td>
+        <td>{{Info.Area}}</td>
+        <td>{{Info.Bedrooms}}</td>
+        <td>{{Info.Rental}}</td>
+        <td>{{Info.Facilities}}</td>
+        <td style="width: 30%;">{{Info.Remarks}}</td>
+      </tr>
+      {%endfor%}
+
+    </table>
+  </div>
+  {%endfor%}
+</body>
+
+</html>

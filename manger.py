@@ -123,6 +123,7 @@ html = """
 
 @app.get("/")
 async def get():
+    logger.info('audax_admin')
     return HTMLResponse(html)
 
 
