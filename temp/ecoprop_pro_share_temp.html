@@ -189,12 +189,12 @@
     </p> -->
     <div class="commpay-info">
       {% if userInfo.brokeLogo %}
-      <img class="commpay-logo Centered" src="{{imgpath}}{{userInfo.brokeLogo}}" alt="">
+      <img class="commpay-logo Centered" src="{{imgpath}}{{userInfo.brokeLogo}}" onerror="https://image.singmap.com/upload/broke/otherimg/404.png" alt="">
       {% endif %}
       <!-- <h2 class="commpay-title Centered">Conflict Denied Ops</h2> -->
       <div class="user-info Centered">
         {% if userInfo.logo %}
-        <img style="margin-top: 13px;float: left;width: 85px;" src="{{imgpath}}{{userInfo.logo}}{{'?x-oss-process=image/auto-orient,1/interlace,1/resize,p_50/quality,q_50'}}" alt="">
+        <img style="margin-top: 13px;float: left;width: 85px;" src="{{imgpath}}{{userInfo.logo}}{{'?x-oss-process=image/auto-orient,1/interlace,1/resize,p_50/quality,q_50'}}" onerror="https://image.singmap.com/upload/broke/otherimg/404.png" alt="">
         {% else %}
         <img style="margin-top: 13px;float: left;width: 85px;height: 85px;" src="https://image.singmap.com/upload/broke/otherimg/NotUserLogo.png" alt="">
         {% endif %}
@@ -220,8 +220,8 @@
       <div class="info-title"><div class="pro-info-data-title line-left">Tenure</div> <div class="line-left" style="width: 75%;">{{proInfo.tenure}}</div></div>
     </div>
     <div class="pro-main-img">
-      {% if userInfo.brokeLogo %}
-      <img style="width: 100%;height: 350px;object-fit: cover;" src='{{imgpath}}{{proInfo.mainImage}}?x-oss-process=image/auto-orient,1/interlace,1/resize,p_50' alt="">
+      {% if proInfo.mainImage %}
+      <img style="width: 100%;height: 350px;object-fit: cover;" src='{{imgpath}}{{proInfo.mainImage}}?x-oss-process=image/auto-orient,1/interlace,1/resize,p_50' onerror="https://image.singmap.com/upload/broke/otherimg/404.png" alt="">
       {% endif %}
     </div>
   </div>
@@ -267,7 +267,8 @@
     <div class="content-title-line"></div>
     <div class="gallery-img-list">
       {% for pro_img in media_list.img %}
-      <div class="Image-Data" style="background-size: 100% 100%;background-image: url('{{imgpath}}{{pro_img.url | urlencode}}?x-oss-process=image/auto-orient,1/interlace,1/resize,p_50');"></div>
+      <img class="Image-Data" style="object-fit: cover;" src="{{imgpath}}{{pro_img.url | urlencode}}?x-oss-process=image/auto-orient,1/interlace,1/resize,m_lfit,w_400"  onerror="https://image.singmap.com/upload/broke/otherimg/404.png" alt="">
+      <!-- <div class="Image-Data" style="background-size: 100% 100%;background-image: url('{{imgpath}}{{pro_img.url | urlencode}}?x-oss-process=image/auto-orient,1/interlace,1/resize,m_lfit,w_400');"></div> -->
       {% if loop.index0 != 0 and loop.index % 12 == 0 %}
       <div style="page-break-after: always;color: white;">.</div>
       {%endif%}
@@ -281,7 +282,7 @@
     <div class="content-title-line"></div>
     <div class="gallery-img-list">
       {% for pro_ivt in media_list.ivt %}
-      <div class="Image-Data" style="position: relative; background-size: 100% 100%;background-image: url({{imgpath}}{{pro_ivt.url | urlencode}}{{'?x-oss-process=image/auto-orient,1/interlace,1/resize,p_50/quality,q_70'}});">
+      <div class="Image-Data" style="position: relative; background-size: 100% 100%;background-image: url({{imgpath}}{{pro_ivt.url | urlencode}}'?x-oss-process=image/auto-orient,1/interlace,1/resize,p_50/quality,q_70');">
         <a class="logo-img" href="{{pro_ivt.link}}" >
           <img style="width: 100%;height: 100%;" src="https://img.singmap.com/upload/broke/otherimg/pdf_ivt.png" alt="">
         </a>
@@ -290,7 +291,7 @@
     </div>
   </div>
   {% endif %}
-  {%if site_plan.siteplan %}
+  {%if site_plan.siteplan%}
   <div class="gallery">
     <h2 class="content-title">SITE AND FLOOR PLAN</h2>
     <div class="content-title-line"></div>
@@ -298,9 +299,9 @@
         {%if site_plan.siteplan|length < 2 %}
         <div class="Image-Data" style="border: 0px !important;background-color: transparent !important;margin: 0px;width: 100%;height: 800px;background-image: url({{imgpath}}{{site_plan.siteplan[0] | urlencode}});"></div>
         {% else %}
-          {% for pro_site_plan in site_plan.siteplan[0:2] %}
-          <div class="Image-Data" style="width: 49%;height: 800px;background-image: url({{imgpath}}{{pro_site_plan | urlencode}});"></div>
-          {% endfor %}
+        {% for pro_site_plan in site_plan.siteplan[0:2] %}
+        <div class="Image-Data" style="width: 49%;height: 800px;background-image: url({{imgpath}}{{pro_site_plan | urlencode}});"></div>
+        {% endfor %}
         {% endif %}
     </div>
   </div>
@@ -313,7 +314,7 @@
         {%if site_plan.allbuilding|length < 2 %}
         <div class="Image-Data" style="border: 0px !important;background-color: transparent !important;margin: 0px;width: 100%;height: 800px;background-image: url({{imgpath}}{{site_plan.allbuilding[0] | urlencode}});"></div>
         {% else %}
-        {% for pro_site_plan in site_plan.allbuilding[0:2] %}
+        {% for pro_building in site_plan.allbuilding[0:2] %}
         <div class="Image-Data" style="width: 49%;height: 800px;background-image: url({{imgpath}}{{pro_building | urlencode}});"></div>
         {% endfor %}
         {% endif %}
@@ -340,14 +341,15 @@
       {% endfor %}
   </div>
   {% endif%}
-  {% if floor_plan_list.lists%}
+  {% if floor_plan_list.lists %}
 
   <div class="gallery">
     <h2 class="content-title">FLOOR PLAN</h2>
     <div class="content-title-line"></div>
     <div class="gallery-img-list">
       {% for floorplan in floor_plan_list.lists %}
-      <div class="Image-Data" style="background-image: url({{imgpath}}{{floorplan.img | urlencode}}{{'?x-oss-process=image/auto-orient,1/interlace,1/resize,p_50'}});"></div>
+        <img class="Image-Data" style="object-fit: cover;" src="{{imgpath}}{{floorplan.img}}"  onerror="https://image.singmap.com/upload/broke/otherimg/404.png" alt="">
+        <!-- <div class="Image-Data" style="background-image: url({{imgpath}}{{floorplan.img | urlencode}}{{'?x-oss-process=image/auto-orient,1/interlace,1/resize,p_50'}});"></div> -->
       {% endfor %}
     </div>
   </div>

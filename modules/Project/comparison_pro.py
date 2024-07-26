@@ -64,9 +64,10 @@ def XHORIZON_Comparison_PDF(agentId,projectId):
     # temp_path = os.path.join(Config.ecoprop_temp_path,'ecoprop_pro_compare_share_temp.html').replace('\\','/')
     # 输出文件路径
     # str(datetime.datetime.now().strftime('%d-%m-%Y-%H%M%S'))
-
-    new_file_name = datas['userInfo']['regNum']+"-"+str(datetime.datetime.now().strftime('%d-%m-%Y'))+'.pdf'
-    re_path = os.path.join(Config.ecoprop_return_path,'user_pro_compare',new_file_name)
+    gettime = getDatetimes()
+    tt = gettime.getDate()
+    new_file_name = datas['userInfo']['regNum']+"-"+tt+'.pdf'
+    re_path = os.path.join(Config.ecoprop_return_path,'user_pro_compare',tt,new_file_name)
     
     
     if not os.path.exists(os.path.split(re_path)[0]):

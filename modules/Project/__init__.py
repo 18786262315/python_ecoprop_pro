@@ -10,7 +10,7 @@ from fastapi import APIRouter,Form,HTTPException,Body
 import os
 from .comm import MakeReportlab,getAPI,getDatetimes
 from comm.logger import logger
-# from config import Config
+from config import Config
 # import ast
 # reportlab
 from reportlab.pdfgen import canvas
@@ -38,9 +38,9 @@ router = APIRouter(prefix="/project",tags=['project'],responses={405: {"descript
 gettime = getDatetimes()
 
 
-envs = "cc" # 本地
+# envs = "cc" # 本地
 # envs = "test" # 测试
-# envs = "release" # 发布
+envs = "release" # 发布
 
 
 
@@ -74,6 +74,79 @@ if envs == 'release':
 @router.get("/")
 def read_users():
     return "Mixgo Make PDF API !"
+
+@router.post("/Make_Pdf")
+def Make_Pdf(MakeType: str=Form(...),MakeData: str=Form(...)):
+    # 创建一个统一接口、按参数区分要生成的PDF,改动较大.暂时没有启用
+    logger.info('Make PDF ========>{},Data:{}'.format(MakeType,MakeData))
+    
+    try:
+        MakeData = json.loads(base64.b16decode(MakeData)) # 解码json串
+        if MakeType == 'pnd_pro_pdf':
+            rentunpath = MakePDF(MakeData.agentId,MakeData.projectId)
+        elif MakeType == 'pnd_pro_pdf_Comparison':
+            rentunpath = ComparisonPDF(MakeData.agentId,MakeData.projectId)
+        elif MakeType == 'xhoapp_pro_pdf':
+            rentunpath = XHORIZON_APP_PRO_PDF(MakeData.agentId,MakeData.projectId)
+        elif MakeType == 'xhoapp_pro_pdf_Comparison':
+            rentunpath = XHORIZON_Comparison_PDF(MakeData.agentId,MakeData.projectId)
+        elif MakeType == 'era_bedroom_pdf':
+            rentunpath = ERABedroomRports(MakeData.agentId,MakeData.brokeId,MakeData.minPrice,MakeData.maxPrice,MakeData.projectArea,
+                                            MakeData.token,MakeData.source)
+        elif MakeType == 'ecoprop_shera_pro_pdf':
+            rentunpath = Shera_to_Pdf(MakeData.agentId,MakeData.projectId)
+        elif MakeType == 'ecoprop_shera_unit_pdf':
+            rentunpath = Share_Unit_Pdf(MakeData.agentId,MakeData.unitId)
+        elif MakeType == 'ecoprop_shera_pro_cmpare_pdf':
+            rentunpath = Share_Pro_compare_Pdf(MakeData.agentId,MakeData.unitId)
+
+        elif MakeType == 'Download_Re_Itinerary_to_Pdf':
+            rentunpath = Re_Itinerary(MakeData.customerId)
+        elif MakeType == 'Download_Re_Condition_Report_to_Pdf':
+            rentunpath = Condition_Report(MakeData.customerId)
+        else:
+            return {'code':'-1','msg':'error',"datas":'MakeType Error!'}
+        return { 'code':'0', 'msg':'succeed', "datas":rentunpath }
+    except BaseException as e:
+        return {'code':'-1','msg':'error',"datas":e}
+
+def Make_Pdf2(MakeType: str=Form(...),MakeData: str=Form(...)):
+    # 创建一个统一接口、按参数区分要生成的PDF,改动较大.暂时没有启用
+
+    pdf_generators ={
+        'pnd_pro_pdf': MakePDF,
+        'pnd_pro_pdf_Comparison': ComparisonPDF,
+        'xhoapp_pro_pdf': XHORIZON_APP_PRO_PDF,
+        'xhoapp_pro_pdf_Comparison': XHORIZON_Comparison_PDF,
+        'era_bedroom_pdf': ERABedroomRports,
+        'ecoprop_shera_pro_pdf': Shera_to_Pdf,
+        'ecoprop_shera_unit_pdf': Share_Unit_Pdf,
+        'ecoprop_shera_pro_cmpare_pdf': Share_Pro_compare_Pdf,
+        'Download_Re_Itinerary_to_Pdf': Re_Itinerary,
+        'Download_Re_Condition_Report_to_Pdf': Condition_Report,
+    }
+    # 验证 MakeType 的合法性
+    if MakeType not in pdf_generators:
+        logger.error(f"Unsupported MakeType: {MakeType}")
+        return {'code': '-1', 'msg': 'error', 'datas': 'MakeType Error!'}
+    
+    # 解析参数
+    try:
+        make_data_decoded = json.loads(base64.b16decode(MakeData))
+    except json.JSONDecodeError:
+        logger.error("JSON decoding error for MakeData")
+        return {'code': '-1', 'msg': 'error', 'datas': 'Invalid MakeData format.'}
+    
+    logger.info('Make PDF ========>{},Data:{}'.format(MakeType,make_data_decoded))
+    try:
+        # 使用映射的函数生成 PDF,
+        # 这里的函数接收参数顺序可能会有不同、所以需要根据函数的参数顺序来调整参数顺序
+        generator_function = pdf_generators[MakeType]
+        return {'code': '0', 'msg': 'succeed', 'datas': generator_function(**make_data_decoded)}
+    except Exception as e:
+        logger.error(f"Error generating PDF for type {MakeType}: {e}")
+        return {'code': '-1', 'msg': 'error', 'datas': 'An error occurred while generating the PDF.'}
+
 
 @router.post('/pnd_pro_pdf')
 async def GetPndPdfPro(agentId: str=Form(...) ,projectId:str=Form(...)):
@@ -227,10 +300,10 @@ async def GeteraPdfPro(agentId: str=Form(...),
             }
             return rtdata
 
-@router.get('/ecoprop_shera_pro_pdf')
-async def EcopropSheraProPdf(agentId: str ,projectId:str):
+@router.post('/ecoprop_shera_pro_pdf')
+async def EcopropSheraProPdf(agentId: str=Form(...) ,projectId:str=Form(...)):
     # 生成Ecoprop shera pro pdf
-    logger.info('----->>>创建 ecoprop_shera_pro_pdf')
+    logger.info('----->>>创建 ecoprop_shera_pro_pdf,agentId:{0},ProjectId:{1}'.format(agentId,projectId))
     if not agentId or not projectId:
         raise HTTPException(status_code=404, detail="参数错误")
     try:
@@ -301,41 +374,81 @@ async def EcopropSheraProComparePdf(agentId: str=Form(...) ,projectId:str=Form(.
             }
             return rtdata
 
-@router.get('/Download_Re_Itinerary_to_Pdf')
-async def Re_Itinerary():
+@router.post('/Download_Re_Itinerary_to_Pdf')
+async def Re_Itinerary(customerId: str=Form(...)):
     """
     Re Lo Sg 项目 
     行程导出PDF功能
     参数：用户ID、行程ID（多个）/日期？
     """
-    logger.info('----->>>创建行程导出PDF')
-    # if not agentId or not projectId:
-    #     raise HTTPException(status_code=404, detail="参数错误")
-    try:
-        datas = {} # 模板填充数据集
-        datas['Itinerarylist'] = [
-            {
-            "dsp_service":"LandPLUS Mobility Solutions",
-            "dsp_agent_name":"Lili Heng",
-            "viewing_date":"11 April 2024",
-            "client_name":"Jeff Gains & Jana Mihaylova",
-            "dsp_agent_contant":"+65 9022 3236 / lili@landplusgroup.com",
-            "client_company":"Abbott",
-            "pickup_location":"Scotts Highpark",
-            "pickup_time":"1.45pm",
-            "day_list":[
-                {"Appt_time":"2.00pm (11 April 2024)","District":"09 Central / Tanglin","Address":"Address","Area":"3251","Bedrooms":"3","Rental":"$26,000 Partially Furnished","Facilities":"Gym & Pooll","Remarks":"Single level Penthouse.",},
-                {"Appt_time":"3.00pm (12 April 2024)","District":"09 Central / Tanglin","Address":"Address","Area":"3251","Bedrooms":"3","Rental":"$26,000 Partially Furnished","Facilities":"Gym & Pooll","Remarks":"Single level Penthouse.",},
-                {"Appt_time":"4.00pm (13 April 2024)","District":"09 Central / Tanglin","Address":"Address","Area":"3251","Bedrooms":"3","Rental":"$26,000 Partially Furnished","Facilities":"Gym & Pooll","Remarks":"Single level Penthouse.",},
-                {"Appt_time":"5.00pm (14 April 2024)","District":"09 Central / Tanglin","Address":"Address","Area":"3251","Bedrooms":"3","Rental":"$26,000 Partially Furnished","Facilities":"Gym & Pooll","Remarks":"Single level Penthouse.",},
-                {"Appt_time":"6.00pm (15 April 2024)","District":"09 Central / Tanglin","Address":"Address","Area":"3251","Bedrooms":"3","Rental":"$26,000 Partially Furnished","Facilities":"Gym & Pooll","Remarks":"Single level Penthouse.",},
-            ],
-            }
-        ]
+    logger.info('创建行程导出PDF----->>>{}'.format(customerId))
 
+    getapi = getAPI()
+    # host_url = "https://api.singmap.com/relo-api"
+    
+    try:
+        InfoData = {}
+
+        # /customer/queryCustomerItineraryList #父级内容
+        ItineraryList = getapi.requsetAPI_POST(Config.ReLoSG_HOST+"/customer/queryCustomerItineraryList",
+                                                params={"pageNo": "1",
+                                                        "pageSize": "1000",
+                                                        "customerId": customerId,
+                                                        "requestTime": int(time.time()* 1000)},
+                                                item='ReLoSG')
+        
+        # /customer/queryCustomerItineraryItem #子级内容
+        InfoData['ItineraryDataList'] = []
+        for ItineraryParent in ItineraryList['lists']:
+            ItineraryDataItem = {"itineraryId": ItineraryParent['itineraryId'],"requestTime": int(time.time()* 1000)}
+            ItineraryData = getapi.requsetAPI_POST(Config.ReLoSG_HOST+"/customer/queryCustomerItineraryItem",params=ItineraryDataItem,item='ReLoSG')
+            if ItineraryData == []: continue
+            # 转换拼接父级和子级内容,并整合到一个列表
+            InfoData['ItineraryDataList'].extend(list(map(lambda item: {**item, **ItineraryParent}, ItineraryData))) 
+
+        # /customer/info # 客户详细信息
+        InfoData['UserInfo'] = getapi.requsetAPI_POST(Config.ReLoSG_HOST+"/customer/info",
+                                            params={"customerId": customerId, "requestTime": int(time.time()* 1000)},
+                                            item='ReLoSG')
+
+        # 列表按 _itineraryDate 和 startDate进行倒序排列
+        InfoData['ItineraryDataList'] = sorted(InfoData['ItineraryDataList'], key=lambda x: (x['_itineraryDate'], x['startDate']), reverse=True)
+        InfoData['NowDate'] = gettime.getDate()
+
+        # 公司列表
+        #  https://api.singmap.com/relo-api/company/list
+
+        companyList = getapi.requsetAPI(Config.ReLoSG_HOST+"/company/list",
+                                                params={
+                                                        "name": '',
+                                                        "pageNo": "1",
+                                                        "pageSize": "1000",
+                                                        "requestTime": int(time.time()* 1000)},
+                                                item='ReLoSG')
+        # 取值公司名称
+        condition = lambda x: x['companyId'] == InfoData['UserInfo']['companyId']
+        InfoData['UserInfo']['companyName'] = next(filter(condition, companyList['lists']), '')['companyName']
+
+        # 管理员列表
+        # https://api.singmap.com/relo-api/user/list
+        userList = getapi.requsetAPI(Config.ReLoSG_HOST+"/user/list",
+                                                params={"pageNo": "1",
+                                                        "pageSize": "10000",
+                                                        "status": '',
+                                                        "userName": '',
+                                                        "role": '',
+                                                        "requestTime": int(time.time()* 1000)},
+                                                item='ReLoSG')
+
+        # 取值管理员名称
+        condition1 = lambda x: x['userId'] == InfoData['UserInfo']['mangerUserId']
+        mangerUserInfo = next(filter(condition1, userList['lists']), '')
+        InfoData['UserInfo']['HandlerName'] = mangerUserInfo['firstName'] +'' + mangerUserInfo['lastName']
+        
+        
         # 输出文件路径
-        new_file_name ="Viewing Schedule"+str(datetime.datetime.now().strftime('%d-%m-%Y'))+'.pdf'
-        re_path = os.path.join(ecoprop_return_path,'re_itinerary',new_file_name).replace('\\','/')
+        new_file_name = InfoData['UserInfo']['firstName']+' '+InfoData['UserInfo']['lastName']+"-Schedule"+'.pdf'
+        re_path = os.path.join(ecoprop_return_path,'re_itinerary',InfoData['NowDate'],new_file_name).replace('\\','/')
         logger.info('Set return Path ====>>>>'+re_path)
         # 文件夹检查
         if not os.path.exists(os.path.split(re_path)[0]): 
@@ -358,8 +471,8 @@ async def Re_Itinerary():
         }
         try:
             logger.info('Add tmp Info ====>>>>')
-            datas = eval(re.sub('None','\'\'',str(datas))) # 去除None值
-            htmls = template.render(datas)
+            InfoData = eval(re.sub('None','\'\'',str(InfoData))) # 去除None值
+            htmls = template.render(InfoData)
             # config = pdfkit.configuration(wkhtmltopdf='/usr/local/bin/wkhtmltopdf')
             pdfkit.from_string(htmls,re_path,options=options)
         except Exception as e:
@@ -374,46 +487,50 @@ async def Re_Itinerary():
         return {'code':'-1','msg':'error',"datas":e}
 
 
-@router.get('/Download_Re_Condition_Report_to_Pdf')
-async def Condition_Report():
+@router.post('/Download_Re_Condition_Report_to_Pdf')
+async def Condition_Report(customerId: str=Form(...)):
     """
-    Re Lo Sg 项目 
+    Re Lo Sg 项目
     反馈信息导出PDF功能
-    参数：
+    参数：客户ID
     """
-    logger.info('----->>>创建行程导出PDF')
-    # if not agentId or not projectId:
-    #     raise HTTPException(status_code=404, detail="参数错误")
+    logger.info('客户反馈信息导出PDF----->>>{}'.format(customerId))
+    
     try:
-        datas = {} # 模板填充数据集
-        datas['Conditionlist'] = {
-            "dsp_service":"LandPLUS Mobility Solutions",
-            "dsp_agent_name":"Lili Heng",
-            "viewing_date":"11 April 2024",
-            "client_name":"Jeff Gains & Jana Mihaylova",
-            "dsp_agent_contant":"+65 9022 3236 / lili@landplusgroup.com",
-            "client_company":"Abbott",
-            "pickup_location":"Scotts Highpark",
-            "pickup_time":"1.45pm",
-            "day_list":[
-                {"Appt_time":"2.00pm (11 April 2024)","District":"09 Central / Tanglin","Address":"Address","Area":"3251","Bedrooms":"3","Rental":"$26,000 Partially Furnished","Facilities":"Gym & Pooll","Remarks":"Single level Penthouse.",},
-                {"Appt_time":"3.00pm (12 April 2024)","District":"09 Central / Tanglin","Address":"Address","Area":"3251","Bedrooms":"3","Rental":"$26,000 Partially Furnished","Facilities":"Gym & Pooll","Remarks":"Single level Penthouse.",},
-                {"Appt_time":"4.00pm (13 April 2024)","District":"09 Central / Tanglin","Address":"Address","Area":"3251","Bedrooms":"3","Rental":"$26,000 Partially Furnished","Facilities":"Gym & Pooll","Remarks":"Single level Penthouse.",},
-                {"Appt_time":"5.00pm (14 April 2024)","District":"09 Central / Tanglin","Address":"Address","Area":"3251","Bedrooms":"3","Rental":"$26,000 Partially Furnished","Facilities":"Gym & Pooll","Remarks":"Single level Penthouse.",},
-                {"Appt_time":"6.00pm (15 April 2024)","District":"09 Central / Tanglin","Address":"Address","Area":"3251","Bedrooms":"3","Rental":"$26,000 Partially Furnished","Facilities":"Gym & Pooll","Remarks":"Single level Penthouse.",},
-            ],
-            }
+        getapi = getAPI()
+        Condition_Data = {}
+        # /customer/info # 客户详细信息
+        Condition_Data['UserInfo'] = getapi.requsetAPI_POST(Config.ReLoSG_HOST+"/customer/info",
+                                            params={
+                                                    "customerId": customerId,
+                                                    "requestTime": int(time.time()* 1000)
+                                                    },
+                                            item='ReLoSG')
         
+        # /customer/queryCustomerFeedbackList # 获取反馈信息
+        ConditionList = getapi.requsetAPI(Config.ReLoSG_HOST+"/customer/queryCustomerFeedbackList",
+                                        params={
+                                                "customerId": customerId,
+                                                "pageNo": "1",
+                                                "pageSize": "1000",
+                                                "requestTime": int(time.time()* 1000)
+                                                },
+                                        item='ReLoSG')
+        Condition_Data['Conditionlist'] = ConditionList['lists']
+
+        # 多个图片分割处理
+        for index,data in enumerate(Condition_Data['Conditionlist']):
+            Condition_Data['Conditionlist'][index]['photo'] = data['photo'].split(',')
 
         # 输出文件路径
-        new_file_name ="Condition_Report"+str(datetime.datetime.now().strftime('%d-%m-%Y'))+'.pdf'
-        re_path = os.path.join(ecoprop_return_path,'re_itinerary',new_file_name).replace('\\','/')
-        logger.info('Set return Path ====>>>>'+re_path)
-        # 文件夹检查
-        if not os.path.exists(os.path.split(re_path)[0]): 
-            os.makedirs(os.path.split(re_path)[0])
+        new_file_name ="Condition_Report_"+Condition_Data['UserInfo']['firstName']+' '+Condition_Data['UserInfo']['lastName']+'.pdf'
+        rt_path = os.path.join(ecoprop_return_path,'re_itinerary',gettime.getDate(),new_file_name).replace('\\','/')
 
-        logger.info('Get Temp ====>>>> Condition_Report.html')
+        # 文件夹检查
+        if not os.path.exists(os.path.split(rt_path)[0]): 
+            os.makedirs(os.path.split(rt_path)[0])
+
+        logger.info('Jinja Temp Filling ====>>>> Condition_Report.html')
         env = jinja2.Environment(loader=jinja2.FileSystemLoader(searchpath=ecoprop_temp_path,encoding='utf-8'))
         template = env.get_template('Condition_Report.html')
 
@@ -427,7 +544,7 @@ async def Condition_Report():
             'orientation':'portrait',
             'encoding': "UTF-8",
             'no-outline': None,
-            # 'header-html':ecoprop_temp_path+'/pdfHeader.html', #设置页眉数据，作为页眉的html页面必须有<!DOCTYPE html>
+            # 'header-html':ecoprop_temp_path+'/pdfHeader.html', #设置页眉数据，作为页眉的html页面必须有<!DOCTYPE html> 不能动态化
             # '--header-center':'Condition Report',
             '--header-left':'Condition Report',
             '--header-line':'--header-line',
@@ -438,19 +555,22 @@ async def Condition_Report():
         }
         try:
             logger.info('Add tmp Info ====>>>>')
-            datas = eval(re.sub('None','\'\'',str(datas))) # 去除None值
+
+            # 去除None值
+            datas = eval(re.sub('None','\'\'',str(Condition_Data))) 
             htmls = template.render(datas)
-            # config = pdfkit.configuration(wkhtmltopdf='/usr/local/bin/wkhtmltopdf')
-            pdfkit.from_string(htmls,re_path,options=options)
+
+            # linux指定位置配置，因找不到wkhtmltopdf导致无法生成PDF 问题处理方案
+            # config = pdfkit.configuration(wkhtmltopdf='/usr/local/bin/wkhtmltopdf') 
+
+            pdfkit.from_string(htmls,rt_path,options=options)
         except Exception as e:
-            logger.error(e)
+            logger.error('PDF Create Error=======>{}'.format(e))
             raise HTTPException(status_code=404, detail="PDF Error")
-        logger.info('PDF创建成功=======>{}'.format(re_path))
-        # rtdata = {'code':'0','msg':'succeed',"datas":re_path}
-        return {'code':'0','msg':'succeed',"datas":re_path}
+        logger.info('PDF Create Overall=======>{}'.format(rt_path))
+        return {'code':'0','msg':'succeed',"datas":rt_path}
     except BaseException as e:
-        logger.info('PDF创建异常=======>{}'.format(e))
-        # rtdata = {'code':'-1','msg':'error',"datas":e}
+        logger.error('PDF Create Error=======>{}'.format(e))
         return {'code':'-1','msg':'error',"datas":e}
 
 
@@ -492,6 +612,7 @@ def MakePDF(agentId,projectId):
         "projectId":projectId,
         "type":""
     })
+
     # if propdfinfo == None :
     #     logger.info('项目PDF上传图片为空--->>>projectId:%s,agentId:%s'%(projectId,agentId))
 
@@ -544,11 +665,13 @@ def MakePDF(agentId,projectId):
     pagesize = (1747,965) # 画布大小
     # pagesize = (A4[1],A4[0]) # 画布大小
     # PND文件夹+ 项目ID + 用户信息 + 文件名称
-    uppath = os.path.join(filepath,agentId)
+    gettime = getDatetimes()
+    tt = gettime.getDate()
+    uppath = os.path.join(filepath,tt)
     if not os.path.exists(uppath):
         os.makedirs(uppath)
     savepath = os.path.join(uppath,str(int(time.time()))+'.pdf') 
-    returnPath = os.path.join(returnpaths,agentId,str(int(time.time()))+'.pdf')
+    returnPath = os.path.join(returnpaths,tt,str(int(time.time()))+'.pdf')
     doc = canvas.Canvas(savepath,pagesize=pagesize)
     doc.setTitle(prodatainfo['projectName'])
 
@@ -1208,7 +1331,9 @@ def ComparisonPDF(agentId,projectId):
     # filepath = os.getcwd() # 当前文件路径 服务器文件路径 ：/home/upload/broke/pnd/file/report
     Imagepath = os.path.join(filepath,'file')
     # savepath = os.path.join(Imagepath,'test.pdf') 
-    uppath = os.path.join(filepath,'Comparison')
+    gettime = getDatetimes()
+    tt = gettime.getDate()
+    uppath = os.path.join(filepath,'Comparison',tt)
     if not os.path.exists(uppath):
         os.makedirs(uppath)
     # filename = agentId+str(int(time.time()))
@@ -1571,7 +1696,10 @@ def Shera_to_Pdf(agentId,projectId):
         raise HTTPException(status_code=404, detail="Get Pro Or User Info Error")
     logger.info('get Pro Info ====>>>>{0}'.format(projectId))
     # Base64 转码
-    datas['proInfo']['description'] = base64.b64decode(datas['proInfo']['description']).decode("utf-8")
+    if datas['proInfo']['description']:
+        datas['proInfo']['description'] = base64.b64decode(datas['proInfo']['description']).decode("utf-8")
+    else:
+        datas['proInfo']['description'] = ''
     logger.info('description Base64====>>>>{0}'.format(projectId))
 
     # 周边设施数据处理
@@ -1597,9 +1725,9 @@ def Shera_to_Pdf(agentId,projectId):
         "allbuilding":[]
     }
     for site in site_plan_list:
-        if site['type'] == "siteplan":
+        if site['type'] == "siteplan" and site['img']:
             site_list['siteplan'].append(site['img'])
-        if site['type'] == "allbuilding":
+        if site['type'] == "allbuilding" and site['img']:
             site_list['allbuilding'].append(site['img'])
     datas['site_plan'] = site_list
 
@@ -1621,8 +1749,11 @@ def Shera_to_Pdf(agentId,projectId):
     # temp_path = os.path.join(ecoprop_temp_path,'ecoprop_pro_share_temp.html').replace('\\','/')
     # 输出文件路径
     logger.info('Set return Path ====>>>>')
-    new_file_name = datas['proInfo']['abbreviation']+"-"+str(datetime.datetime.now().strftime('%d-%m-%Y'))+'.pdf'
-    re_path = os.path.join(ecoprop_return_path,'pro_share_pdf',new_file_name).replace('\\','/')
+    gettime = getDatetimes()
+    tt = gettime.getDate()
+    if not datas['userInfo']['regNum'] : return {'code':'-1','msg':'error',"datas":"regNum is null"}
+    new_file_name = datas['proInfo']['abbreviation']+"-"+datas['userInfo']['regNum']+"-"+tt+'.pdf'
+    re_path = os.path.join(ecoprop_return_path,'pro_share_pdf',tt,new_file_name).replace('\\','/')
 
     # 文件夹检查
     if not os.path.exists(os.path.split(re_path)[0]): 
@@ -1650,7 +1781,13 @@ def Shera_to_Pdf(agentId,projectId):
         datas = eval(re.sub('None','\'\'',str(datas))) # 去除None值
         htmls = template.render(datas)
         # config = pdfkit.configuration(wkhtmltopdf='/usr/local/bin/wkhtmltopdf') 
+        # 清空之前文件的内容
+        open(re_path, 'w').close() 
         pdfkit.from_string(htmls,re_path,options=options)
+
+        # 确保临时文件生成成功后再覆盖目标文件
+        # if os.path.exists(temp_pdf_path):
+        #     shutil.move(temp_pdf_path, output_path)
     except Exception as e:
         logger.error(e)
         raise HTTPException(status_code=404, detail="PDF Error")
@@ -1681,8 +1818,10 @@ def Share_Unit_Pdf(agentId,unitId):
     # temp_path = os.path.join(ecoprop_temp_path,'ecoprop_unit_share_temp.html').replace('\\','/')
     # 输出文件路径
     # str(datetime.datetime.now().strftime('%d-%m-%Y-%H%M%S'))
-    new_file_name = datas['userInfo']['regNum']+"-"+str(datetime.datetime.now().strftime('%d-%m-%Y'))+'.pdf'
-    re_path = os.path.join(ecoprop_return_path,'user_unit_compare',new_file_name).replace('\\','/')
+    gettime = getDatetimes()
+    tt = gettime.getDate()
+    new_file_name = datas['userInfo']['regNum']+"-"+tt+'.pdf'
+    re_path = os.path.join(ecoprop_return_path,'user_unit_compare',tt,new_file_name).replace('\\','/')
     if not os.path.exists(os.path.split(re_path)[0]):
         logger.info('ADD New folder ====>>>>'+os.path.split(re_path)[0])
         os.makedirs(os.path.split(re_path)[0])
@@ -1740,8 +1879,10 @@ def Share_Pro_compare_Pdf(agentId,projectId):
     # temp_path = os.path.join(ecoprop_temp_path,'ecoprop_pro_compare_share_temp.html').replace('\\','/')
     # 输出文件路径
     # str(datetime.datetime.now().strftime('%d-%m-%Y-%H%M%S'))
-    new_file_name = datas['userInfo']['regNum']+"-"+str(datetime.datetime.now().strftime('%d-%m-%Y'))+'.pdf'
-    re_path = os.path.join(ecoprop_return_path,'user_pro_compare',new_file_name).replace('\\','/')
+    gettime = getDatetimes()
+    tt = gettime.getDate()
+    new_file_name = datas['userInfo']['regNum']+"-"+tt+'.pdf'
+    re_path = os.path.join(ecoprop_return_path,'user_pro_compare',tt,new_file_name).replace('\\','/')
     if not os.path.exists(os.path.split(re_path)[0]):
         logger.info('ADD New folder ====>>>>'+os.path.split(re_path)[0])
         os.makedirs(os.path.split(re_path)[0])

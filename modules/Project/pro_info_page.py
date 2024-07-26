@@ -90,6 +90,8 @@ def XHORIZON_APP_PRO_PDF(agentId,projectId):
     pagesize = (1747,965) # 画布大小
     # pagesize = (A4[1],A4[0]) # 画布大小
     # PND文件夹+ 项目ID + 用户信息 + 文件名称
+    # gettime = getDatetimes()
+    # tt = gettime.getDate()
     uppath = os.path.join(Config.filepath,agentId)
     if not os.path.exists(uppath):
         os.makedirs(uppath)

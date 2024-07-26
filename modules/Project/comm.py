@@ -29,12 +29,22 @@ class getDatetimes():
         return datetime.datetime.now().strftime('%Y%m%d')
     def getDates(self):
         return datetime.datetime.now().strftime('%d/%m/%Y')
+    def determine_am_pm(self,time_str):
+        # Split the time string into hours and minutes
+        hours, minutes = map(int, time_str.split(':'))
 
+        # Determine if it's AM or PM
+        if hours == 0 or (hours >= 1 and hours < 12):
+            return "%s AM"%time_str
+        elif hours == 12 or (hours >= 13 and hours <= 23):
+            return "%s PM"%time_str
+        else:
+            return "Invalid time"
 
 class getAPI(): # 网络请求
     def __init__(self):
         ...
-    def setmd5(self,data):
+    def setmd5(self,data,pro):
         # logger.info('Md5加密',data)
         a = list(data.items()) # 转列表
         a.sort(key=lambda x:x[0],reverse=False) # 排序
@@ -44,31 +54,44 @@ class getAPI(): # 网络请求
                 keys+= str(item[1])
             else:
                 keys+= ''
-        keys = keys+'c1d65f3667324592a071ebec5038f38c'
+        if pro == "ReLoSG": # 处理不同项目标识不同
+            keys = keys+'relo'
+        else:
+            keys = keys+'c1d65f3667324592a071ebec5038f38c'
+
         signature = md5(keys.encode(encoding='UTF-8')).hexdigest() #加密
-        # logger.info('signature=======>{}'.format(signature))
+        logger.info('signature=======>{}'.format(signature))
         # print(signature)
         return signature
-    def requsetAPI(self,path,params):
-        params['signature'] = self.setmd5(params)
-        # print(path,params)
+    def requsetAPI(self,path,params,item='EcoProp'):
+        params['signature'] = self.setmd5(params,item)
         res = requests.get(path,params=params)
         value = json.loads(res.text)
-        # print(value)
-        logger.info('data=======>{0}'.format(value['datas']))
-        if value['code'] == '0':
+        # logger.info('data=======>{0}'.format(value['datas']))
+        if int(value['code']) == 0:
             # eval(re.sub('None','\'\'',str(value['datas']))) # 去除None值
-            return value['datas']
+            if item == 'ReLoSG':
+                # logger.info('data=======>{0}'.format(value['data']))
+                return value['data']
+            else:
+                # logger.info('data=======>{0}'.format(value['datas']))
+                return value['datas']
         else:
             raise HTTPException(status_code=404, detail="参数错误")
         
-    def requsetAPI_POST(self,path,params):
-        params['signature'] = self.setmd5(params)
+    def requsetAPI_POST(self,path,params,item='EcoProp'):
+        params['signature'] = self.setmd5(params,item)
+        # print('==========>',params)
         res = requests.post(path,data=params)
         value = json.loads(res.text)
-        # print(value)
-        if value['code'] == '0':
-            return value['datas']
+        print(value)
+        if int(value['code']) == 0:
+            if item == 'ReLoSG':
+                # logger.info('data=======>{0}'.format(value['data']))
+                return value['data']
+            else:
+                # logger.info('data=======>{0}'.format(value['datas']))
+                return value['datas']
         else:
             raise HTTPException(status_code=404, detail="参数错误")
 

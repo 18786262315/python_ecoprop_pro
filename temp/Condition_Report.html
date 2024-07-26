@@ -37,56 +37,46 @@
 </head>
 <body>
   <div>
-    <!-- <div class="header">
-      <table style="width: 100%;">
-        <tr>
-          <td><span class="font-bold">Company</span>: Landplus Property Network Pte Ltd</td>
-          <td><span class="font-bold">Email</span>: sieweng@landplusgroup.com</td>
-          <td><span class="font-bold">No. Items</span>: 24</td>
-        </tr>
-        <tr>
-          <td><span class="font-bold">Contact</span>: Lim Siew Eng</td>
-          <td><span class="font-bold">Title</span>: Report: 11/7/2023 21:35</td>
-          <td></td>
-        </tr>
-        <tr>
-          <td><span class="font-bold">Phone</span>: 90250572</td>
-          <td><span class="font-bold">Created</span>: Tue, 11/7/2023</td>
-          <td></td>
-        </tr>
-      </table>
-    </div> -->
+
     <div style="color: white;">.</div>
     <div class="container">
       <!-- 房间信息 -->
-      <p class="font-bold" style="font-size: 4rem;">207 River Valley Road #05-51 UE Square Singapore 238275</p>
+      <!-- <p class="font-bold" style="font-size: 4rem;">房源标题.当前暂时没有关联到相关房源,需要等后续 反馈如何关联到客户房源信息</p> -->
       <p>Property Condition Report</p>
       <div style="width: 100%;height: 1px;background-color: black;"></div>
-      <p>Company Name : Landplus Property Network Pte Ltd</p>
-      <p>Contact : Lim Siew Eng</p>
-      <p>Phone : 90250572</p>
-      <p>Email : sieweng@landplusgroup.com</p>
-      <p>Created : Tue, 11/7/2023</p>
+      <!-- <p>Company Name : {{UserInfo.companyId}} 要后台数据给到公司名称</p>  -->
+      <p>Contact : {{UserInfo.firstName}} {{UserInfo.lastName}}</p>
+      <p>Phone : {{UserInfo.mobileCode}} {{UserInfo.mobile}}</p>
+      <p>Email : {{UserInfo.email}}</p>
+      <p>Created : {{NowDate}}</p>
       <div style="width: 100%;height: 1px;background-color: black;"></div>
     </div>
     <table style="border-collapse: collapse;">
       <!-- 内容 -->
-      {% for Condition in range(0,20) %}
+      {% for Condition in Conditionlist %}
       <tr height="400px" >
         <td style="display: block;">
           ({{loop.index}})
         </td>
-        <td style="width: 400px;
-        height: 400px;
-        background-size: contain;
-        background-repeat: no-repeat;
-        background-image: url('https://img.singmap.com/upload/broke/0c5d80359cc5416a9ea953fdebcbfc20/7474b1724023430aa9eb0a05e5000ee1/imgs/92c85daf7bad4982a4a2d33884dcd470.jpg');">
+        <td 
+        >
+        {% for photo in Condition.photo %}
+          <div style="width: 400px;
+          height: 400px;
+          background-size: contain;
+          background-repeat: no-repeat;
+          background-image: url('http://192.168.0.145:8083{{photo}}');">
+
+          </div>
+        {%endfor%}
+
           <!-- <img height="300px" style="object-fit: contain;" src="https://img.singmap.com/upload/broke/0c5d80359cc5416a9ea953fdebcbfc20/7474b1724023430aa9eb0a05e5000ee1/imgs/d0b4b24a77474e6b9d9cdbadf2ad77b1.jpg" alt=""> -->
         </td>
         <td style="display: block;margin-left: 20px;">
-          <h2>Foyer</h2>
-          <p>Created: Tue, 11/7/2023</p>
-          <p>Artificial plant removed Artificial plant removed Artificial plant removed</p>
+          <h2>{{Condition.title}}</h2>
+          <h4>Type: {{Condition.type}}</h2>
+          <p>Created: {{Condition._createTime}}</p>
+          <p>{{Condition.description}}</p>
         </td>
       </tr>
       {%endfor%}

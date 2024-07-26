@@ -43,56 +43,57 @@
 </head>
 
 <body>
-  {% for Itinerary in Itinerarylist %}
   <div class="content">
+    <h2>ReLoSG Travel Data Export, Export Date ({{NowDate}})</h2>
+
+    <div class="text-bold" style="padding: 20px 0;">Info</div>
     <table style="border-collapse: collapse;width: 100%;">
       <tr>
-        <td class="text-start text-bold table-box">Destination Service Provider (DSP)</td><td class="text-start">{{Itinerary.dsp_service}}</td>
-        <td class="text-start text-bold table-box">Viewing Date</td><td class="text-start">{{Itinerary.viewing_date}}</td>
+        <td class="text-start text-bold table-box">Name</td><td class="text-start">{{UserInfo.firstName}}{{UserInfo.lastName}}({{UserInfo.preferredName}})</td>
+        <td class="text-start text-bold table-box">Email</td><td class="text-start">{{UserInfo.email}}</td>
       </tr>
       <tr>
-        <td class="text-start text-bold table-box">DSP Agent Name</td><td class="text-start">{{Itinerary.dsp_agent_name}}</td>
-        <td class="text-start text-bold table-box">DSP Agent Contact & Email</td><td class="text-start">{{Itinerary.dsp_agent_contant}}</td>
+        <td class="text-start text-bold table-box">Phone</td><td class="text-start">{{UserInfo.mobileCode}} {{UserInfo.mobile}}</td>
+        <td class="text-start text-bold table-box">ID</td><td class="text-start">{{UserInfo.fileNumber}}</td>
       </tr>
       <tr>
-        <td class="text-start text-bold table-box">Client Name</td><td class="text-start">{{Itinerary.client_name}}</td>
-        <td class="text-start text-bold table-box">Client Company</td><td class="text-start">{{Itinerary.client_company}}</td>
-      </tr>
-      <tr>
-        <td class="text-start text-bold table-box">Pickup Location</td><td class="text-start">{{Itinerary.pickup_location}}</td>
-        <td class="text-start text-bold table-box">Pickup Time</td><td class="text-start">{{Itinerary.pickup_time}}</td>
+        <td class="text-start text-bold table-box">Company</td><td class="text-start">{{UserInfo.companyName}}</td>
+        <td class="text-start text-bold table-box">File Handler</td><td class="text-start">{{UserInfo.HandlerName}}</td>
       </tr>
     </table>
-    <div class="text-bold" style="padding: 20px 0;">Note:  The following properties are subject to contract & availability</div>
+    <div class="text-bold" style="padding: 20px 0;">Itinerary List</div>
     <table style="border-collapse: collapse;">
       <tr class="content-header">
         <td class="text-bold">S/N</td>
         <td class="text-bold">Appt Time</td>
+        <td class="text-bold">Title</td>
         <td class="text-bold">District / Area</td>
-        <td class="text-bold">Name of Development (If apartment) & Address with Unit Number</td>
-        <td class="text-bold">Approx. Land/Built-In Area (Square Feet)</td>
-        <td class="text-bold">No. Of Bedrooms</td>
-        <td class="text-bold">Asking Rental ($p/m) & partially or fully furnished</td>
-        <td class="text-bold">Facilities</td>
-        <td class="text-bold">Remarks</td>
+        <!-- <td class="text-bold">Name of Development (If apartment) & Address with Unit Number</td> 房间 -->
+        <!-- <td class="text-bold">Approx. Land/Built-In Area (Square Feet)</td> 房间面积 -->
+        <!-- <td class="text-bold">No. Of Bedrooms</td> 房间数量 -->
+        <!-- <td class="text-bold">Asking Rental ($p/m) & partially or fully furnished</td> 价格 -->
+        <!-- <td class="text-bold">Facilities</td> -->
+        <td class="text-bold">Itinerary Notes</td>
+        <td class="text-bold">On-site Staff</td>
       </tr>
-      {% for Info in Itinerary.day_list %}
+      {% for Info in ItineraryDataList %}
       <tr>
         <td>{{loop.index}}</td>
-        <td>{{Info.Appt_time}}</td>
-        <td>{{Info.District}}</td>
-        <td>{{Info.Address}}</td>
+        <td>{{Info.startDate}} ({{Info._itineraryDate}})</td>
+        <td>{{Info.activityName}}</td>
+        <td>{{Info.location}}</td>
+        <!-- <td>{{Info.Address}}</td>
         <td>{{Info.Area}}</td>
         <td>{{Info.Bedrooms}}</td>
         <td>{{Info.Rental}}</td>
-        <td>{{Info.Facilities}}</td>
-        <td style="width: 30%;">{{Info.Remarks}}</td>
+        <td>{{Info.Facilities}}</td> -->
+        <td style="width: 30%;">{{Info.note}}</td>
+        <td >{{Info.onSiteStaff_firstName}} {{Info.onSiteStaff_lastName}}</td>
       </tr>
       {%endfor%}
 
     </table>
   </div>
-  {%endfor%}
 </body>
 
 </html>
