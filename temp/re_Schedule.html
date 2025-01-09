@@ -1,6 +1,6 @@
 <!DOCTYPE html>
+<!-- Re 项目 客户行程导出PDF模板 -->
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -45,8 +45,13 @@
 <body>
   <div class="content">
     <h2>ReLoSG Travel Data Export, Export Date ({{NowDate}})</h2>
-
+    <p>Note: The following properties are subject to contract & availability</p>
+    <!-- 客户ID -->
+    <p>客户名称-客户编号-客户公司，负责人-导出日期-负责人联系信息（电话/邮箱）-</p>
     <div class="text-bold" style="padding: 20px 0;">Info</div>
+    <p>File Number:客户编号</p>
+    <p>Client Name:客户名称</p>
+    <p>Client Company:客户名称</p>
     <table style="border-collapse: collapse;width: 100%;">
       <tr>
         <td class="text-start text-bold table-box">Name</td><td class="text-start">{{UserInfo.firstName}}{{UserInfo.lastName}}({{UserInfo.preferredName}})</td>
@@ -62,6 +67,19 @@
       </tr>
     </table>
     <div class="text-bold" style="padding: 20px 0;">Itinerary List</div>
+    <div>
+      {% for ItineraryInfo in ItineraryList %}
+      <p>标题-日期-负责人-描述</p>
+      <div>
+        {% for ItineraryItem in ItineraryInfo.ItineraryItemList %}
+        <div>
+          {{loop.index}} {{ItineraryInfo.title}} {{ItineraryInfo.startDate}} {{ItineraryInfo.HandlerName}}
+          开始时间-地点-行程标题-描述-状态-（经纬度）
+        </div>
+        {%endfor%}
+      </div>
+      {%endfor%}
+    </div>
     <table style="border-collapse: collapse;">
       <tr class="content-header">
         <td class="text-bold">S/N</td>

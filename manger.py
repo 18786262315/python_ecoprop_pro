@@ -4,6 +4,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse,HTMLResponse
 # from sqlalchemy.orm import Session
+from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.responses import StreamingResponse
 
 # 前置处理
 from comm.logger import logger
@@ -46,6 +48,7 @@ origins = [
     "http://192.168.0.116:8080",
     "http://localhost:8081",
     "http://192.168.0.116:8081",
+    "http://192.168.0.114",
 ]
 app.add_middleware(
     CORSMiddleware,
@@ -55,9 +58,28 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
+# 请求中间件，请求前后内容处理。
+class LoggingMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next):
+        response = await call_next(request)
+        print(f"Request: {request.method} {request.url} from {request.client.host}:{request.client.port} {request.body}")
+        # 记录响应内容
+        if isinstance(response, StreamingResponse):
+            # 对于流式响应，无法直接读取内容，所以这里可以记录其他信息
+            print(f"StreamingResponse: {response.media_type}, Status Code: {response.status_code}")
+        else:
+            # 对于普通响应，可以直接获取内容
+            print(f"Response: {response.body}, Status Code: {response.status_code}")
+        
+        return response
+
+app.add_middleware(LoggingMiddleware)
+
 # 参数检测
 @app.exception_handler(RequestValidationError) 
 async def request_validation_exception_handler(request: Request, exc: RequestValidationError):
+    logger.info(f"{request.method} {request.url}")
     # print(f"参数不对{request.method} {request.url}") # 可以用日志记录请求信息,方便排错
     logger.error(f"参数错误{request.method} {request.url}")
     return JSONResponse({"code": "400", "message": exc.errors()})
@@ -79,62 +101,8 @@ async def request_validation_exception_handler(request: Request, exc: RequestVal
 #     return "audax_admin"
 
 
-
-
-
-
-# WebSocket
-
-
-html = """
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>Chat</title>
-    </head>
-    <body>
-        <h1>WebSocket Chat</h1>
-        <form action="" onsubmit="sendMessage(event)">
-            <input type="text" id="messageText" autocomplete="off"/>
-            <button>Send</button>
-        </form>
-        <ul id='messages'>
-        </ul>
-        <script>
-            var ws = new WebSocket("ws://localhost:7777/ws");
-            ws.onmessage = function(event) {
-                var messages = document.getElementById('messages')
-                var message = document.createElement('li')
-                var content = document.createTextNode(event.data)
-                message.appendChild(content)
-                messages.appendChild(message)
-            };
-            function sendMessage(event) {
-                var input = document.getElementById("messageText")
-                ws.send(input.value)
-                input.value = ''
-                event.preventDefault()
-            }
-        </script>
-    </body>
-</html>
-"""
-
-
 @app.get("/")
 async def get():
     logger.info('audax_admin')
-    return HTMLResponse(html)
+    return f'fdsfa'
 
-
-@app.websocket("/ws")
-async def websocket_endpoint(websocket: WebSocket):
-    await websocket.accept()
-    while True:
-        # 接收前端发送的图像数据
-        image_data_url = await websocket.receive_text()
-        print(image_data_url)
-        # 处理图像数据，这里可以保存、转换等，根据你的需求来实现
-        
-        # 将处理后的数据发送回前端
-        await websocket.send_text("Image data received and processed")

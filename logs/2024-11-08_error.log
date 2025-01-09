@@ -1,0 +1,18 @@
+2024-11-08 16:45:07.769 | ERROR    | manger:request_validation_exception_handler:83 - 参数错误POST http://192.168.0.114:7777/project/Make_Signature_File
+2024-11-08 16:57:49.209 | ERROR    | manger:request_validation_exception_handler:83 - 参数错误POST http://192.168.0.114:7777/project/Make_Signature_File
+2024-11-08 16:59:19.259 | ERROR    | modules.Project:text_to_word:1969 - 图片下载失败:/upload/broke/0c5d80359cc5416a9ea953fdebcbfc20/26835e67a63f48aeb31750a3e8385a17/PDIFloorPlanImg/6811f0fdc7a049c483ef1a876fdad3c9.jpg
+2024-11-08 16:59:19.271 | ERROR    | modules.Project:text_to_word:1969 - 图片下载失败:/upload/broke/0c5d80359cc5416a9ea953fdebcbfc20/26835e67a63f48aeb31750a3e8385a17/PDIFloorPlanImg/94faddd9512148b797c09cf30ac44e1.jpg
+2024-11-08 16:59:22.990 | ERROR    | manger:request_validation_exception_handler:83 - 参数错误POST http://192.168.0.114:7777/project/Make_Signature_File
+2024-11-08 16:59:59.603 | ERROR    | manger:request_validation_exception_handler:83 - 参数错误POST http://192.168.0.114:7777/project/Make_Signature_File
+2024-11-08 17:01:21.110 | ERROR    | manger:request_validation_exception_handler:84 - 参数错误POST http://192.168.0.114:7777/project/Make_Signature_File
+2024-11-08 17:02:11.061 | ERROR    | manger:request_validation_exception_handler:84 - 参数错误POST http://192.168.0.114:7777/project/Make_Signature_File
+2024-11-08 18:48:33.280 | ERROR    | modules.Project:text_to_word:1969 - 图片下载失败:/upload/broke/0c5d80359cc5416a9ea953fdebcbfc20/26835e67a63f48aeb31750a3e8385a17/PDIFloorPlanImg/6811f0fdc7a049c483ef1a876fdad3c9.jpg
+2024-11-08 18:48:33.291 | ERROR    | modules.Project:text_to_word:1969 - 图片下载失败:/upload/broke/0c5d80359cc5416a9ea953fdebcbfc20/26835e67a63f48aeb31750a3e8385a17/PDIFloorPlanImg/94faddd9512148b797c09cf30ac44e1.jpg
+2024-11-08 18:55:29.337 | ERROR    | modules.Project:text_to_word:1969 - 图片下载失败:/upload/broke/0c5d80359cc5416a9ea953fdebcbfc20/26835e67a63f48aeb31750a3e8385a17/PDIFloorPlanImg/6811f0fdc7a049c483ef1a876fdad3c9.jpg
+2024-11-08 18:55:29.350 | ERROR    | modules.Project:text_to_word:1969 - 图片下载失败:/upload/broke/0c5d80359cc5416a9ea953fdebcbfc20/26835e67a63f48aeb31750a3e8385a17/PDIFloorPlanImg/94faddd9512148b797c09cf30ac44e1.jpg
+2024-11-08 18:57:27.335 | ERROR    | modules.Project:text_to_word:1969 - 图片下载失败:/upload/broke/0c5d80359cc5416a9ea953fdebcbfc20/26835e67a63f48aeb31750a3e8385a17/PDIFloorPlanImg/6811f0fdc7a049c483ef1a876fdad3c9.jpg
+2024-11-08 18:57:27.379 | ERROR    | modules.Project:text_to_word:1969 - 图片下载失败:/upload/broke/0c5d80359cc5416a9ea953fdebcbfc20/26835e67a63f48aeb31750a3e8385a17/PDIFloorPlanImg/94faddd9512148b797c09cf30ac44e1.jpg
+2024-11-08 18:58:26.441 | ERROR    | modules.Project:text_to_word:1969 - 图片下载失败:/upload/broke/0c5d80359cc5416a9ea953fdebcbfc20/26835e67a63f48aeb31750a3e8385a17/PDIFloorPlanImg/6811f0fdc7a049c483ef1a876fdad3c9.jpg
+2024-11-08 18:58:26.468 | ERROR    | modules.Project:text_to_word:1969 - 图片下载失败:/upload/broke/0c5d80359cc5416a9ea953fdebcbfc20/26835e67a63f48aeb31750a3e8385a17/PDIFloorPlanImg/94faddd9512148b797c09cf30ac44e1.jpg
+2024-11-08 19:21:02.878 | ERROR    | modules.Project:text_to_word:1971 - 图片下载失败:/upload/broke/0c5d80359cc5416a9ea953fdebcbfc20/26835e67a63f48aeb31750a3e8385a17/PDIFloorPlanImg/6811f0fdc7a049c483ef1a876fdad3c9.jpg
+2024-11-08 19:21:02.900 | ERROR    | modules.Project:text_to_word:1971 - 图片下载失败:/upload/broke/0c5d80359cc5416a9ea953fdebcbfc20/26835e67a63f48aeb31750a3e8385a17/PDIFloorPlanImg/94faddd9512148b797c09cf30ac44e1.jpg

@@ -1,9 +1,9 @@
 <!DOCTYPE html>
+<!-- 导出反馈信息PDF 模板 -->
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- 导出反馈信息PDF 模板 -->
   <title>Property Condition Report</title>
   <style>
     html,body {
@@ -37,6 +37,7 @@
 </head>
 <body>
   <div>
+    房源地址-创建时间-检查人名称-检查人联系信息（电话/邮箱）-检查类型-客户名称
 
     <div style="color: white;">.</div>
     <div class="container">
@@ -54,6 +55,7 @@
     <table style="border-collapse: collapse;">
       <!-- 内容 -->
       {% for Condition in Conditionlist %}
+      <p>照片-位置-描述-时间</p>
       <tr height="400px" >
         <td style="display: block;">
           ({{loop.index}})
@@ -61,7 +63,8 @@
         <td 
         >
         {% for photo in Condition.photo %}
-          <div style="width: 400px;
+          <div style="
+          width: 400px;
           height: 400px;
           background-size: contain;
           background-repeat: no-repeat;

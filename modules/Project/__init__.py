@@ -1,10 +1,17 @@
 
 # import imp
-import jinja2,pdfkit,base64
+import jinja2,pdfkit,base64,time
+
+from docx import Document
+from docx.shared import Inches,RGBColor
+from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
+
+from typing import Optional
+from pydantic import BaseModel
 # from logging import exception
 import re
 from ast import literal_eval
-# from urllib import parse
+from urllib import parse
 # from msilib.schema import Error
 from fastapi import APIRouter,Form,HTTPException,Body
 import os
@@ -45,9 +52,9 @@ envs = "release" # 发布
 
 
 if envs == "cc":
-    imgpath = 'https://img.singmap.com'
-    urlpath = 'https://api.singmap.com' #API
-    now_host = "https://api.singmap.com"
+    imgpath = 'http://192.168.0.145:8083'
+    urlpath = 'http://192.168.0.145:9998' #API
+    now_host = "http://192.168.0.145:9998"
     filepath = os.getcwd() # 当前文件路径 
     returnpaths = os.getcwd() # 当前文件路径 
     ecoprop_temp_path = os.path.join(os.getcwd(),'temp') # 当前文件路径 
@@ -74,6 +81,7 @@ if envs == 'release':
 @router.get("/")
 def read_users():
     return "Mixgo Make PDF API !"
+
 
 @router.post("/Make_Pdf")
 def Make_Pdf(MakeType: str=Form(...),MakeData: str=Form(...)):
@@ -379,7 +387,8 @@ async def Re_Itinerary(customerId: str=Form(...)):
     """
     Re Lo Sg 项目 
     行程导出PDF功能
-    参数：用户ID、行程ID（多个）/日期？
+    参数：用户ID
+
     """
     logger.info('创建行程导出PDF----->>>{}'.format(customerId))
 
@@ -474,6 +483,7 @@ async def Re_Itinerary(customerId: str=Form(...)):
             InfoData = eval(re.sub('None','\'\'',str(InfoData))) # 去除None值
             htmls = template.render(InfoData)
             # config = pdfkit.configuration(wkhtmltopdf='/usr/local/bin/wkhtmltopdf')
+            
             pdfkit.from_string(htmls,re_path,options=options)
         except Exception as e:
             logger.error(e)
@@ -562,6 +572,7 @@ async def Condition_Report(customerId: str=Form(...)):
 
             # linux指定位置配置，因找不到wkhtmltopdf导致无法生成PDF 问题处理方案
             # config = pdfkit.configuration(wkhtmltopdf='/usr/local/bin/wkhtmltopdf') 
+            open(rt_path, 'w').close() 
 
             pdfkit.from_string(htmls,rt_path,options=options)
         except Exception as e:
@@ -572,7 +583,6 @@ async def Condition_Report(customerId: str=Form(...)):
     except BaseException as e:
         logger.error('PDF Create Error=======>{}'.format(e))
         return {'code':'-1','msg':'error',"datas":e}
-
 
 
 def MakePDF(agentId,projectId):
@@ -1844,6 +1854,7 @@ def Share_Unit_Pdf(agentId,unitId):
         datas = eval(re.sub('None','\'\'',str(datas))) # 去除None值
         htmls = template.render(datas)
         # config = pdfkit.configuration(wkhtmltopdf='/usr/local/bin/wkhtmltopdf') 
+        open(re_path, 'w').close()
         pdfkit.from_string(htmls,re_path,options=options)
     except Exception as e:
         logger.error("File Padding Err ===>>>{0}".format(e))
@@ -1908,6 +1919,7 @@ def Share_Pro_compare_Pdf(agentId,projectId):
         datas = eval(re.sub('None','\'\'',str(datas))) # 去除None值
         htmls = template.render(datas)
         # config = pdfkit.configuration(wkhtmltopdf='/usr/local/bin/wkhtmltopdf') 
+        open(re_path, 'w').close()
         pdfkit.from_string(htmls,re_path,options=options)
     except Exception as e:
         logger.error("File Padding Err ===>>>{0}".format(e))
@@ -1920,5 +1932,152 @@ def Share_Pro_compare_Pdf(agentId,projectId):
 
 
 
+class Person(BaseModel):
+    docPath: Optional[str] = ""
+    filePath: Optional[str] = ""
+    data: Optional[dict] = {}
 
+
+
+def text_to_word(paragraph, conntent,types):
+    """Word文档字段填充"""
+    
+    def replace_placeholder(match, key):
+        """替换占位符并记录日志"""
+        if key in conntent:
+            logger.info(f'替换: {match} -> {conntent[key]}')
+            return conntent[key]
+        else:
+            logger.info(f'未找到内容: {match}')
+            return ""
+
+    # 处理文本替换
+    if any(tag in paragraph.text for tag in ["{{Sign", "{{ck", "{{rd"]):
+        logger.info(f"填充文本 =====>{paragraph.text}")
+        # 优化 正则表达式直接分割整个段落，处理需要白色文本且不做填充的标签
+        parts = re.split(r'(\{\{.*?\}\})', paragraph.text)
+        if types == 'cell':
+            # 清除表格内容
+            paragraph = paragraph.paragraphs[0]
+            paragraph.clear()
+        else:
+            # 清除段落内容
+            paragraph.clear()
+        for part in parts:
+            # 处理需要白字的标签
+            if part.startswith(("{{Sign", "{{ck", "{{rd")):
+                logger.info(f'特殊标签不处理: {part}')
+                run_white = paragraph.add_run(part)  # 回填标签text
+                run_white.font.color.rgb = RGBColor(255, 255, 255)  # 设置为白色
+                continue
+            
+            key = re.search(r'\{\{(.*)\}\}', part)
+            if key:
+                part = replace_placeholder(part, key.group(1).strip())
+            run_black = paragraph.add_run(part)
+            run_black.font.color.rgb = RGBColor(0, 0, 0)  # 设置为黑色
+        # 之前的实现方式
+        # matches = re.findall(r'({{.*?}})', paragraph.text)
+        # for match in matches:
+        #     key = re.search(r'\{\{(.*?)\}\}', match).group(1).strip()
+        #     if key == '':
+        #         logger.info('待填充字段为空,不填充')
+        #         continue
+        #     if key.startswith(("Sign", "ck", "rd")):
+        #         logger.info(f'排除: {match}')
+        #         continue
+            
+        #     # 替换内容
+        #     paragraph.text = paragraph.text.replace(match, replace_placeholder(match, key))
+        # if "{{ck" in paragraph.text:
+        #     parts = re.split(r'(\{\{ck1\}\}|\{\{ck2\}\})', paragraph.text)
+        #     print(parts)
+        #     # 添加黑色文本
+        #     paragraph.clear()
+        #     for part in parts:
+        #         if part == '{{ck1}}' or part == '{{ck2}}':
+        #             run_white = paragraph.add_run(part)  # 添加白色部分
+        #             run_white.font.color.rgb = RGBColor(255, 255, 255)  # 设置为白色
+        #             continue
+        #         run_black = paragraph.add_run(part)
+        #         run_black.font.color.rgb = RGBColor(0, 0, 0)  # 设置为黑色
+
+    elif "{{img" in paragraph.text:
+        # 添加指定图片到文档
+        logger.info("填充图片 =====>{}".format(paragraph.text))
+        matches = re.findall(r'\{\{(\w+)\}\}', paragraph.text)
+        if not conntent.get(matches[0]):
+            paragraph.text = ''
+            return
+        # 临时保存图片的路径
+        parsed_url = parse.urlparse(conntent[matches[0]])
+        img_filename = os.path.basename(parsed_url.path)
+        img_path = os.path.join(ecoprop_temp_path, img_filename).replace('\\', '/')  # 构建临时文件路径
+        
+        response = requests.get(imgpath + conntent[matches[0]])
+        if response.status_code == 200:
+            with open(img_path, 'wb') as file:
+                file.write(response.content)
+
+            paragraph.text = ''
+            run = paragraph.add_run('')
+            run.add_break()
+            # 添加图片并指定大小
+            run.add_picture(img_path, width=Inches(5.5))
+            # 删除图片
+            os.remove(img_path)
+        else:
+            logger.error("图片下载失败:{}".format(conntent[matches[0]]))
+            paragraph.text = ''
+    elif "{{buyerList}}" in paragraph.text:
+        # 填充买家列表
+        logger.info("填充买家列表 =====>{}".format(paragraph.text))
+        paragraph.text = ""
+        for index,rows in enumerate(conntent['buyerList']):
+            # paragraph.text += "({0}) {1} (ID No. {2}) \n".format(str(index+1),rows['buyerName'],rows['num'])
+            paragraph.text += "{0} {1} \n".format(rows['num'],rows['buyerName'])
+        # 设置对齐方式
+        paragraph.alignment = WD_PARAGRAPH_ALIGNMENT.LEFT 
+    else:
+        # logger.info("填充文本 =====>{}".format(paragraph.text))
+        # 方案1 用jinja2模板填充文本（特殊内容不太好处理，比如一段内容、有的填充有的不填充）
+        logger.info(f"填充文本 =====>{paragraph.text}")
+        template = jinja2.Template(paragraph.text)
+        paragraph.text = template.render(conntent)
+        logger.info(f"填充后的文本 =====>{paragraph.text}")
+
+
+@router.post("/Make_Signature_File")
+def Make_Signature_Files(p: Person):
+    # 填充模板参数内容
+    logger.info("Make_Signature_Files ====>>>>>{0}".format(p))
+    try:
+        # 读取模板文件
+        doc = Document(p.docPath)
+        for paragraph in doc.paragraphs:
+            # 遍历文档段落
+            if '{{' in paragraph.text:
+                text_to_word(paragraph, p.data,'text')
+                
+        for table in doc.tables:
+            # 遍历文档中的每个表格
+            for row in table.rows:
+                for cell in row.cells:
+                    if '{{' in cell.text:
+                        text_to_word(cell, p.data,'cell')
+        
+        # 保存渲染后的文件
+        if not p.filePath :
+            p.filePath = os.path.join(ecoprop_return_path,'SignatureFlie',f"{int(time.time())}.docx").replace('\\','/')
+        
+        # 文件夹不存在就创建
+        parent_dir = os.path.dirname(p.filePath)
+        os.makedirs(parent_dir, exist_ok=True)
+        
+        doc.save(p.filePath)
+        logger.info("WORD 生成完成 ====>>>>>{0}".format(p.filePath))
+        return { 'code':'0', 'msg':'succeed', "datas":p.filePath }
+    except BaseException as e:
+        logger.info("WORD 生成失败 ====>>>>>{0}".format(e))
+        return {'code':'-1','msg':'error',"datas":e}
 

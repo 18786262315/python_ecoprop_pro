@@ -1,0 +1,21 @@
+2024-11-07 16:39:19.518 | ERROR    | manger:request_validation_exception_handler:82 - 参数错误POST http://127.0.0.1:7777/project/Make_Signature_File
+2024-11-07 16:39:44.761 | ERROR    | manger:request_validation_exception_handler:82 - 参数错误POST http://127.0.0.1:7777/project/Make_Signature_File
+2024-11-07 16:40:09.280 | ERROR    | manger:request_validation_exception_handler:82 - 参数错误POST http://127.0.0.1:7777/project/Make_Signature_File
+2024-11-07 16:40:35.713 | ERROR    | manger:request_validation_exception_handler:82 - 参数错误POST http://127.0.0.1:7777/project/Make_Signature_File
+2024-11-07 16:40:58.541 | ERROR    | manger:request_validation_exception_handler:82 - 参数错误POST http://127.0.0.1:7777/project/Make_Signature_File
+2024-11-07 16:41:16.980 | ERROR    | manger:request_validation_exception_handler:82 - 参数错误POST http://127.0.0.1:7777/project/Make_Signature_File
+2024-11-07 16:41:43.778 | ERROR    | manger:request_validation_exception_handler:82 - 参数错误POST http://127.0.0.1:7777/project/Make_Signature_File
+2024-11-07 18:10:57.202 | ERROR    | manger:request_validation_exception_handler:82 - 参数错误POST http://127.0.0.1:7777/project/Make_Signature_File
+2024-11-07 18:11:16.032 | ERROR    | manger:request_validation_exception_handler:82 - 参数错误POST http://127.0.0.1:7777/project/Make_Signature_File
+2024-11-07 18:11:48.701 | ERROR    | manger:request_validation_exception_handler:82 - 参数错误POST http://127.0.0.1:7777/project/Make_Signature_File
+2024-11-07 18:12:01.076 | ERROR    | manger:request_validation_exception_handler:82 - 参数错误POST http://127.0.0.1:7777/project/Make_Signature_File
+2024-11-07 18:12:06.253 | ERROR    | manger:request_validation_exception_handler:82 - 参数错误POST http://127.0.0.1:7777/project/Make_Signature_File
+2024-11-07 18:29:31.053 | ERROR    | manger:request_validation_exception_handler:82 - 参数错误POST http://127.0.0.1:7777/project/Make_Signature_File
+2024-11-07 18:29:35.023 | ERROR    | manger:request_validation_exception_handler:82 - 参数错误POST http://127.0.0.1:7777/project/Make_Signature_File
+2024-11-07 18:59:58.924 | ERROR    | modules.Project:text_to_word:121 - 图片下载失败:https://img.singmap.com/upload/broke/0c5d80359cc5416a9ea953fdebcbfc20/26835e67a63f48aeb31750a3e8385a17/PDIFloorPlanImg/94faddd9512148b797c09cf30ac44e1.jpg
+2024-11-07 19:01:13.026 | ERROR    | modules.Project:text_to_word:120 - 图片下载失败:https://img.singmap.com/upload/broke/0c5d80359cc5416a9ea953fdebcbfc20/26835e67a63f48aeb31750a3e8385a17/PDIFloorPlanImg/94faddd9512148b797c09cf30ac44e1.jpg
+2024-11-07 19:03:31.163 | ERROR    | modules.Project:text_to_word:1969 - 图片下载失败:https://img.singmap.com/upload/broke/0c5d80359cc5416a9ea953fdebcbfc20/26835e67a63f48aeb31750a3e8385a17/PDIFloorPlanImg/94faddd9512148b797c09cf30ac44e1.jpg
+2024-11-07 19:05:52.291 | ERROR    | modules.Project:text_to_word:1969 - 图片下载失败:https://img.singmap.com/upload/broke/0c5d80359cc5416a9ea953fdebcbfc20/26835e67a63f48aeb31750a3e8385a17/PDIFloorPlanImg/94faddd9512148b797c09cf30ac44e1.jpg
+2024-11-07 19:06:05.020 | ERROR    | modules.Project:text_to_word:1969 - 图片下载失败:https://img.singmap.com/upload/broke/0c5d80359cc5416a9ea953fdebcbfc20/26835e67a63f48aeb31750a3e8385a17/PDIFloorPlanImg/94faddd9512148b797c09cf30ac44e1.jpg
+2024-11-07 19:06:17.282 | ERROR    | modules.Project:text_to_word:1969 - 图片下载失败:https://img.singmap.com/upload/broke/0c5d80359cc5416a9ea953fdebcbfc20/26835e67a63f48aeb31750a3e8385a17/PDIFloorPlanImg/94faddd9512148b797c09cf30ac44e1.jpg
+2024-11-07 19:08:36.274 | ERROR    | modules.Project:text_to_word:1970 - 图片下载失败:/upload/broke/0c5d80359cc5416a9ea953fdebcbfc20/26835e67a63f48aeb31750a3e8385a17/PDIFloorPlanImg/94faddd9512148b797c09cf30ac44e1.jpg
