@@ -348,7 +348,9 @@
     <div class="content-title-line"></div>
     <div class="gallery-img-list">
       {% for floorplan in floor_plan_list.lists %}
+      {% if floorplan.img %}
         <img class="Image-Data" style="object-fit: cover;" src="{{imgpath}}{{floorplan.img}}"  onerror="https://image.singmap.com/upload/broke/otherimg/404.png" alt="">
+      {%endif%}
         <!-- <div class="Image-Data" style="background-image: url({{imgpath}}{{floorplan.img | urlencode}}{{'?x-oss-process=image/auto-orient,1/interlace,1/resize,p_50'}});"></div> -->
       {% endfor %}
     </div>

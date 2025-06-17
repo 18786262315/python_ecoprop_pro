@@ -32,8 +32,6 @@ class push_siteplan(userInfo):
 
 @router.get('/mapping')
 async def SetMapping(data: get_siteplan):
-
-
     try:
         print(0)
 
@@ -45,8 +43,8 @@ async def SetMapping(data: get_siteplan):
 
         headers = {"Content-Type": "application/x-www-form-urlencoded"}
         Push_Url = "/broke-manager-service/siteplan/updateSiteContent"
-        content = push_siteplan(**data.dict(),content=content)
-        return pic.set_signature(content.dict())
+        content = push_siteplan(**data.model_dump(),content=content)
+        return pic.set_signature(content.model_dump())
 
         # ret = requests.post(Push_Url, data=pic.set_signature(content.dict()))
         # logger.info('提交内容成功=======>')

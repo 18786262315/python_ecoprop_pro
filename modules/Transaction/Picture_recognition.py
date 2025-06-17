@@ -26,7 +26,7 @@ def FileDown(url,filepath=os.getcwd()):
         return downFlie
     else:
       logger.info("网络图片不存在:{}".format(url))
-      raise '图片下载异常'
+      raise Exception("网络图片不存在")
 
 
 def set_signature(data):

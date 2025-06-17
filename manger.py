@@ -35,7 +35,7 @@ app = FastAPI()
 
 # app.include_router(Users.router)
 # app.include_router(Company.router)
-# app.include_router(Transaction.router)
+app.include_router(Transaction.router)
 app.include_router(Project.router)
 
 
@@ -62,26 +62,29 @@ app.add_middleware(
 # 请求中间件，请求前后内容处理。
 class LoggingMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
+        # logger.info(f"处理前")
         response = await call_next(request)
-        print(f"Request: {request.method} {request.url} from {request.client.host}:{request.client.port} {request.body}")
+        # print(f"Request: {request.method} {request.url} from {request.client.host}:{request.client.port} {request.body}")
+        # logger.info(f"请求111{request.method} {request.url} from {request.client.host}:{request.client.port}")
         # 记录响应内容
-        if isinstance(response, StreamingResponse):
+        # if isinstance(response, StreamingResponse):
             # 对于流式响应，无法直接读取内容，所以这里可以记录其他信息
-            print(f"StreamingResponse: {response.media_type}, Status Code: {response.status_code}")
-        else:
+            # logger.info(f"请求111{request.method} {request.url} from {request.client.host}:{request.client.port}")
+            # print(f"StreamingResponse: {response.media_type}, Status Code: {response.status_code}")
+        # else:
             # 对于普通响应，可以直接获取内容
-            print(f"Response: {response.body}, Status Code: {response.status_code}")
+            # logger.info(f"请求222")
+            # print(f"Response: {response.body}, Status Code: {response.status_code}")
         
-        return response
+        # return response
 
-app.add_middleware(LoggingMiddleware)
+# app.add_middleware(LoggingMiddleware)
 
 # 参数检测
 @app.exception_handler(RequestValidationError) 
 async def request_validation_exception_handler(request: Request, exc: RequestValidationError):
-    logger.info(f"{request.method} {request.url}")
-    # print(f"参数不对{request.method} {request.url}") # 可以用日志记录请求信息,方便排错
-    logger.error(f"参数错误{request.method} {request.url}")
+    # logger.info(f"{request.method} {request.url}")
+    logger.error(f"参数错误{request.method} {request.url}") # 记录请求信息,方便排错
     return JSONResponse({"code": "400", "message": exc.errors()})
 
 # Dependency
@@ -93,16 +96,14 @@ async def request_validation_exception_handler(request: Request, exc: RequestVal
 #         db.close()
 
 
-# 模块引入
-
-# @app.get("/")
-# def read_users():
-#     logger.info('audax_admin')
-#     return "audax_admin"
-
 
 @app.get("/")
-async def get():
-    logger.info('audax_admin')
-    return f'fdsfa'
+async def main():
+
+    return 0
+
+
+
+
+
 

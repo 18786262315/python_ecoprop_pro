@@ -1956,6 +1956,7 @@ def text_to_word(paragraph, conntent,types):
         logger.info(f"填充文本 =====>{paragraph.text}")
         # 优化 正则表达式直接分割整个段落，处理需要白色文本且不做填充的标签
         parts = re.split(r'(\{\{.*?\}\})', paragraph.text)
+        logger.info(f"parts: {parts}")
         if types == 'cell':
             # 清除表格内容
             paragraph = paragraph.paragraphs[0]
@@ -1967,8 +1968,8 @@ def text_to_word(paragraph, conntent,types):
             # 处理需要白字的标签
             if part.startswith(("{{Sign", "{{ck", "{{rd")):
                 logger.info(f'特殊标签不处理: {part}')
-                run_white = paragraph.add_run(part)  # 回填标签text
-                run_white.font.color.rgb = RGBColor(255, 255, 255)  # 设置为白色
+                # run_white = paragraph.add_run(part)  # 回填标签text
+                # run_white.font.color.rgb = RGBColor(255, 255, 255)  # 设置为白色
                 continue
             
             key = re.search(r'\{\{(.*)\}\}', part)
@@ -2046,7 +2047,7 @@ def text_to_word(paragraph, conntent,types):
         paragraph.text = template.render(conntent)
         logger.info(f"填充后的文本 =====>{paragraph.text}")
 
-
+# 生成PDI签名文件,java 那边处理不了替换的问题。
 @router.post("/Make_Signature_File")
 def Make_Signature_Files(p: Person):
     # 填充模板参数内容

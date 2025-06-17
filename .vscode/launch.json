@@ -4,20 +4,35 @@
     // 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
+        // {
+        //     "name": "Python",
+        //     "type": "debugpy",
+        //     "request": "launch",
+        //     "stopOnEntry": false,
+        //     "python": "D:\\OtherApps\\PythonEnvs\\envs\\testenv1\\python.exe",
+        //     "program": "${file}",
+        //     "cwd": "${workspaceFolder}",
+        //     "env": {},
+        //     "envFile": "${workspaceFolder}/.env",
+        //     "debugOptions": [
+        //         "RedirectOutput"
+        //     ]
+        // }
         {
-            "name": "Python",
-            "type": "python",
+            "name": "Python: FastAPI",
+            "type": "debugpy",
             "request": "launch",
-            "stopOnEntry": false,
-            "python": "E:\\python\\Python36-32\\python.exe",
-            "program": "${file}",
+            "module": "uvicorn",
+            "args": [
+                "manger:app",
+                "--host",
+                "127.0.0.1",
+                "--port",
+                "7777",
+                "--reload"
+            ],
             "cwd": "${workspaceFolder}",
-            "env": {},
-            "envFile": "${workspaceFolder}/.env",
-            "debugOptions": [
-                
-                "RedirectOutput"
-            ]
+            "console": "integratedTerminal"
         }
        
     ]

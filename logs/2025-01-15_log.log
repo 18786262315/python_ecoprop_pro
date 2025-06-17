@@ -1,0 +1,1 @@
+2025-01-15 15:24:07.789 | ERROR    | manger:request_validation_exception_handler:87 - 参数错误GET http://127.0.0.1:7777/Transaction/mapping
