@@ -97,7 +97,7 @@ def XHORIZON_APP_PRO_PDF(agentId,projectId):
         os.makedirs(uppath)
     
     savepath = os.path.join(uppath,str(int(time.time()))+'.pdf')
-    returnPath = os.path.join(Config.returnpaths,agentId,str(int(time.time()))+'.pdf')
+    returnPath = os.path.join(Config.filepath,agentId,str(int(time.time()))+'.pdf')
     doc = canvas.Canvas(savepath,pagesize=pagesize)
     doc.setTitle(prodatainfo['projectName'])
     makefunc = MakeReportlab(doc,Imagepath,pagesize,Symbol) # 加载方法

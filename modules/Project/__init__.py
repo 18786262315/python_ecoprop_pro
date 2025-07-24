@@ -45,38 +45,35 @@ router = APIRouter(prefix="/project",tags=['project'],responses={405: {"descript
 gettime = getDatetimes()
 
 
-# envs = "cc" # 本地
-# envs = "test" # 测试
-envs = "release" # 发布
+# Config.envs = "cc" # 本地
+# Config.envs = "test" # 测试
+# Config.envs = "release" # 发布
 
 
 
-if envs == "cc":
-    imgpath = 'http://192.168.0.145:8083'
-    urlpath = 'http://192.168.0.145:9998' #API
-    now_host = "http://192.168.0.145:9998"
-    filepath = os.getcwd() # 当前文件路径 
-    returnpaths = os.getcwd() # 当前文件路径 
-    ecoprop_temp_path = os.path.join(os.getcwd(),'temp') # 当前文件路径 
-    ecoprop_return_path = os.path.join(os.getcwd(),'pdf') # 当前文件路径 
+# if Config.envs == "cc":
+#     Config.imgpath = 'http://192.168.0.145:8083'
+#     Config.urlpath = 'http://192.168.0.145:9998' #API
+#     Config.now_host = "http://192.168.0.145:9998"
+#     Config.filepath = os.getcwd() # 当前文件路径 
+#     Config.ecoprop_temp_path = os.path.join(os.getcwd(),'temp') # 当前文件路径 
+#     Config.ecoprop_return_path = os.path.join(os.getcwd(),'pdf') # 当前文件路径 
 
-if envs == "test":
-    imgpath = 'http://192.168.0.145:8083'
-    urlpath = 'http://192.168.0.145:9998' #API
-    now_host = "http://127.0.0.1:9998"
-    filepath = '/home/mixgo_py_pro'
-    returnpaths = "/home/mixgo_py_pro"
-    ecoprop_temp_path = "/home/upload/broke/ecoprop/temp"
-    ecoprop_return_path = "/home/upload/broke/ecoprop/pdf"
+# if Config.envs == "test":
+#     Config.imgpath = 'http://192.168.0.145:8083'
+#     Config.urlpath = 'http://192.168.0.145:9998' #API
+#     Config.now_host = "http://127.0.0.1:9998"
+#     Config.filepath = '/home/mixgo_py_pro'
+#     Config.ecoprop_temp_path = "/home/upload/broke/ecoprop/temp"
+#     Config.ecoprop_return_path = "/home/upload/broke/ecoprop/pdf"
 
-if envs == 'release':
-    imgpath = 'https://img.singmap.com'
-    urlpath = 'https://api.singmap.com' #API
-    now_host = "http://127.0.0.1:9998" 
-    filepath = '/home/upload/broke/pnd/file/report'
-    returnpaths = "/home/upload/broke/pnd/file/report"
-    ecoprop_temp_path = "/home/upload/broke/ecoprop/temp"
-    ecoprop_return_path = "/home/upload/broke/ecoprop/pdf"
+# if Config.envs == 'release':
+#     Config.imgpath = 'https://img.singmap.com'
+#     Config.urlpath = 'https://api.singmap.com' #API
+#     Config.now_host = "http://127.0.0.1:9998" 
+#     Config.filepath = '/home/upload/broke/pnd/file/report'
+#     Config.ecoprop_temp_path = "/home/upload/broke/ecoprop/temp"
+#     Config.ecoprop_return_path = "/home/upload/broke/ecoprop/pdf"
 
 @router.get("/")
 def read_users():
@@ -388,7 +385,7 @@ async def Re_Itinerary(customerId: str=Form(...)):
     Re Lo Sg 项目 
     行程导出PDF功能
     参数：用户ID
-
+    未启用
     """
     logger.info('创建行程导出PDF----->>>{}'.format(customerId))
 
@@ -457,14 +454,14 @@ async def Re_Itinerary(customerId: str=Form(...)):
         
         # 输出文件路径
         new_file_name = InfoData['UserInfo']['firstName']+' '+InfoData['UserInfo']['lastName']+"-Schedule"+'.pdf'
-        re_path = os.path.join(ecoprop_return_path,'re_itinerary',InfoData['NowDate'],new_file_name).replace('\\','/')
+        re_path = os.path.join(Config.ecoprop_return_path,'re_itinerary',InfoData['NowDate'],new_file_name).replace('\\','/')
         logger.info('Set return Path ====>>>>'+re_path)
         # 文件夹检查
         if not os.path.exists(os.path.split(re_path)[0]): 
             os.makedirs(os.path.split(re_path)[0])
 
         logger.info('Get Temp ====>>>> re_Schedule.html')
-        env = jinja2.Environment(loader=jinja2.FileSystemLoader(searchpath=ecoprop_temp_path,encoding='utf-8'))
+        env = jinja2.Environment(loader=jinja2.FileSystemLoader(searchpath=Config.ecoprop_temp_path,encoding='utf-8'))
         template = env.get_template('re_Schedule.html')
 
         # 模板填充参数
@@ -534,14 +531,14 @@ async def Condition_Report(customerId: str=Form(...)):
 
         # 输出文件路径
         new_file_name ="Condition_Report_"+Condition_Data['UserInfo']['firstName']+' '+Condition_Data['UserInfo']['lastName']+'.pdf'
-        rt_path = os.path.join(ecoprop_return_path,'re_itinerary',gettime.getDate(),new_file_name).replace('\\','/')
+        rt_path = os.path.join(Config.ecoprop_return_path,'re_itinerary',gettime.getDate(),new_file_name).replace('\\','/')
 
         # 文件夹检查
         if not os.path.exists(os.path.split(rt_path)[0]): 
             os.makedirs(os.path.split(rt_path)[0])
 
         logger.info('Jinja Temp Filling ====>>>> Condition_Report.html')
-        env = jinja2.Environment(loader=jinja2.FileSystemLoader(searchpath=ecoprop_temp_path,encoding='utf-8'))
+        env = jinja2.Environment(loader=jinja2.FileSystemLoader(searchpath=Config.ecoprop_temp_path,encoding='utf-8'))
         template = env.get_template('Condition_Report.html')
 
         # 模板填充参数
@@ -554,7 +551,7 @@ async def Condition_Report(customerId: str=Form(...)):
             'orientation':'portrait',
             'encoding': "UTF-8",
             'no-outline': None,
-            # 'header-html':ecoprop_temp_path+'/pdfHeader.html', #设置页眉数据，作为页眉的html页面必须有<!DOCTYPE html> 不能动态化
+            # 'header-html':Config.ecoprop_temp_path+'/pdfHeader.html', #设置页眉数据，作为页眉的html页面必须有<!DOCTYPE html> 不能动态化
             # '--header-center':'Condition Report',
             '--header-left':'Condition Report',
             '--header-line':'--header-line',
@@ -589,7 +586,7 @@ def MakePDF(agentId,projectId):
     # 基础数据准备 =====================================================
     getapi = getAPI()
     # 项目信息
-    proinfourl = urlpath+"/pnd-api/project/queryProjectInfoById"
+    proinfourl = Config.urlpath+"/pnd-api/project/queryProjectInfoById"
     proinfodata = {
         "projectId":projectId,
         "agentId":agentId
@@ -613,12 +610,12 @@ def MakePDF(agentId,projectId):
     unitproce = [0,0,0,0,0] #单位售价
 
     # 项目PDF上传图片
-    # propdfurls = urlpath+"/pnd-api/pdf/queryPdfProjectList"
+    # propdfurls = Config.urlpath+"/pnd-api/pdf/queryPdfProjectList"
     # propdfdatas = {
     #     "projectId":projectId,
     #     "type":""
     # }
-    propdfinfo = getapi.requsetAPI( urlpath+"/pnd-api/pdf/queryPdfProjectList",{
+    propdfinfo = getapi.requsetAPI( Config.urlpath+"/pnd-api/pdf/queryPdfProjectList",{
         "projectId":projectId,
         "type":""
     })
@@ -627,31 +624,31 @@ def MakePDF(agentId,projectId):
     #     logger.info('项目PDF上传图片为空--->>>projectId:%s,agentId:%s'%(projectId,agentId))
 
     # 项目区域
-    # districturl = urlpath+"/pnd-api/pdf/queryPdfDistrictList"
+    # districturl = Config.urlpath+"/pnd-api/pdf/queryPdfDistrictList"
     # districtdata = {
     #     "district":prodatainfo['district'],
     #     "type":"1"
     # }
-    districtinfo = getapi.requsetAPI(urlpath+"/pnd-api/pdf/queryPdfDistrictList",{
+    districtinfo = getapi.requsetAPI(Config.urlpath+"/pnd-api/pdf/queryPdfDistrictList",{
         "district":prodatainfo['district'],
         "type":"1"
     })
     logger.info('项目区域销售图查询成功--->>>%s'%(districtinfo))
 
     # PDF文件　
-    # fileurl = urlpath+"/pnd-api/pdf/queryPdfList"
+    # fileurl = Config.urlpath+"/pnd-api/pdf/queryPdfList"
     # filedata = {
     #     "fileName":"ProjectReport",
     #     "page":""
     # }
-    fileinfo = getapi.requsetAPI(urlpath+"/pnd-api/pdf/queryPdfList",{
+    fileinfo = getapi.requsetAPI(Config.urlpath+"/pnd-api/pdf/queryPdfList",{
         "fileName":"ProjectReport",
         "page":""
     })
     logger.info('PDF文件页面图片查询成功--->>>%s'%(fileinfo))
 
     #新加坡区间 销售统计
-    regionurl = urlpath+"/pnd-api/project/queryRetailCount"
+    regionurl = Config.urlpath+"/pnd-api/project/queryRetailCount"
     # RCRdata = { "region":"RCR"}
     RCRinfo = getapi.requsetAPI(regionurl,{ "region":"RCR"})
     logger.info('RCR查询成功--->>>%s'%(RCRinfo))
@@ -671,17 +668,17 @@ def MakePDF(agentId,projectId):
     pdfmetrics.registerFont(TTFont('arial','arial.ttf')) #注册字体
     pdfmetrics.registerFont(TTFont('msyh','msyh.ttf')) #注册字体
     pdfmetrics.registerFont(TTFont('msyhbd','msyhbd.ttf')) #注册字体
-    Imagepath = os.path.join(filepath,'file')
+    Imagepath = os.path.join(Config.filepath,'file')
     pagesize = (1747,965) # 画布大小
     # pagesize = (A4[1],A4[0]) # 画布大小
     # PND文件夹+ 项目ID + 用户信息 + 文件名称
     gettime = getDatetimes()
     tt = gettime.getDate()
-    uppath = os.path.join(filepath,tt)
+    uppath = os.path.join(Config.filepath,tt)
     if not os.path.exists(uppath):
         os.makedirs(uppath)
     savepath = os.path.join(uppath,str(int(time.time()))+'.pdf') 
-    returnPath = os.path.join(returnpaths,tt,str(int(time.time()))+'.pdf')
+    # returnPath = os.path.join(Config.filepath,tt,str(int(time.time()))+'.pdf')
     doc = canvas.Canvas(savepath,pagesize=pagesize)
     doc.setTitle(prodatainfo['projectName'])
 
@@ -694,9 +691,9 @@ def MakePDF(agentId,projectId):
     # page1  ===============================================
     # 背景
     makefunc.background('0.jpg')
-    if userinfo['logo'] and envs == 'release':
+    if userinfo['logo'] and Config.envs == 'release':
 
-        makefunc.AddURLImages(imgpath+userinfo['logo'],x=650,y=150,w=224,h=224) 
+        makefunc.AddURLImages(Config.imgpath+userinfo['logo'],x=650,y=150,w=224,h=224) 
 
     agentdata4 = [
     ["NAME",':', userinfo['agentName']],
@@ -733,9 +730,9 @@ def MakePDF(agentId,projectId):
 
     makefunc.addTesxts(fontsize=25,fontname='ARIALBD',x=70,y=pagesize[1]-150,text="PROJECT SUMMARY",color=HexColor('#E37200'))
     # 项目主图
-    if prodatainfo['mainImage'] and envs != "test":
+    if prodatainfo['mainImage'] and Config.envs != "test":
         ...
-        makefunc.ImageAdaptive(imgpath+prodatainfo['mainImage'],x=pagesize[0]-400,y=pagesize[1]-400,w=400,h=200) 
+        makefunc.ImageAdaptive(Config.imgpath+prodatainfo['mainImage'],x=pagesize[0]-400,y=pagesize[1]-400,w=400,h=200) 
     completionDate = ''
     if type(prodatainfo['completionDate']) is int:
         timeArray = time.strptime(prodatainfo['completionDate'], "%Y-%m-%d")
@@ -827,7 +824,7 @@ def MakePDF(agentId,projectId):
     ]
     if prodatainfo['url'] != None:
         page3_btm[0][1] = 'CLICK HERE'
-        doc.linkURL(imgpath+prodatainfo['url'], (280,240,280+150,240+22))
+        doc.linkURL(Config.imgpath+prodatainfo['url'], (280,240,280+150,240+22))
     if prodatainfo['ivtList'] != []:
         page3_btm[1][1] = 'CLICK HERE'
         # print(prodatainfo['ivtList'][0])
@@ -871,29 +868,29 @@ def MakePDF(agentId,projectId):
     makefunc.background('bgB.png')
     makefunc.addTesxts(fontsize=60,x=70,y=pagesize[1]-80,text=prodatainfo['projectName'],fontname='msyhbd')
     makefunc.addTesxts(fontsize=40,x=pagesize[0]/2.6,y=pagesize[1]-270,text="LOCATION HIGHLIGHT",color=HexColor('#E37200'))
-    if prodatainfo['snapshotLogo'] and envs != "test":
+    if prodatainfo['snapshotLogo'] and Config.envs != "test":
         # 地址Google 截图
-        makefunc.AddURLImages(imgpath+prodatainfo['snapshotLogo'],x=100,y=100,w=700,h=550) 
+        makefunc.AddURLImages(Config.imgpath+prodatainfo['snapshotLogo'],x=100,y=100,w=700,h=550) 
     if propdfinfo != [] :
         # 周边截图
-        makefunc.AddURLImages(imgpath+propdfinfo[0]['logo'],x=pagesize[0]/2,y=100,w=700,h=550)
+        makefunc.AddURLImages(Config.imgpath+propdfinfo[0]['logo'],x=pagesize[0]/2,y=100,w=700,h=550)
     makefunc.addTesxts(fontsize=18,x=100,y=50,text="Source: Google Maps")
     makefunc.addTesxts(fontsize=18,x=pagesize[0]/2,y=50,text="Source: URA Map")
     doc.showPage()  # 保存当前画布页面
     logger.info('============>> LOCATION HIGHLIGHT')
 
     # Page6 区域出租记录图片 ===========================================================================
-    if districtinfo != [] and envs != "test":
+    if districtinfo != [] and Config.envs != "test":
 
-        makefunc.AddURLImages(imgpath+districtinfo[0]['logo'],w=pagesize[0],h=pagesize[1])
+        makefunc.AddURLImages(Config.imgpath+districtinfo[0]['logo'],w=pagesize[0],h=pagesize[1])
         makefunc.addTesxts(fontsize=50,x=10,y=pagesize[1]-80,text='District Pricing (Rental)',color=HexColor('#E37200'))
         doc.showPage()  # 保存当前画布页面
         logger.info('============>> District Pricing (Rental)')
 
     # Page7 中介信息   ===========================================================================
     # makefunc.background('6.jpg')
-    # if userinfo['logo'] and envs == 'release' and envs != "test":
-    #     makefunc.AddURLImages(imgpath+userinfo['logo'],x=650,y=200,w=224,h=224) 
+    # if userinfo['logo'] and Config.envs == 'release' and Config.envs != "test":
+    #     makefunc.AddURLImages(Config.imgpath+userinfo['logo'],x=650,y=200,w=224,h=224) 
 
     # agentdata2 = [
     # ["NAME",':', userinfo['agentName']],
@@ -969,8 +966,8 @@ def MakePDF(agentId,projectId):
     # Page9 ===========================================================================
     # 背景
     # makefunc.background('8.jpg')
-    # if userinfo['logo'] and envs == 'release':
-    #     makefunc.AddURLImages(imgpath+userinfo['logo'],x=100,y=250,w=224,h=224) 
+    # if userinfo['logo'] and Config.envs == 'release':
+    #     makefunc.AddURLImages(Config.imgpath+userinfo['logo'],x=100,y=250,w=224,h=224) 
 
     # agentdata5 = [
     # ["NAME",':', userinfo['agentName']],
@@ -1121,9 +1118,9 @@ def MakePDF(agentId,projectId):
 
     # Page10 ===========================================================================
     # makefunc.background('10.jpg')
-    # if userinfo['logo'] and envs == 'release':
+    # if userinfo['logo'] and Config.envs == 'release':
     #     ...
-    #     makefunc.AddURLImages(imgpath+userinfo['logo'],x=100,y=270,w=224,h=224) 
+    #     makefunc.AddURLImages(Config.imgpath+userinfo['logo'],x=100,y=270,w=224,h=224) 
     # agentdata6 = [
     # ["NAME",':', userinfo['agentName']],
     # ["MOBILE",':', userinfo['mobile']],
@@ -1148,7 +1145,7 @@ def MakePDF(agentId,projectId):
         for item in fileinfo:
             # print('page10')
             if item["page"] == 10:
-                makefunc.AddURLImages(imgpath+item['logo'],x=0,y=0,w=pagesize[0],h=pagesize[1]) 
+                makefunc.AddURLImages(Config.imgpath+item['logo'],x=0,y=0,w=pagesize[0],h=pagesize[1]) 
                 doc.showPage()  # 保存当前画布页面
     makefunc.background('11.jpg')
     doc.showPage()  # 保存当前画布页面
@@ -1253,9 +1250,9 @@ def MakePDF(agentId,projectId):
     # Page16 ===========================================================================
     makefunc.background('17.jpg')
 
-    if userinfo['logo'] and envs == 'release':
+    if userinfo['logo'] and Config.envs == 'release':
         ...
-        makefunc.AddURLImages(imgpath+userinfo['logo'],x=700,y=250,w=224,h=224) 
+        makefunc.AddURLImages(Config.imgpath+userinfo['logo'],x=700,y=250,w=224,h=224) 
 
     agentdata3 = [
     ["NAME",':', userinfo['agentName']],
@@ -1311,8 +1308,8 @@ def MakePDF(agentId,projectId):
     doc.showPage()  # 保存当前画布页面
     doc.save()  # 保存文件并关闭画布
     # time.sleep(3)
-    return returnPath
-    # return savepath 
+    # return returnPath
+    return savepath 
 
 def ComparisonPDF(agentId,projectId):
     ##################################################################
@@ -1322,7 +1319,7 @@ def ComparisonPDF(agentId,projectId):
     getapi = getAPI()
     # 项目信息
     prolsit = []
-    proinfourl = urlpath+"/pnd-api/project/queryProjectInfoById"
+    proinfourl = Config.urlpath+"/pnd-api/project/queryProjectInfoById"
     for item in proidlist:
         proinfodata = {
             "projectId":item,
@@ -1338,12 +1335,12 @@ def ComparisonPDF(agentId,projectId):
     pagesize = (1747,965) # 画布大小
     # pagesize = (A4[1],A4[0]) # 画布大小
     # PND文件夹+ 项目ID + 用户信息 + 文件名称
-    # filepath = os.getcwd() # 当前文件路径 服务器文件路径 ：/home/upload/broke/pnd/file/report
-    Imagepath = os.path.join(filepath,'file')
+    # Config.filepath = os.getcwd() # 当前文件路径 服务器文件路径 ：/home/upload/broke/pnd/file/report
+    Imagepath = os.path.join(Config.filepath,'file')
     # savepath = os.path.join(Imagepath,'test.pdf') 
     gettime = getDatetimes()
     tt = gettime.getDate()
-    uppath = os.path.join(filepath,'Comparison',tt)
+    uppath = os.path.join(Config.filepath,'Comparison',tt)
     if not os.path.exists(uppath):
         os.makedirs(uppath)
     # filename = agentId+str(int(time.time()))
@@ -1478,7 +1475,7 @@ def ComparisonPDF(agentId,projectId):
         procomparison[12][keys+1] = makefunc.create_body_text(' / '.join(school),'msyh')
         if projectdata['url'] != None:
             procomparison[13][keys+1] = 'CLICK HERE'
-            # doc.linkURL(imgpath+projectdata['url'], (280,185,280+150,185+22))
+            # doc.linkURL(Config.imgpath+projectdata['url'], (280,185,280+150,185+22))
         if projectdata['ivtList'] != []:
             procomparison[14][keys+1] = 'CLICK HERE'
             # print(prodatainfo['ivtList'][0])
@@ -1489,9 +1486,9 @@ def ComparisonPDF(agentId,projectId):
     logger.info('---------->proimglist 处理完成')
     makefunc.background('comparisn0.jpg')
   
-    if userinfo['logo'] and envs == 'release':
+    if userinfo['logo'] and Config.envs == 'release':
         ...
-        makefunc.AddURLImages(imgpath+userinfo['logo'],x=720,y=250,w=224,h=224) 
+        makefunc.AddURLImages(Config.imgpath+userinfo['logo'],x=720,y=250,w=224,h=224) 
     agentdata4 = [
     ["NAME",':', userinfo['agentName']],
     ["MOBILE",':', userinfo['mobile']],
@@ -1515,7 +1512,7 @@ def ComparisonPDF(agentId,projectId):
 
     itemx = 240
     for imgitem in proimglist:
-        makefunc.ImageAdaptive(imgpath+imgitem,x=itemx,y=pagesize[1]-255,w=200,h=100) 
+        makefunc.ImageAdaptive(Config.imgpath+imgitem,x=itemx,y=pagesize[1]-255,w=200,h=100) 
         itemx+=312
     t = Table(procomparison,312,42, style={
     # ("FONT", (0, 0), (0, -1), 'msyh', 18,25),
@@ -1553,7 +1550,7 @@ def ComparisonPDF(agentId,projectId):
     for keys,items in enumerate(prolsit):
         if items['projectInfo']['url'] != None:
             # print(items['projectInfo']['url'])
-            doc.linkURL(imgpath+items['projectInfo']['url'], (170+(312*(keys)),62,170+(312*(keys))+312,62+42))
+            doc.linkURL(Config.imgpath+items['projectInfo']['url'], (170+(312*(keys)),62,170+(312*(keys))+312,62+42))
         if items['projectInfo']['ivtList'] != []:
             # print(items['ivtList'])
             doc.linkURL(items['projectInfo']['ivtList'][0], (170+(312*(keys)),20,170+(312*(keys))+312,20+42))
@@ -1607,7 +1604,7 @@ def ComparisonPDF(agentId,projectId):
 def ERABedroomRports(agentId,brokeId,minPrice,maxPrice,projectArea,token,source):
     # ERA 项目可售单位报表 生成
     gettime = getDatetimes()
-    # Imagepath = os.path.join(filepath,'file')
+    # Imagepath = os.path.join(Config.filepath,'file')
     tt = gettime.getDate()
     uppath = os.path.join('/home/upload/broke/',brokeId,'pdf',tt)
     retpath = os.path.join('/upload/broke/',brokeId,'pdf',tt)  # 因 文件请求映射地址与文件存放地址层级不一致
@@ -1623,7 +1620,7 @@ def ERABedroomRports(agentId,brokeId,minPrice,maxPrice,projectArea,token,source)
     # 基础数据准备 =====================================================
     getapi = getAPI()
     # 项目信息
-    proinfourl = urlpath+"/app-service/project/queryProjectCountByBedroom"
+    proinfourl = Config.urlpath+"/app-service/project/queryProjectCountByBedroom"
     proinfodata = {
         "brokeId":brokeId,
         "minPrice":minPrice,
@@ -1694,14 +1691,14 @@ def Shera_to_Pdf(agentId,projectId):
     # 基础数据准备 =====================================================
     getapi = getAPI()
     datas = {} 
-    datas['imgpath'] = imgpath
+    datas['Config.imgpath'] = Config.imgpath
     # agentId = "e73ca86d287143709c1450012bac9e9a"
     # projectId = "26835e67a63f48aeb31750a3e8385a17"
     logger.info('get User Info ====>>>>'+agentId)
-    datas['userInfo'] = getapi.requsetAPI(now_host+'/app-service/agent/queryShareAgentInfo',params={"agentId": agentId})
+    datas['userInfo'] = getapi.requsetAPI(Config.now_host+'/app-service/agent/queryShareAgentInfo',params={"agentId": agentId})
 
     # # 项目信息 
-    datas['proInfo'] = getapi.requsetAPI(now_host+'/app-service/project/queryProjectInfo',params={"agentId": agentId,"projectId": projectId})
+    datas['proInfo'] = getapi.requsetAPI(Config.now_host+'/app-service/project/queryProjectInfo',params={"agentId": agentId,"projectId": projectId})
     if not datas['proInfo'] or not datas['userInfo']:
         raise HTTPException(status_code=404, detail="Get Pro Or User Info Error")
     logger.info('get Pro Info ====>>>>{0}'.format(projectId))
@@ -1725,11 +1722,11 @@ def Shera_to_Pdf(agentId,projectId):
     
     # 单位价格信息
     logger.info('get unit_price_list ====>>>>')
-    datas['unit_price_list'] = getapi.requsetAPI(now_host+'/app-service/unit/unitTypeReport',params={"agentId": agentId,"projectId": projectId})
+    datas['unit_price_list'] = getapi.requsetAPI(Config.now_host+'/app-service/unit/unitTypeReport',params={"agentId": agentId,"projectId": projectId})
     
     # 项目Floor Plans
     logger.info('get site_plan_list ====>>>>')
-    site_plan_list = getapi.requsetAPI_POST(now_host+"/app-service/siteplan/querySitePlanImg",params={"agentId": agentId,"projectId": projectId})
+    site_plan_list = getapi.requsetAPI_POST(Config.now_host+"/app-service/siteplan/querySitePlanImg",params={"agentId": agentId,"projectId": projectId})
     site_list = {
         "siteplan":[],
         "allbuilding":[]
@@ -1743,11 +1740,11 @@ def Shera_to_Pdf(agentId,projectId):
 
     # 项目媒体文件
     logger.info('get Pro_media_list ====>>>>')
-    datas['media_list'] = getapi.requsetAPI_POST(now_host+"/app-service/media/queryProjectShareMedia",params={"agentId": agentId,"projectId": projectId})
+    datas['media_list'] = getapi.requsetAPI_POST(Config.now_host+"/app-service/media/queryProjectShareMedia",params={"agentId": agentId,"projectId": projectId})
     
     # 项目户型图列表
     logger.info('get floor_plan_list ====>>>>')
-    datas['floor_plan_list'] = getapi.requsetAPI_POST(now_host+"/app-service/floor/queryFloorPlansByType",params={"type":"","projectId": projectId,"pageNo": 1,"pageSize":10})
+    datas['floor_plan_list'] = getapi.requsetAPI_POST(Config.now_host+"/app-service/floor/queryFloorPlansByType",params={"type":"","projectId": projectId,"pageNo": 1,"pageSize":10})
 
     # 文件内部的所有跳转全部将跳转到指定的分享页面
     logger.info('set openlink====>>>>')
@@ -1756,21 +1753,21 @@ def Shera_to_Pdf(agentId,projectId):
 
     # 模板文件路径
     # logger.info('Set Tmp Info ====>>>>'+agentId)
-    # temp_path = os.path.join(ecoprop_temp_path,'ecoprop_pro_share_temp.html').replace('\\','/')
+    # temp_path = os.path.join(Config.ecoprop_temp_path,'ecoprop_pro_share_temp.html').replace('\\','/')
     # 输出文件路径
     logger.info('Set return Path ====>>>>')
     gettime = getDatetimes()
     tt = gettime.getDate()
     if not datas['userInfo']['regNum'] : return {'code':'-1','msg':'error',"datas":"regNum is null"}
     new_file_name = datas['proInfo']['abbreviation']+"-"+datas['userInfo']['regNum']+"-"+tt+'.pdf'
-    re_path = os.path.join(ecoprop_return_path,'pro_share_pdf',tt,new_file_name).replace('\\','/')
+    re_path = os.path.join(Config.ecoprop_return_path,'pro_share_pdf',tt,new_file_name).replace('\\','/')
 
     # 文件夹检查
     if not os.path.exists(os.path.split(re_path)[0]): 
         os.makedirs(os.path.split(re_path)[0])
 
     logger.info('Get Jinja2 Temp ====>>>>')
-    env = jinja2.Environment(loader=jinja2.FileSystemLoader(searchpath=ecoprop_temp_path,encoding='utf-8'))
+    env = jinja2.Environment(loader=jinja2.FileSystemLoader(searchpath=Config.ecoprop_temp_path,encoding='utf-8'))
     template = env.get_template('ecoprop_pro_share_temp.html')
 
     # 模板填充参数
@@ -1808,35 +1805,35 @@ def Share_Unit_Pdf(agentId,unitId):
     # 创建 单位对比PDF文件
     getapi = getAPI()
     datas = {
-        "imgpath":imgpath
+        "imgpath":Config.imgpath
     } 
     # agentId = "e73ca86d287143709c1450012bac9e9a"
     # unitId = "7da0db34a0f34d969049a4b22a768b39,7e078477280b4abfb639ab79661c4400,70911a06985b44549380cc04839a7f14,b67eaef41f224acb919852e9b98ca81a"
     logger.info('get User Info ====>>>>'+agentId)
-    datas['userInfo'] = getapi.requsetAPI(now_host+'/app-service/agent/queryShareAgentInfo',params={"agentId": agentId})
+    datas['userInfo'] = getapi.requsetAPI(Config.now_host+'/app-service/agent/queryShareAgentInfo',params={"agentId": agentId})
 
     UnitIdList = unitId.split(',')
     datas['unit_list'] = []
     logger.info('get Unit Info ====>>>>')
     for i in UnitIdList:
-        unitInfo = getapi.requsetAPI(now_host+'/app-service/unit/getUnitInfo',params={"agentId": agentId,"unitId":i})
+        unitInfo = getapi.requsetAPI(Config.now_host+'/app-service/unit/getUnitInfo',params={"agentId": agentId,"unitId":i})
         if unitInfo : datas['unit_list'].append(unitInfo)
     if not datas['unit_list'] :
         logger.error('Unit List Is None')
         raise HTTPException(status_code=404, detail="Unit Get Error")
     # 模板文件路径
-    # temp_path = os.path.join(ecoprop_temp_path,'ecoprop_unit_share_temp.html').replace('\\','/')
+    # temp_path = os.path.join(Config.ecoprop_temp_path,'ecoprop_unit_share_temp.html').replace('\\','/')
     # 输出文件路径
     # str(datetime.datetime.now().strftime('%d-%m-%Y-%H%M%S'))
     gettime = getDatetimes()
     tt = gettime.getDate()
     new_file_name = datas['userInfo']['regNum']+"-"+tt+'.pdf'
-    re_path = os.path.join(ecoprop_return_path,'user_unit_compare',tt,new_file_name).replace('\\','/')
+    re_path = os.path.join(Config.ecoprop_return_path,'user_unit_compare',tt,new_file_name).replace('\\','/')
     if not os.path.exists(os.path.split(re_path)[0]):
         logger.info('ADD New folder ====>>>>'+os.path.split(re_path)[0])
         os.makedirs(os.path.split(re_path)[0])
         
-    env = jinja2.Environment(loader=jinja2.FileSystemLoader(searchpath=ecoprop_temp_path,encoding='utf-8'))
+    env = jinja2.Environment(loader=jinja2.FileSystemLoader(searchpath=Config.ecoprop_temp_path,encoding='utf-8'))
     template = env.get_template('ecoprop_unit_share_temp.html')
     # 模板填充参数
     options = {
@@ -1867,17 +1864,17 @@ def Share_Pro_compare_Pdf(agentId,projectId):
     # 创建 项目对比PDF文件
     getapi = getAPI()
     datas = {
-        "imgpath":imgpath
+        "imgpath":Config.imgpath
     } 
     # agentId = "e73ca86d287143709c1450012bac9e9a"
     # projectId = "5b2216e95ef446bf853113450a0642f1,0c3cef5e77f547a99d61d6a2ccd37885"
     logger.info('get User Info ====>>>>'+agentId)
-    datas['userInfo'] = getapi.requsetAPI(now_host+'/app-service/agent/queryShareAgentInfo',params={"agentId": agentId})
+    datas['userInfo'] = getapi.requsetAPI(Config.now_host+'/app-service/agent/queryShareAgentInfo',params={"agentId": agentId})
 
     UnitIdList = projectId.split(',')
     datas['pro_list'] = []
     logger.info('get Pro Info ====>>>>')
-    proinfourl = urlpath+"/app-service/project/queryProjectInfo"
+    proinfourl = Config.urlpath+"/app-service/project/queryProjectInfo"
     for item in UnitIdList:
         proinfo = getapi.requsetAPI(proinfourl,{"projectId":item,"agentId":agentId})
         if proinfo: datas['pro_list'].append(proinfo) 
@@ -1887,18 +1884,18 @@ def Share_Pro_compare_Pdf(agentId,projectId):
         raise HTTPException(status_code=404, detail="Pro Get Error")
 
     # 模板文件路径
-    # temp_path = os.path.join(ecoprop_temp_path,'ecoprop_pro_compare_share_temp.html').replace('\\','/')
+    # temp_path = os.path.join(Config.ecoprop_temp_path,'ecoprop_pro_compare_share_temp.html').replace('\\','/')
     # 输出文件路径
     # str(datetime.datetime.now().strftime('%d-%m-%Y-%H%M%S'))
     gettime = getDatetimes()
     tt = gettime.getDate()
     new_file_name = datas['userInfo']['regNum']+"-"+tt+'.pdf'
-    re_path = os.path.join(ecoprop_return_path,'user_pro_compare',tt,new_file_name).replace('\\','/')
+    re_path = os.path.join(Config.ecoprop_return_path,'user_pro_compare',tt,new_file_name).replace('\\','/')
     if not os.path.exists(os.path.split(re_path)[0]):
         logger.info('ADD New folder ====>>>>'+os.path.split(re_path)[0])
         os.makedirs(os.path.split(re_path)[0])
         
-    env = jinja2.Environment(loader=jinja2.FileSystemLoader(searchpath=ecoprop_temp_path,encoding='utf-8'))
+    env = jinja2.Environment(loader=jinja2.FileSystemLoader(searchpath=Config.ecoprop_temp_path,encoding='utf-8'))
     template = env.get_template('ecoprop_pro_compare_share_temp.html')
     datas['openlink'] = "https://app.singmap.com/share/index.html#/vsProject?projectIds={0}&agentId={1}".format(projectId,agentId)
 
@@ -1934,7 +1931,7 @@ def Share_Pro_compare_Pdf(agentId,projectId):
 
 class Person(BaseModel):
     docPath: Optional[str] = ""
-    filePath: Optional[str] = ""
+    filepath: Optional[str] = ""
     data: Optional[dict] = {}
 
 
@@ -2013,9 +2010,9 @@ def text_to_word(paragraph, conntent,types):
         # 临时保存图片的路径
         parsed_url = parse.urlparse(conntent[matches[0]])
         img_filename = os.path.basename(parsed_url.path)
-        img_path = os.path.join(ecoprop_temp_path, img_filename).replace('\\', '/')  # 构建临时文件路径
+        img_path = os.path.join(Config.ecoprop_temp_path, img_filename).replace('\\', '/')  # 构建临时文件路径
         
-        response = requests.get(imgpath + conntent[matches[0]])
+        response = requests.get(Config.imgpath + conntent[matches[0]])
         if response.status_code == 200:
             with open(img_path, 'wb') as file:
                 file.write(response.content)
@@ -2068,16 +2065,16 @@ def Make_Signature_Files(p: Person):
                         text_to_word(cell, p.data,'cell')
         
         # 保存渲染后的文件
-        if not p.filePath :
-            p.filePath = os.path.join(ecoprop_return_path,'SignatureFlie',f"{int(time.time())}.docx").replace('\\','/')
+        if not p.filepath :
+            p.filepath = os.path.join(Config.ecoprop_return_path,'SignatureFlie',f"{int(time.time())}.docx").replace('\\','/')
         
         # 文件夹不存在就创建
-        parent_dir = os.path.dirname(p.filePath)
+        parent_dir = os.path.dirname(p.filepath)
         os.makedirs(parent_dir, exist_ok=True)
         
-        doc.save(p.filePath)
-        logger.info("WORD 生成完成 ====>>>>>{0}".format(p.filePath))
-        return { 'code':'0', 'msg':'succeed', "datas":p.filePath }
+        doc.save(p.filepath)
+        logger.info("WORD 生成完成 ====>>>>>{0}".format(p.filepath))
+        return { 'code':'0', 'msg':'succeed', "datas":p.filepath }
     except BaseException as e:
         logger.info("WORD 生成失败 ====>>>>>{0}".format(e))
         return {'code':'-1','msg':'error',"datas":e}

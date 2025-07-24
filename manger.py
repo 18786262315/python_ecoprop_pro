@@ -76,7 +76,7 @@ class LoggingMiddleware(BaseHTTPMiddleware):
             # logger.info(f"请求222")
             # print(f"Response: {response.body}, Status Code: {response.status_code}")
         
-        # return response
+        return response
 
 # app.add_middleware(LoggingMiddleware)
 
@@ -84,7 +84,7 @@ class LoggingMiddleware(BaseHTTPMiddleware):
 @app.exception_handler(RequestValidationError) 
 async def request_validation_exception_handler(request: Request, exc: RequestValidationError):
     # logger.info(f"{request.method} {request.url}")
-    logger.error(f"参数错误{request.method} {request.url}") # 记录请求信息,方便排错
+    # logger.error(f"参数错误{request.method} {request.url}") # 记录请求信息,方便排错
     return JSONResponse({"code": "400", "message": exc.errors()})
 
 # Dependency
