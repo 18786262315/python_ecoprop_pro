@@ -45,36 +45,6 @@ router = APIRouter(prefix="/project",tags=['project'],responses={405: {"descript
 gettime = getDatetimes()
 
 
-# Config.envs = "cc" # 本地
-# Config.envs = "test" # 测试
-# Config.envs = "release" # 发布
-
-
-
-# if Config.envs == "cc":
-#     Config.imgpath = 'http://192.168.0.145:8083'
-#     Config.urlpath = 'http://192.168.0.145:9998' #API
-#     Config.now_host = "http://192.168.0.145:9998"
-#     Config.filepath = os.getcwd() # 当前文件路径 
-#     Config.ecoprop_temp_path = os.path.join(os.getcwd(),'temp') # 当前文件路径 
-#     Config.ecoprop_return_path = os.path.join(os.getcwd(),'pdf') # 当前文件路径 
-
-# if Config.envs == "test":
-#     Config.imgpath = 'http://192.168.0.145:8083'
-#     Config.urlpath = 'http://192.168.0.145:9998' #API
-#     Config.now_host = "http://127.0.0.1:9998"
-#     Config.filepath = '/home/mixgo_py_pro'
-#     Config.ecoprop_temp_path = "/home/upload/broke/ecoprop/temp"
-#     Config.ecoprop_return_path = "/home/upload/broke/ecoprop/pdf"
-
-# if Config.envs == 'release':
-#     Config.imgpath = 'https://img.singmap.com'
-#     Config.urlpath = 'https://api.singmap.com' #API
-#     Config.now_host = "http://127.0.0.1:9998" 
-#     Config.filepath = '/home/upload/broke/pnd/file/report'
-#     Config.ecoprop_temp_path = "/home/upload/broke/ecoprop/temp"
-#     Config.ecoprop_return_path = "/home/upload/broke/ecoprop/pdf"
-
 @router.get("/")
 def read_users():
     return "Mixgo Make PDF API !"
@@ -163,9 +133,6 @@ async def GetPndPdfPro(agentId: str=Form(...) ,projectId:str=Form(...)):
     if not agentId and not projectId :
         raise HTTPException(status_code=404, detail="参数错误")
 
-    # rentunpath = MakePDF(agentId,projectId)
-    # return rentunpath
-
     try:
         rentunpath = MakePDF(agentId,projectId)
         logger.info('PDF创建成功=======>{}'.format(rentunpath))
@@ -194,9 +161,6 @@ async def GetPndComparison(agentId: str=Form(...) ,projectId:str=Form(...)):
     if not agentId or not projectId :
         raise HTTPException(status_code=404, detail="参数错误")
 
-    # rentunpath = MakePDF(agentId,projectId)
-    # return rentunpath
-
     try:
         rentunpath = ComparisonPDF(agentId,projectId)
         logger.info('ComparisonPDF创建成功=======>{}'.format(rentunpath))
@@ -223,9 +187,6 @@ async def GetxhoappPdfPro(agentId: str=Form(...) ,projectId:str=Form(...)):
     logger.info('创建PDF,%s'%projectId)
     if not agentId and not projectId :
         raise HTTPException(status_code=404, detail="参数错误")
-
-    # rentunpath = MakePDF(agentId,projectId)
-    # return rentunpath
 
     try:
         rentunpath = XHORIZON_APP_PRO_PDF(agentId,projectId)
@@ -254,10 +215,6 @@ async def GetxhoappComparison(agentId: str=Form(...) ,projectId:str=Form(...)):
     logger.info('创建PDF,%s'%projectId)
     if not agentId or not projectId :
         raise HTTPException(status_code=404, detail="参数错误")
-
-    # rentunpath = MakePDF(agentId,projectId)
-    # return rentunpath
-
     try:
         rentunpath = XHORIZON_Comparison_PDF(agentId,projectId)
         logger.info('ComparisonPDF创建成功=======>{}'.format(rentunpath))
@@ -591,9 +548,9 @@ def MakePDF(agentId,projectId):
         "projectId":projectId,
         "agentId":agentId
     }
-
+    logger.info('项目信息查询')
+    
     proinfo = getapi.requsetAPI(proinfourl,proinfodata)
-
     if "projectInfo" in proinfo and "unitInfo" in proinfo and "agentInfo" in proinfo:
         logger.info('项目信息查询成功--->>>projectId:%s,agentId:%s,projectInfo:%s,unitInfo:%s,agentInfo:%s'%(projectId,agentId,proinfo['projectInfo'],proinfo['unitInfo'],proinfo['agentInfo']))
     else:
@@ -663,11 +620,16 @@ def MakePDF(agentId,projectId):
 
     # 创建PDF文档 =====================================================
     song = "simsun"
+
+    # 注册字体    
+    msyh = os.path.join(os.getcwd(), "font", "msyh.ttf")
+    msyhbd = os.path.join(os.getcwd(), "font", "msyhbd.ttf")
+
     pdfmetrics.registerFont(TTFont(song, "simsun.ttc"))
     pdfmetrics.registerFont(TTFont('ARIALBD','ARIALBD.TTF')) #注册字体
     pdfmetrics.registerFont(TTFont('arial','arial.ttf')) #注册字体
-    pdfmetrics.registerFont(TTFont('msyh','msyh.ttf')) #注册字体
-    pdfmetrics.registerFont(TTFont('msyhbd','msyhbd.ttf')) #注册字体
+    pdfmetrics.registerFont(TTFont('msyh',msyh)) #注册字体
+    pdfmetrics.registerFont(TTFont('msyhbd',msyhbd)) #注册字体
     Imagepath = os.path.join(Config.filepath,'file')
     pagesize = (1747,965) # 画布大小
     # pagesize = (A4[1],A4[0]) # 画布大小
@@ -1345,17 +1307,21 @@ def ComparisonPDF(agentId,projectId):
         os.makedirs(uppath)
     # filename = agentId+str(int(time.time()))
     savepath = os.path.join(uppath,str(int(time.time()))+'.pdf') 
-    returnPath = os.path.join(uppath,str(int(time.time()))+'.pdf')
+    # returnPath = os.path.join(uppath,str(int(time.time()))+'.pdf')
     doc = canvas.Canvas(savepath,pagesize=pagesize)
     doc.setTitle("ProJect Comparison")
     makefunc = MakeReportlab(doc,Imagepath,pagesize,Symbol) # 加载方法
+    
+    # 注册字体    
+    msyh = os.path.join(os.getcwd(), "font", "msyh.ttf")
+    msyhbd = os.path.join(os.getcwd(), "font", "msyhbd.ttf")
     
     song = "simsun"
     pdfmetrics.registerFont(TTFont(song, "simsun.ttc"))
     pdfmetrics.registerFont(TTFont('ARIALBD','ARIALBD.TTF')) #注册字体
     pdfmetrics.registerFont(TTFont('arial','arial.ttf')) #注册字体
-    pdfmetrics.registerFont(TTFont('msyh','msyh.ttf')) #注册字体
-    pdfmetrics.registerFont(TTFont('msyhbd','msyhbd.ttf')) #注册字体
+    pdfmetrics.registerFont(TTFont('msyh',msyh)) #注册字体
+    pdfmetrics.registerFont(TTFont('msyhbd',msyhbd)) #注册字体
     # pdfmetrics.registerFont(TTFont('dejavu','dejavu-sans.book.ttf')) #注册字体
     logger.info('----------> 生成空文件')
     styles = getSampleStyleSheet()["Normal"]
@@ -1599,7 +1565,8 @@ def ComparisonPDF(agentId,projectId):
     doc.showPage()  # 保存当前画布页面
     logger.info('---------->page 3')
     doc.save()  # 保存文件并关闭画布
-    return returnPath
+    # return returnPath
+    return savepath
 
 def ERABedroomRports(agentId,brokeId,minPrice,maxPrice,projectArea,token,source):
     # ERA 项目可售单位报表 生成

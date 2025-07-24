@@ -23,10 +23,11 @@
             "type": "debugpy",
             "request": "launch",
             "module": "uvicorn",
+            "python": "D:\\OtherApps\\PythonEnvs\\envs\\testenv1\\python.exe",
             "args": [
                 "manger:app",
                 "--host",
-                "127.0.0.1",
+                "0.0.0.0",
                 "--port",
                 "7777",
                 "--reload"

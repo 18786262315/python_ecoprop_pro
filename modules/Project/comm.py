@@ -60,14 +60,16 @@ class getAPI(): # 网络请求
             keys = keys+'c1d65f3667324592a071ebec5038f38c'
 
         signature = md5(keys.encode(encoding='UTF-8')).hexdigest() #加密
-        logger.info('signature=======>{}'.format(signature))
+        # logger.info('signature=======>{}'.format(signature))
         # print(signature)
         return signature
     def requsetAPI(self,path,params,item='EcoProp'):
+        params['timestamp'] = int(time.time()* 1000)
         params['signature'] = self.setmd5(params,item)
+        # logger.info('signature======={},{}'.format(path,params))
         res = requests.get(path,params=params)
         value = json.loads(res.text)
-        # logger.info('data=======>{0}'.format(value['datas']))
+        logger.info('requests data=======>{0}'.format(value['datas']))
         if int(value['code']) == 0:
             # eval(re.sub('None','\'\'',str(value['datas']))) # 去除None值
             if item == 'ReLoSG':
@@ -84,7 +86,8 @@ class getAPI(): # 网络请求
         # print('==========>',params)
         res = requests.post(path,data=params)
         value = json.loads(res.text)
-        print(value)
+        logger.info('requests data=======>{0}'.format(value['datas']))
+        # print(value)
         if int(value['code']) == 0:
             if item == 'ReLoSG':
                 # logger.info('data=======>{0}'.format(value['data']))
@@ -106,12 +109,16 @@ class MakeReportlab():
         # 中文宋体
         self.song = "simsun"
         self.S = S
+
+        msyh = os.path.join(os.getcwd(), "font", "msyh.ttf")
+        msyhbd = os.path.join(os.getcwd(), "font", "msyhbd.ttf")
+
         pdfmetrics.registerFont(TTFont(self.song, "simsun.ttc"))
         # pdfmetrics.registerFont(TTFont('ARIALBD','ARIALBD.TTF')) #注册字体
         pdfmetrics.registerFont(TTFont('arial','arial.ttf')) #注册字体
-        pdfmetrics.registerFont(TTFont('msyh','msyh.ttf')) #注册字体
-        pdfmetrics.registerFont(TTFont('msyhbd','msyhbd.ttf')) #注册字体
-    
+        pdfmetrics.registerFont(TTFont('msyh',msyh)) #注册字体
+        pdfmetrics.registerFont(TTFont('msyhbd',msyhbd)) #注册字体
+       
     def priceBSD(self,price):
         ...
         BSD = 0

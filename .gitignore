@@ -1,0 +1,10 @@
+# Python 字节码文件
+__pycache__/
+*.py[cod]
+*$py.class
+
+# 日志文件
+*.log
+
+# 生成的 PDF 文件
+*.pdf
