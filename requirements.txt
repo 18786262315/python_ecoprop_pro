@@ -12,3 +12,4 @@ aiofiles
 uvicorn
 python-docx
 opencv-python
+pytest
