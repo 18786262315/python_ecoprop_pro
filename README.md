@@ -43,4 +43,12 @@ python3 -m venv venv
 # 激活虚拟环境
 source venv/bin/activate
 
+# 安装依赖
+pip3 install -r requirements.txt
+
+# 程序启动 :
+uvicorn manger:app --port 7777 --reload
+
+# 正式环境后台运行 无需其他的管理工具 :
+nohup uvicorn manger:app --host 0.0.0.0 --port 7777 --reload  > /home/mixgo/project/python/logs/log.txt 2>&1 &
 

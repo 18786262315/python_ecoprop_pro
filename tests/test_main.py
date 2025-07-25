@@ -10,8 +10,6 @@ sys.path.insert(0, project_root)
 # 导入模块
 import manger
 
-print(manger.test)
-
 client = TestClient(manger.app)
 
 def test_read_root():
