@@ -636,7 +636,7 @@ def MakePDF(agentId,projectId):
     # PND文件夹+ 项目ID + 用户信息 + 文件名称
     gettime = getDatetimes()
     tt = gettime.getDate()
-    uppath = os.path.join(Config.filepath,tt)
+    uppath = os.path.join(Config.returnpaths,tt)
     if not os.path.exists(uppath):
         os.makedirs(uppath)
     savepath = os.path.join(uppath,str(int(time.time()))+'.pdf') 
@@ -1302,7 +1302,7 @@ def ComparisonPDF(agentId,projectId):
     # savepath = os.path.join(Imagepath,'test.pdf') 
     gettime = getDatetimes()
     tt = gettime.getDate()
-    uppath = os.path.join(Config.filepath,'Comparison',tt)
+    uppath = os.path.join(Config.returnpaths,'Comparison',tt)
     if not os.path.exists(uppath):
         os.makedirs(uppath)
     # filename = agentId+str(int(time.time()))

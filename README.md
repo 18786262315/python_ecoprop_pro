@@ -28,4 +28,19 @@ FastAPI 程序启动 ：
 3、端口问题，目前使用7777
 4、部署时，请将项目目录下的logs目录，复制到部署目录下，并修改权限为777
 
+# ubuntu 部署记录
+
+# 使用 sudo 权限安装
+sudo apt update
+sudo apt install python3.12-venv  # 根据你的 Python 版本调整（如 python3.10-venv）
+
+# 进入项目目录（如果尚未进入）
+cd ~/ecoprop_python/python_ecoprop_pro
+
+# 创建虚拟环境
+python3 -m venv venv
+
+# 激活虚拟环境
+source venv/bin/activate
+
 

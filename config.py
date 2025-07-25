@@ -25,16 +25,7 @@ class Config:
 
     # PDF Set
     
-    # 香港独立部署程序
-    # envs = "cc" # 本地
-    # imgpath = 'https://img.singmap.com'
-    # urlpath = 'http://singmap.mypropdb.com:9998' #API
-    # now_host = "http://singmap.mypropdb.com:9998"
-    # filepath = os.getcwd() # 当前文件路径 
-    # returnpaths = os.getcwd() # 当前文件路径 
-    # ecoprop_temp_path = os.path.join(os.getcwd(),'temp') # 当前文件路径 
-    # ecoprop_return_path = os.path.join(os.getcwd(),'pdf') # 当前文件路径 
-    # ReLoSG_HOST = "http://192.168.0.145:4501"
+
     
     # 本地调试
     # envs = "cc" # 本地
@@ -58,13 +49,25 @@ class Config:
     # ecoprop_return_path = "/home/upload/broke/ecoprop/pdf"
 
     # 线上
-    envs = "release" # 发布
-    imgpath = 'https://img.singmap.com'
-    urlpath = 'http://127.0.0.1:9998' # https://api.singmap.com
-    now_host = "http://127.0.0.1:9998" 
-    filepath = '/home/upload/broke/pnd/file/report'
+    # envs = "release" # 发布
+    # imgpath = 'https://img.singmap.com'
+    # urlpath = 'https://api.singmap.com' #API
+    # now_host = "http://127.0.0.1:9998" 
+    # filepath = '/home/upload/broke/pnd/file/report'
+    # returnpaths = "/home/upload/broke/pnd/file/report"
+    # ecoprop_temp_path = "/home/upload/broke/ecoprop/temp"
+    # ecoprop_return_path = "/home/upload/broke/ecoprop/pdf"
+
+
+    # 香港独立部署程序
+    envs = "release" # 本地
+    imgpath = 'https://ecoprop.s3.ap-southeast-1.amazonaws.com' # oss 图片
+    # 服务器upload 资源访问链接 http://imagesingmap.mypropdb.com/
+    urlpath = 'http://127.0.0.1:9998' #API
+    now_host = "http://127.0.0.1:9998"
+    filepath = os.getcwd()
     returnpaths = "/home/upload/broke/pnd/file/report"
-    ecoprop_temp_path = "/home/upload/broke/ecoprop/temp"
+    ecoprop_temp_path = os.path.join(os.getcwd(),'temp') # 当前文件路径 
     ecoprop_return_path = "/home/upload/broke/ecoprop/pdf"
     ReLoSG_HOST = "http://192.168.0.145:4501"
 
