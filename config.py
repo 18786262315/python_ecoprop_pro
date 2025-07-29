@@ -65,6 +65,7 @@ class Config:
     # 香港独立部署程序
     envs = "release" # 发布
     imgpath = 'https://ecoprop.s3.ap-southeast-1.amazonaws.com' # oss 图片
+    # host_imgpath = 'https://ecoprop.s3.ap-southeast-1.amazonaws.com' # oss 图片
     # 服务器upload 资源访问链接 http://imagesingmap.mypropdb.com/
     urlpath = 'http://127.0.0.1:9998' #API
     now_host = "http://127.0.0.1:9998"

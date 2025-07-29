@@ -12,7 +12,7 @@
           padding: 0;
           width: 1400px;
           font-family: Montserrat-Regular, Montserrat;
-          background-image: url('./img/commpayBg.png');
+          background-image: url('https://image.singmap.com/upload/broke/otherimg/commpayBg.png');
         }
         .commpay{
 
@@ -110,7 +110,7 @@
           margin: auto;
           text-align: center;
           page-break-after: always; 
-          /* background-image: url('./img/commpayBg.png');
+          /* background-image: url('https://image.singmap.com/upload/broke/otherimg/commpayBg.png');
           background-size: cover; */
         }
         .unit-data{
@@ -182,21 +182,21 @@
 </head>
 <body>
   <div class="commpay">
-      <img style="position: absolute;left: 10%;height: 850px;" src="./img/time-logo.png" alt="">
+      <img style="position: absolute;left: 10%;height: 850px;" src="https://image.singmap.com/upload/broke/otherimg/time-logo.png" alt="">
     <!-- <p style="position: absolute;top: 300px;color: #00d1c7;margin: 0;left: 10%;font-weight: bold;">
       <span style="margin: 0;line-height: 10rem;font-size: 10rem;font-weight: bold;">20</span>
       <span style="margin: 0; margin-left: 80px;line-height: 10rem;font-size: 10rem;font-weight: bold;">24</span>
     </p> -->
     <div class="commpay-info">
       {% if userInfo.brokeLogo %}
-      <img class="commpay-logo Centered" src="{{imgpath}}{{userInfo.brokeLogo}}" onerror="./img/404.png" alt="">
+      <img class="commpay-logo Centered" src="{{imgpath}}{{userInfo.brokeLogo}}" onerror="https://image.singmap.com/upload/broke/otherimg/404.png" alt="">
       {% endif %}
       <!-- <h2 class="commpay-title Centered">Conflict Denied Ops</h2> -->
       <div class="user-info Centered">
         {% if userInfo.logo %}
-        <img style="margin-top: 13px;float: left;width: 85px;" src="{{imgpath}}{{userInfo.logo}}{{'/quality,q_50'}}" onerror="./img/404.png" alt="">
+        <img style="margin-top: 13px;float: left;width: 85px;" src="{{imgpath}}{{userInfo.logo}}{{'?x-oss-process=image/auto-orient,1/interlace,1/resize,p_50/quality,q_50'}}" onerror="https://image.singmap.com/upload/broke/otherimg/404.png" alt="">
         {% else %}
-        <img style="margin-top: 13px;float: left;width: 85px;height: 85px;" src="./img/NotUserLogo.png" alt="">
+        <img style="margin-top: 13px;float: left;width: 85px;height: 85px;" src="https://image.singmap.com/upload/broke/otherimg/NotUserLogo.png" alt="">
         {% endif %}
         <div style="float: left;">
           <h4 class="user-info-text">{{userInfo.agentName}}</h4>
@@ -221,7 +221,7 @@
     </div>
     <div class="pro-main-img">
       {% if proInfo.mainImage %}
-      <img style="width: 100%;height: 350px;object-fit: cover;" src='{{imgpath}}{{proInfo.mainImage}}' onerror="./img/404.png" alt="">
+      <img style="width: 100%;height: 350px;object-fit: cover;" src='{{imgpath}}{{proInfo.mainImage}}?x-oss-process=image/auto-orient,1/interlace,1/resize,p_50' onerror="https://image.singmap.com/upload/broke/otherimg/404.png" alt="">
       {% endif %}
     </div>
   </div>
@@ -239,7 +239,7 @@
     <div class="map-right-content"
     style="
     float: right;
-    background-image: url('{{{{imgpath}}}}{{proInfo.snapshotLogo | urlencode}}');
+    background-image: url('https://img.singmap.com{{proInfo.snapshotLogo | urlencode}}');
     background-size: cover;
     background-repeat: no-repeat;
     background-position: 50%;
@@ -267,8 +267,8 @@
     <div class="content-title-line"></div>
     <div class="gallery-img-list">
       {% for pro_img in media_list.img %}
-      <img class="Image-Data" style="object-fit: cover;" src="{{imgpath}}{{pro_img.url | urlencode}}"  onerror="./img/404.png" alt="">
-      <!-- <div class="Image-Data" style="background-size: 100% 100%;background-image: url('{{imgpath}}{{pro_img.url | urlencode}}');"></div> -->
+      <img class="Image-Data" style="object-fit: cover;" src="{{imgpath}}{{pro_img.url | urlencode}}?x-oss-process=image/auto-orient,1/interlace,1/resize,m_lfit,w_400"  onerror="https://image.singmap.com/upload/broke/otherimg/404.png" alt="">
+      <!-- <div class="Image-Data" style="background-size: 100% 100%;background-image: url('{{imgpath}}{{pro_img.url | urlencode}}?x-oss-process=image/auto-orient,1/interlace,1/resize,m_lfit,w_400');"></div> -->
       {% if loop.index0 != 0 and loop.index % 12 == 0 %}
       <div style="page-break-after: always;color: white;">.</div>
       {%endif%}
@@ -282,9 +282,9 @@
     <div class="content-title-line"></div>
     <div class="gallery-img-list">
       {% for pro_ivt in media_list.ivt %}
-      <div class="Image-Data" style="position: relative; background-size: 100% 100%;background-image: url({{imgpath}}{{pro_ivt.url | urlencode}}'/quality,q_70');">
+      <div class="Image-Data" style="position: relative; background-size: 100% 100%;background-image: url({{imgpath}}{{pro_ivt.url | urlencode}}'?x-oss-process=image/auto-orient,1/interlace,1/resize,p_50/quality,q_70');">
         <a class="logo-img" href="{{pro_ivt.link}}" >
-          <img style="width: 100%;height: 100%;" src="./img/pdf_ivt.png" alt="">
+          <img style="width: 100%;height: 100%;" src="https://img.singmap.com/upload/broke/otherimg/pdf_ivt.png" alt="">
         </a>
       </div>
       {% endfor %}
@@ -349,9 +349,9 @@
     <div class="gallery-img-list">
       {% for floorplan in floor_plan_list.lists %}
       {% if floorplan.img %}
-        <img class="Image-Data" style="object-fit: cover;" src="{{imgpath}}{{floorplan.img}}"  onerror="./img/404.png" alt="">
+        <img class="Image-Data" style="object-fit: cover;" src="{{imgpath}}{{floorplan.img}}"  onerror="https://image.singmap.com/upload/broke/otherimg/404.png" alt="">
       {%endif%}
-        <!-- <div class="Image-Data" style="background-image: url({{imgpath}}{{floorplan.img | urlencode}}{{''}});"></div> -->
+        <!-- <div class="Image-Data" style="background-image: url({{imgpath}}{{floorplan.img | urlencode}}{{'?x-oss-process=image/auto-orient,1/interlace,1/resize,p_50'}});"></div> -->
       {% endfor %}
     </div>
   </div>
