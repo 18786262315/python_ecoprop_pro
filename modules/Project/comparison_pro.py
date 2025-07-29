@@ -35,6 +35,8 @@ def XHORIZON_Comparison_PDF(agentId,projectId):
     getapi = getAPI()
     datas = {
         "imgpath":Config.imgpath,
+        "temppath":Config.ecoprop_temp_path,
+        "pro_list":[],
         "userInfo":None
     } 
     # agentId = "e73ca86d287143709c1450012bac9e9a"
@@ -43,7 +45,6 @@ def XHORIZON_Comparison_PDF(agentId,projectId):
     logger.info('get User Info ====>>>>{0}',format(datas['userInfo']))
 
     UnitIdList = projectId.split(',')
-    datas['pro_list'] = []
     no_room = 1
     proinfourl = Config.urlpath+"/app-service/other/queryProjectInfoByComparison"
     for item in UnitIdList:

@@ -29,7 +29,7 @@ def test_pro_info():
 def test_make_pdf():
     # 测试项目文件生成接口是否正常
     response = client.post(
-        "/project/ecoprop_shera_pro_pdf/",
+        "/project/ecoprop_shera_pro_pdf",
                 data={
             "agentId": "6",
             "projectId": "b1d78cceab4d4515a1ec7969ccda74b8"  # 示例 base16 编码数据

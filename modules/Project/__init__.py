@@ -1664,6 +1664,7 @@ def Shera_to_Pdf(agentId,projectId):
     getapi = getAPI()
     datas = {} 
     datas['imgpath'] = Config.imgpath
+    datas['temppath'] = Config.ecoprop_temp_path # 本地图片路径
     # agentId = "e73ca86d287143709c1450012bac9e9a"
     # projectId = "26835e67a63f48aeb31750a3e8385a17"
     logger.info('get User Info ====>>>>'+agentId)
@@ -1679,13 +1680,10 @@ def Shera_to_Pdf(agentId,projectId):
         datas['proInfo']['description'] = base64.b64decode(datas['proInfo']['description']).decode("utf-8")
     else:
         datas['proInfo']['description'] = ''
-    logger.info('description Base64====>>>>{0}'.format(projectId))
+    logger.info('description Base64====>>>>')
 
     # 周边设施数据处理
-    # Nearby_Amenities = {}
-    # for amenities in literal_eval(datas['proInfo']['facilitiesMap']):
-    #     Nearby_Amenities[amenities['type']] = amenities['value']
-    logger.info('facilitiesMap  literal_eval====>>>>{0}'.format(type(datas['proInfo']['facilitiesMap'])))
+    logger.info('facilitiesMap  literal_eval====>>>>')
 
     if datas['proInfo']['facilitiesMap']:
         datas['proInfo']['facilitiesMap'] = literal_eval(datas['proInfo']['facilitiesMap'])
@@ -1754,17 +1752,25 @@ def Shera_to_Pdf(agentId,projectId):
         'orientation':'Landscape', #横向
         'encoding': "UTF-8",
         'no-outline': None,
+        'enable-local-file-access': None,  # 允许访问本地文件
+        'quiet': None
     }
     try:
-        logger.info('Add tmp Info ====>>>>')
         datas = eval(re.sub('None','\'\'',str(datas))) # 去除None值
+        logger.info('插入模板的参数 ====>>>>{}'.format(datas))
         htmls = template.render(datas)
         config = pdfkit_config()
+
+        # 输出 HTML 预览文件
+        preview_path = re_path.replace('.pdf', '_preview.html')
+        with open(preview_path, 'w', encoding='utf-8') as preview_file:
+            preview_file.write(htmls)
+        logger.info(f'HTML preview file generated at: {preview_path}')
+
         # 清空之前文件的内容
         open(re_path, 'w').close() 
+   
         pdfkit.from_string(htmls,re_path,options=options,configuration=config) # 生成PDF文件
-        # logger.info('PDF ADD Over ====>>>>')
-
         # 确保临时文件生成成功后再覆盖目标文件
         # if os.path.exists(temp_pdf_path):
         #     shutil.move(temp_pdf_path, output_path)
@@ -1788,7 +1794,10 @@ def Share_Unit_Pdf(agentId,unitId):
 
     getapi = getAPI()
     datas = {
-        "imgpath":Config.imgpath
+        "imgpath":Config.imgpath,
+        "temppath":Config.ecoprop_temp_path, # 本地图片路径"
+        "unit_list": [], # 单位列表
+        "userInfo": {}, # 用户信息
     } 
     # agentId = "e73ca86d287143709c1450012bac9e9a"
     # unitId = "7da0db34a0f34d969049a4b22a768b39,7e078477280b4abfb639ab79661c4400,70911a06985b44549380cc04839a7f14,b67eaef41f224acb919852e9b98ca81a"
@@ -1796,7 +1805,6 @@ def Share_Unit_Pdf(agentId,unitId):
     datas['userInfo'] = getapi.requsetAPI(Config.now_host+'/app-service/agent/queryShareAgentInfo',params={"agentId": agentId})
 
     UnitIdList = unitId.split(',')
-    datas['unit_list'] = []
     logger.info('get Unit Info ====>>>>')
     for i in UnitIdList:
         unitInfo = getapi.requsetAPI(Config.now_host+'/app-service/unit/getUnitInfo',params={"agentId": agentId,"unitId":i})
@@ -1828,6 +1836,8 @@ def Share_Unit_Pdf(agentId,unitId):
         'orientation':'Landscape', #横向
         'encoding': "UTF-8",
         'no-outline': None,
+        'enable-local-file-access': None,  # 允许访问本地文件
+        'quiet': None
     }
     try:
         logger.info('Set tmp Info ====>>>>{0}'.format(datas))
@@ -1848,7 +1858,9 @@ def Share_Unit_Pdf(agentId,unitId):
 def Share_Pro_compare_Pdf(agentId,projectId):
     getapi = getAPI()
     datas = {
-        "imgpath":Config.imgpath
+        "imgpath":Config.imgpath,
+        "temppath":Config.ecoprop_temp_path, # 本地图片路径
+        "pro_list": [],
     } 
     # agentId = "e73ca86d287143709c1450012bac9e9a"
     # projectId = "5b2216e95ef446bf853113450a0642f1,0c3cef5e77f547a99d61d6a2ccd37885"
@@ -1856,7 +1868,6 @@ def Share_Pro_compare_Pdf(agentId,projectId):
     datas['userInfo'] = getapi.requsetAPI(Config.now_host+'/app-service/agent/queryShareAgentInfo',params={"agentId": agentId})
 
     UnitIdList = projectId.split(',')
-    datas['pro_list'] = []
     logger.info('get Pro Info ====>>>>')
     proinfourl = Config.urlpath+"/app-service/project/queryProjectInfo"
     for item in UnitIdList:
@@ -1894,6 +1905,8 @@ def Share_Pro_compare_Pdf(agentId,projectId):
         'orientation':'Landscape', #横向
         'encoding': "UTF-8",
         'no-outline': None,
+        'enable-local-file-access': None,  # 允许访问本地文件
+        'quiet': None
     }
     try:
         logger.info('Set tmp Info ====>>>>{0}'.format(datas))

@@ -127,7 +127,7 @@
                 {% if pro.projectInfo.mainImage %}
                 <img style="max-height: 120px;width: 220px;" src="{{imgpath}}{{pro.projectInfo.mainImage | urlencode}}" alt="">
                 {% else %}
-                <img style="max-height: 120px;width: 220px;" src="https://img.singmap.com/upload/broke/otherimg/not_img.jpg" alt="">
+                <img style="max-height: 120px;width: 220px;" src="{{temppath}}/img/not_img.jpg" alt="">
                 {% endif %}
                 <p style="color: black;font-size: 14px;font-weight: 600;padding: 0px 10px;">{{pro.projectInfo.projectName}}</p>
                 <!-- $300k-$1.23M -->

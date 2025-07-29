@@ -41,9 +41,9 @@
   <div class="commpay" >
     <div style="float: left;height:100%">
       {% if userInfo.logo %}
-      <img style="float: left;max-width: 75px;max-height: 75px;border-radius: 50%;margin-top: 35px;" src="{{'https://img.singmap.com'+userInfo.logo}}" alt="User Logo">
+      <img style="float: left;max-width: 75px;max-height: 75px;border-radius: 50%;margin-top: 35px;" src="{{imgpath}}{{userInfo.logo}}" alt="User Logo">
       {% else %}
-      <img style="float: left;max-width: 75px;max-height: 75px;border-radius: 50%;margin-top: 35px;" src="https://img.singmap.com/upload/broke/otherimg/not_img.jpg" alt="">
+      <img style="float: left;max-width: 75px;max-height: 75px;border-radius: 50%;margin-top: 35px;" src="{{temppath}}/img/not_img.jpg" alt="">
       {% endif %}
       <div style="float:right;">
         <h4 style="margin:0px;margin-left: 20px;margin-bottom: 2px;line-height: 35px;">{{userInfo.agentName}}</h4>
@@ -53,7 +53,7 @@
     </div>
 
     <div style="float: right;"> 
-      <img style="max-height: 75px;max-width: 75px;margin-top: 20px;margin-right: 20px;" src="{{'https://img.singmap.com'+userInfo.brokeLogo}}" alt="">
+      <img style="max-height: 75px;max-width: 75px;margin-top: 20px;margin-right: 20px;" src="{{imgpath}}{{userInfo.brokeLogo}}" alt="">
     </div>
   </div>
   <div class="hr-solid"></div>
