@@ -91,10 +91,10 @@ async def request_validation_exception_handler(request: Request, exc: RequestVal
 
 
 
-@app.get("/")
-async def main():
-
-    return 0
+@app.post("/")
+async def main(agentId: str=Form(...) ,projectId:str=Form(...)):
+    logger.info(f"{agentId} {projectId}")
+    return {'status': 'ok'}
 
 
 
