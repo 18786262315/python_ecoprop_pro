@@ -436,9 +436,10 @@ async def Re_Itinerary(customerId: str=Form(...)):
             logger.info('Add tmp Info ====>>>>')
             InfoData = eval(re.sub('None','\'\'',str(InfoData))) # 去除None值
             htmls = template.render(InfoData)
-            # config = pdfkit.configuration(wkhtmltopdf='/usr/local/bin/wkhtmltopdf')
+            config = pdfkit_config()
+
             
-            pdfkit.from_string(htmls,re_path,options=options)
+            pdfkit.from_string(htmls,re_path,options=options,configuration=config)
         except Exception as e:
             logger.error(e)
             raise HTTPException(status_code=404, detail="PDF Error")
@@ -525,10 +526,11 @@ async def Condition_Report(customerId: str=Form(...)):
             htmls = template.render(datas)
 
             # linux指定位置配置，因找不到wkhtmltopdf导致无法生成PDF 问题处理方案
-            # config = pdfkit.configuration(wkhtmltopdf='/usr/local/bin/wkhtmltopdf') 
+            config = pdfkit_config()
+
             open(rt_path, 'w').close() 
 
-            pdfkit.from_string(htmls,rt_path,options=options)
+            pdfkit.from_string(htmls,rt_path,options=options,configuration=config)
         except Exception as e:
             logger.error('PDF Create Error=======>{}'.format(e))
             raise HTTPException(status_code=404, detail="PDF Error")
@@ -538,7 +540,7 @@ async def Condition_Report(customerId: str=Form(...)):
         logger.error('PDF Create Error=======>{}'.format(e))
         return {'code':'-1','msg':'error',"datas":e}
 
-
+# PND项目PDF生成函数
 def MakePDF(agentId,projectId):
     # 基础数据准备 =====================================================
     getapi = getAPI()
@@ -1273,6 +1275,7 @@ def MakePDF(agentId,projectId):
     # return returnPath
     return savepath 
 
+# PND项目对比PDF生成函数
 def ComparisonPDF(agentId,projectId):
     ##################################################################
     # 项目对比报表
@@ -1568,8 +1571,9 @@ def ComparisonPDF(agentId,projectId):
     # return returnPath
     return savepath
 
+
+# ERA 项目可售单位报表 生成
 def ERABedroomRports(agentId,brokeId,minPrice,maxPrice,projectArea,token,source):
-    # ERA 项目可售单位报表 生成
     gettime = getDatetimes()
     # Imagepath = os.path.join(Config.filepath,'file')
     tt = gettime.getDate()
@@ -1653,12 +1657,13 @@ def ERABedroomRports(agentId,brokeId,minPrice,maxPrice,projectArea,token,source)
     doc.build(elements)
     return retpaths
 
+# 项目分享PDF生成函数
 def Shera_to_Pdf(agentId,projectId):
 
     # 基础数据准备 =====================================================
     getapi = getAPI()
     datas = {} 
-    datas['Config.imgpath'] = Config.imgpath
+    datas['imgpath'] = Config.imgpath
     # agentId = "e73ca86d287143709c1450012bac9e9a"
     # projectId = "26835e67a63f48aeb31750a3e8385a17"
     logger.info('get User Info ====>>>>'+agentId)
@@ -1733,7 +1738,7 @@ def Shera_to_Pdf(agentId,projectId):
     if not os.path.exists(os.path.split(re_path)[0]): 
         os.makedirs(os.path.split(re_path)[0])
 
-    logger.info('Get Jinja2 Temp ====>>>>')
+    logger.info('Get Jinja2 Temp ====>>>> ecoprop_pro_share_temp.html')
     env = jinja2.Environment(loader=jinja2.FileSystemLoader(searchpath=Config.ecoprop_temp_path,encoding='utf-8'))
     template = env.get_template('ecoprop_pro_share_temp.html')
 
@@ -1754,10 +1759,11 @@ def Shera_to_Pdf(agentId,projectId):
         logger.info('Add tmp Info ====>>>>')
         datas = eval(re.sub('None','\'\'',str(datas))) # 去除None值
         htmls = template.render(datas)
-        # config = pdfkit.configuration(wkhtmltopdf='/usr/local/bin/wkhtmltopdf') 
+        config = pdfkit_config()
         # 清空之前文件的内容
         open(re_path, 'w').close() 
-        pdfkit.from_string(htmls,re_path,options=options)
+        pdfkit.from_string(htmls,re_path,options=options,configuration=config) # 生成PDF文件
+        # logger.info('PDF ADD Over ====>>>>')
 
         # 确保临时文件生成成功后再覆盖目标文件
         # if os.path.exists(temp_pdf_path):
@@ -1768,8 +1774,18 @@ def Shera_to_Pdf(agentId,projectId):
     logger.info('PDF ADD Over ====>>>>')
     return re_path
 
+
+# 抽离wkhtmltopdf 路径配置统一维护
+def pdfkit_config():
+    ...
+    config = pdfkit.configuration(wkhtmltopdf=Config.wkhtml_path)
+    # config = ''
+    return config
+
+
+# 创建 单位对比PDF文件
 def Share_Unit_Pdf(agentId,unitId):
-    # 创建 单位对比PDF文件
+
     getapi = getAPI()
     datas = {
         "imgpath":Config.imgpath
@@ -1817,9 +1833,9 @@ def Share_Unit_Pdf(agentId,unitId):
         logger.info('Set tmp Info ====>>>>{0}'.format(datas))
         datas = eval(re.sub('None','\'\'',str(datas))) # 去除None值
         htmls = template.render(datas)
-        # config = pdfkit.configuration(wkhtmltopdf='/usr/local/bin/wkhtmltopdf') 
+        config = pdfkit_config()
         open(re_path, 'w').close()
-        pdfkit.from_string(htmls,re_path,options=options)
+        pdfkit.from_string(htmls,re_path,options=options,configuration=config)
     except Exception as e:
         logger.error("File Padding Err ===>>>{0}".format(e))
         raise HTTPException(status_code=404, detail="PDF ADD Error")
@@ -1827,8 +1843,9 @@ def Share_Unit_Pdf(agentId,unitId):
     logger.info('PDF ADD Over ====>>>>')
     return re_path
 
+
+# Ecoprop 创建 项目对比PDF文件
 def Share_Pro_compare_Pdf(agentId,projectId):
-    # 创建 项目对比PDF文件
     getapi = getAPI()
     datas = {
         "imgpath":Config.imgpath
@@ -1882,9 +1899,9 @@ def Share_Pro_compare_Pdf(agentId,projectId):
         logger.info('Set tmp Info ====>>>>{0}'.format(datas))
         datas = eval(re.sub('None','\'\'',str(datas))) # 去除None值
         htmls = template.render(datas)
-        # config = pdfkit.configuration(wkhtmltopdf='/usr/local/bin/wkhtmltopdf') 
+        config = pdfkit_config()
         open(re_path, 'w').close()
-        pdfkit.from_string(htmls,re_path,options=options)
+        pdfkit.from_string(htmls,re_path,options=options,configuration=config)
     except Exception as e:
         logger.error("File Padding Err ===>>>{0}".format(e))
         raise HTTPException(status_code=404, detail="PDF ADD Error")
@@ -1902,7 +1919,7 @@ class Person(BaseModel):
     data: Optional[dict] = {}
 
 
-
+# Word文档字段填充函数
 def text_to_word(paragraph, conntent,types):
     """Word文档字段填充"""
     

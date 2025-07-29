@@ -66,7 +66,7 @@ class getAPI(): # 网络请求
     def requsetAPI(self,path,params,item='EcoProp'):
         params['timestamp'] = int(time.time()* 1000)
         params['signature'] = self.setmd5(params,item)
-        # logger.info('signature======={},{}'.format(path,params))
+        logger.info('signature======={},{}'.format(path,params))
         res = requests.get(path,params=params)
         value = json.loads(res.text)
         logger.info('requests data=======>{0}'.format(value['datas']))

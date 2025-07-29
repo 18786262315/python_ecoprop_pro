@@ -43,12 +43,6 @@ app.include_router(Project.router)
 origins = [
     "http://localhost",
     "http://127.0.0.1",
-    "http://47.88.212.170",
-    "http://localhost:8080",
-    "http://192.168.0.116:8080",
-    "http://localhost:8081",
-    "http://192.168.0.116:8081",
-    "http://192.168.0.114",
 ]
 app.add_middleware(
     CORSMiddleware,

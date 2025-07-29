@@ -13,14 +13,16 @@ import manger
 client = TestClient(manger.app)
 
 def test_read_root():
+    # 测试是否正常调起服务
     response = client.get("/")
     print(response.status_code)
     assert 1 + 1 == 2
     assert response.status_code == 200
-    # assert response.json() == {"Hello": "World"}
 def test_pro_info():
-    ...
+    # 测试项目文件生成接口是否正常
     response = client.get("/project/")
     print(response.json() )
     assert response.status_code == 200
     assert response.json() == "Mixgo Make PDF API !"
+
+
