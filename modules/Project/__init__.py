@@ -1761,15 +1761,11 @@ def Shera_to_Pdf(agentId,projectId):
         htmls = template.render(datas)
         config = pdfkit_config()
 
-        # 输出 HTML 预览文件
-        preview_path = re_path.replace('.pdf', '_preview.html')
-        with open(preview_path, 'w', encoding='utf-8') as preview_file:
-            preview_file.write(htmls)
-        logger.info(f'HTML preview file generated at: {preview_path}')
-
         # 清空之前文件的内容
         open(re_path, 'w').close() 
-   
+        
+        # Share_Pro_Preview(re_path,htmls) # 输出预览html
+        
         pdfkit.from_string(htmls,re_path,options=options,configuration=config) # 生成PDF文件
         # 确保临时文件生成成功后再覆盖目标文件
         # if os.path.exists(temp_pdf_path):
@@ -1780,6 +1776,11 @@ def Shera_to_Pdf(agentId,projectId):
     logger.info('PDF ADD Over ====>>>>')
     return re_path
 
+# 输出预览html
+def Share_Pro_Preview(re_path,htmls):
+    preview_path = re_path.replace('.pdf', '_preview.html')
+    with open(preview_path, 'w', encoding='utf-8') as preview_file:
+        preview_file.write(htmls)
 
 # 抽离wkhtmltopdf 路径配置统一维护
 def pdfkit_config():
