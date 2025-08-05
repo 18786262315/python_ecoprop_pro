@@ -23,6 +23,8 @@ FastAPI 程序启动 :
 uvicorn manger:app --port 7777 --reload
 正式环境后台运行 无需其他的管理工具 :
 nohup uvicorn manger:app --host 0.0.0.0 --port 7777 --reload  > /home/mixgo/project/python/logs/log.txt 2>&1 &
+# 部署测试
+nohup uvicorn manger:app --host 0.0.0.0 --port 7777 --reload  > /home/ubuntu/ecoprop_python/python_ecoprop_pro/logs/log.txt 2>&1 &
 
 
 PDF 有个字体需要传入到 安装包下 /usr/local/python3/lib/python3.7/site-packages/reportlab/fonts
@@ -74,10 +76,14 @@ class LoggingMiddleware(BaseHTTPMiddleware):
 
 # app.add_middleware(LoggingMiddleware)
 
-# 参数检测
+# 参数错误统一处理器
 @app.exception_handler(RequestValidationError) 
 async def request_validation_exception_handler(request: Request, exc: RequestValidationError):
-    # logger.info(f"{request.method} {request.url}")
+    # 处理请求参数验证错误
+    # logger.error(f"参数错误{request.method} {request.url} {exc.errors()}")
+    # 记录请求信息,方便排错
+    # logger.error(f"参数错误{request.method} {request.url} {exc.body}")
+    logger.info(f"{request.method} {request.url}{exc.body}")
     # logger.error(f"参数错误{request.method} {request.url}") # 记录请求信息,方便排错
     return JSONResponse({"code": "400", "message": exc.errors()})
 

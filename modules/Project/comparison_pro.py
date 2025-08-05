@@ -78,7 +78,7 @@ def XHORIZON_Comparison_PDF(agentId,projectId):
     env = jinja2.Environment(loader=jinja2.FileSystemLoader(searchpath=Config.ecoprop_temp_path,encoding='utf-8'))
     template = env.get_template('xhoapp_pro_compare_share_temp.html')
     logger.info(datas)
-    datas['openlink'] = "https://app.singmap.com/share/index.html#/vsProject?projectIds={0}&agentId={1}".format(projectId,agentId)
+    datas['openlink'] = "{}?projectIds={}&agentId={}".format(Config.ecoprop_pro_vs_path,projectId,agentId)
     datas['roomNo'] = no_room * 75
     # print(datas['roomNo'])
 

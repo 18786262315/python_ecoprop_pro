@@ -45,6 +45,14 @@ router = APIRouter(prefix="/project",tags=['project'],responses={405: {"descript
 gettime = getDatetimes()
 
 
+class Person(BaseModel):
+    docPath: Optional[str] = ""
+    filepath: Optional[str] = ""
+    data: Optional[dict] = {}
+
+
+
+
 @router.get("/")
 def read_users():
     return "Mixgo Make PDF API !"
@@ -545,7 +553,7 @@ def MakePDF(agentId,projectId):
     # 基础数据准备 =====================================================
     getapi = getAPI()
     # 项目信息
-    proinfourl = Config.urlpath+"/pnd-api/project/queryProjectInfoById"
+    proinfourl = Config.urlpath+Config.PND_PROJECT_INFO
     proinfodata = {
         "projectId":projectId,
         "agentId":agentId
@@ -569,12 +577,12 @@ def MakePDF(agentId,projectId):
     unitproce = [0,0,0,0,0] #单位售价
 
     # 项目PDF上传图片
-    # propdfurls = Config.urlpath+"/pnd-api/pdf/queryPdfProjectList"
+    # propdfurls = Config.urlpath+Config.PND_PDF_PROJECT_LIST
     # propdfdatas = {
     #     "projectId":projectId,
     #     "type":""
     # }
-    propdfinfo = getapi.requsetAPI( Config.urlpath+"/pnd-api/pdf/queryPdfProjectList",{
+    propdfinfo = getapi.requsetAPI( Config.urlpath+Config.PND_PDF_PROJECT_LIST,{
         "projectId":projectId,
         "type":""
     })
@@ -583,12 +591,12 @@ def MakePDF(agentId,projectId):
     #     logger.info('项目PDF上传图片为空--->>>projectId:%s,agentId:%s'%(projectId,agentId))
 
     # 项目区域
-    # districturl = Config.urlpath+"/pnd-api/pdf/queryPdfDistrictList"
+    # districturl = Config.urlpath+Config.PND_PDF_DISTRICT_LIST
     # districtdata = {
     #     "district":prodatainfo['district'],
     #     "type":"1"
     # }
-    districtinfo = getapi.requsetAPI(Config.urlpath+"/pnd-api/pdf/queryPdfDistrictList",{
+    districtinfo = getapi.requsetAPI(Config.urlpath+Config.PND_PDF_DISTRICT_LIST,{
         "district":prodatainfo['district'],
         "type":"1"
     })
@@ -607,7 +615,7 @@ def MakePDF(agentId,projectId):
     logger.info('PDF文件页面图片查询成功--->>>%s'%(fileinfo))
 
     #新加坡区间 销售统计
-    regionurl = Config.urlpath+"/pnd-api/project/queryRetailCount"
+    regionurl = Config.urlpath+Config.PND_PROJECT_RETAIL_COUNT
     # RCRdata = { "region":"RCR"}
     RCRinfo = getapi.requsetAPI(regionurl,{ "region":"RCR"})
     logger.info('RCR查询成功--->>>%s'%(RCRinfo))
@@ -1236,7 +1244,7 @@ def MakePDF(agentId,projectId):
     t.drawOn(doc, 920, 250)
 
     # 跳转到 项目分享页面
-    doc.linkURL('https://share.ecoprop.com/{0}/{1}'.format(prodatainfo['abbreviation'],userinfo['regNum']), (1250,130,1250+350,200))
+    doc.linkURL('{}{}/{}'.format(Config.ecoprop_share_paths,prodatainfo['abbreviation'],userinfo['regNum']), (1250,130,1250+350,200))
 
     # 跳转到 whatsapp
     # doc.linkURL('https://api.whatsapp.com/send?phone= '+userinfo['mobile'], (1250,130,1250+350,200))
@@ -1284,7 +1292,7 @@ def ComparisonPDF(agentId,projectId):
     getapi = getAPI()
     # 项目信息
     prolsit = []
-    proinfourl = Config.urlpath+"/pnd-api/project/queryProjectInfoById"
+    proinfourl = Config.urlpath+Config.PND_PROJECT_INFO
     for item in proidlist:
         proinfodata = {
             "projectId":item,
@@ -1591,7 +1599,7 @@ def ERABedroomRports(agentId,brokeId,minPrice,maxPrice,projectArea,token,source)
     # 基础数据准备 =====================================================
     getapi = getAPI()
     # 项目信息
-    proinfourl = Config.urlpath+"/app-service/project/queryProjectCountByBedroom"
+    proinfourl = Config.urlpath+Config.APP_PROJECT_BEDROOM_COUNT
     proinfodata = {
         "brokeId":brokeId,
         "minPrice":minPrice,
@@ -1665,38 +1673,36 @@ def Shera_to_Pdf(agentId,projectId):
     datas = {} 
     datas['imgpath'] = Config.imgpath
     datas['temppath'] = Config.ecoprop_temp_path # 本地图片路径
-    # agentId = "e73ca86d287143709c1450012bac9e9a"
-    # projectId = "26835e67a63f48aeb31750a3e8385a17"
+
     logger.info('get User Info ====>>>>'+agentId)
-    datas['userInfo'] = getapi.requsetAPI(Config.now_host+'/app-service/agent/queryShareAgentInfo',params={"agentId": agentId})
+    datas['userInfo'] = getapi.requsetAPI(Config.now_host+Config.APP_AGENT_SHARE_INFO,params={"agentId": agentId})
 
     # # 项目信息 
-    datas['proInfo'] = getapi.requsetAPI(Config.now_host+'/app-service/project/queryProjectInfo',params={"agentId": agentId,"projectId": projectId})
+    datas['proInfo'] = getapi.requsetAPI(Config.now_host+Config.APP_PROJECT_INFO,params={"agentId": agentId,"projectId": projectId})
     if not datas['proInfo'] or not datas['userInfo']:
         raise HTTPException(status_code=404, detail="Get Pro Or User Info Error")
     logger.info('get Pro Info ====>>>>{0}'.format(projectId))
     # Base64 转码
     if datas['proInfo']['description']:
+        logger.info('description Base64====>>>>')
         datas['proInfo']['description'] = base64.b64decode(datas['proInfo']['description']).decode("utf-8")
     else:
         datas['proInfo']['description'] = ''
-    logger.info('description Base64====>>>>')
 
     # 周边设施数据处理
-    logger.info('facilitiesMap  literal_eval====>>>>')
-
     if datas['proInfo']['facilitiesMap']:
+        logger.info('facilitiesMap  literal_eval====>>>>')
         datas['proInfo']['facilitiesMap'] = literal_eval(datas['proInfo']['facilitiesMap'])
     else:
         datas['proInfo']['facilitiesMap'] = []
     
     # 单位价格信息
     logger.info('get unit_price_list ====>>>>')
-    datas['unit_price_list'] = getapi.requsetAPI(Config.now_host+'/app-service/unit/unitTypeReport',params={"agentId": agentId,"projectId": projectId})
+    datas['unit_price_list'] = getapi.requsetAPI(Config.now_host+Config.APP_UNIT_TYPE_REPORT,params={"agentId": agentId,"projectId": projectId})
     
     # 项目Floor Plans
     logger.info('get site_plan_list ====>>>>')
-    site_plan_list = getapi.requsetAPI_POST(Config.now_host+"/app-service/siteplan/querySitePlanImg",params={"agentId": agentId,"projectId": projectId})
+    site_plan_list = getapi.requsetAPI_POST(Config.now_host+Config.APP_SITEPLAN_IMG,params={"agentId": agentId,"projectId": projectId})
     site_list = {
         "siteplan":[],
         "allbuilding":[]
@@ -1710,15 +1716,15 @@ def Shera_to_Pdf(agentId,projectId):
 
     # 项目媒体文件
     logger.info('get Pro_media_list ====>>>>')
-    datas['media_list'] = getapi.requsetAPI_POST(Config.now_host+"/app-service/media/queryProjectShareMedia",params={"agentId": agentId,"projectId": projectId})
+    datas['media_list'] = getapi.requsetAPI_POST(Config.now_host+Config.APP_MEDIA_SHARE,params={"agentId": agentId,"projectId": projectId})
     
     # 项目户型图列表
     logger.info('get floor_plan_list ====>>>>')
-    datas['floor_plan_list'] = getapi.requsetAPI_POST(Config.now_host+"/app-service/floor/queryFloorPlansByType",params={"type":"","projectId": projectId,"pageNo": 1,"pageSize":10})
+    datas['floor_plan_list'] = getapi.requsetAPI_POST(Config.now_host+Config.APP_FLOOR_PLANS,params={"type":"","projectId": projectId,"pageNo": 1,"pageSize":10})
 
     # 文件内部的所有跳转全部将跳转到指定的分享页面
     logger.info('set openlink====>>>>')
-    datas['openlink'] = "http://share.ecoprop.com/"+datas['proInfo']['abbreviation']+"/"+datas['userInfo']['regNum']
+    datas['openlink'] = Config.ecoprop_share_path+datas['proInfo']['abbreviation']+"/"+datas['userInfo']['regNum']
 
 
     # 模板文件路径
@@ -1803,12 +1809,12 @@ def Share_Unit_Pdf(agentId,unitId):
     # agentId = "e73ca86d287143709c1450012bac9e9a"
     # unitId = "7da0db34a0f34d969049a4b22a768b39,7e078477280b4abfb639ab79661c4400,70911a06985b44549380cc04839a7f14,b67eaef41f224acb919852e9b98ca81a"
     logger.info('get User Info ====>>>>'+agentId)
-    datas['userInfo'] = getapi.requsetAPI(Config.now_host+'/app-service/agent/queryShareAgentInfo',params={"agentId": agentId})
+    datas['userInfo'] = getapi.requsetAPI(Config.now_host+Config.APP_AGENT_SHARE_INFO,params={"agentId": agentId})
 
     UnitIdList = unitId.split(',')
     logger.info('get Unit Info ====>>>>')
     for i in UnitIdList:
-        unitInfo = getapi.requsetAPI(Config.now_host+'/app-service/unit/getUnitInfo',params={"agentId": agentId,"unitId":i})
+        unitInfo = getapi.requsetAPI(Config.now_host+Config.APP_UNIT_INFO,params={"agentId": agentId,"unitId":i})
         if unitInfo : datas['unit_list'].append(unitInfo)
     if not datas['unit_list'] :
         logger.error('Unit List Is None')
@@ -1866,11 +1872,11 @@ def Share_Pro_compare_Pdf(agentId,projectId):
     # agentId = "e73ca86d287143709c1450012bac9e9a"
     # projectId = "5b2216e95ef446bf853113450a0642f1,0c3cef5e77f547a99d61d6a2ccd37885"
     logger.info('get User Info ====>>>>'+agentId)
-    datas['userInfo'] = getapi.requsetAPI(Config.now_host+'/app-service/agent/queryShareAgentInfo',params={"agentId": agentId})
+    datas['userInfo'] = getapi.requsetAPI(Config.now_host+Config.APP_AGENT_SHARE_INFO,params={"agentId": agentId})
 
     UnitIdList = projectId.split(',')
     logger.info('get Pro Info ====>>>>')
-    proinfourl = Config.urlpath+"/app-service/project/queryProjectInfo"
+    proinfourl = Config.urlpath+Config.APP_PROJECT_INFO
     for item in UnitIdList:
         proinfo = getapi.requsetAPI(proinfourl,{"projectId":item,"agentId":agentId})
         if proinfo: datas['pro_list'].append(proinfo) 
@@ -1893,7 +1899,7 @@ def Share_Pro_compare_Pdf(agentId,projectId):
         
     env = jinja2.Environment(loader=jinja2.FileSystemLoader(searchpath=Config.ecoprop_temp_path,encoding='utf-8'))
     template = env.get_template('ecoprop_pro_compare_share_temp.html')
-    datas['openlink'] = "https://app.singmap.com/share/index.html#/vsProject?projectIds={0}&agentId={1}".format(projectId,agentId)
+    datas['openlink'] = "{}?projectIds={}&agentId={}".format(Config.ecoprop_pro_vs_path,projectId,agentId)
 
 
     # 模板填充参数
@@ -1922,15 +1928,6 @@ def Share_Pro_compare_Pdf(agentId,projectId):
         
     logger.info('PDF ADD Over ====>>>>')
     return re_path
-
-
-
-
-
-class Person(BaseModel):
-    docPath: Optional[str] = ""
-    filepath: Optional[str] = ""
-    data: Optional[dict] = {}
 
 
 # Word文档字段填充函数
