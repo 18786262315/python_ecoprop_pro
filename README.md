@@ -74,6 +74,8 @@ uvicorn manger:app --port 7777 --reload
 # 正式环境后台运行 无需其他的管理工具 :
 nohup uvicorn manger:app --host 0.0.0.0 --port 7777 --reload  > /home/mixgo/project/python/logs/log.txt 2>&1 &
 
+# 部署运行香港测试服务器
+nohup uvicorn manger:app --host 0.0.0.0 --port 7777 --reload  > /home/ubuntu/ecoprop_python/python_ecoprop_pro/logs/log.txt 2>&1 &
 
 
 
