@@ -13,5 +13,4 @@ uvicorn
 python-docx
 opencv-python
 pytest
-python3-pytest
 httpx
