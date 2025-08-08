@@ -103,14 +103,15 @@ class Config:
     ecoprop_temp_path = os.path.join(os.getcwd(),'temp') # 项目模板所在路径 
     # 文件导出路径
     returnpaths = "/home/upload/savills/pnd/file/report" # Pnd 报告保存路径
-    ecoprop_return_path = "/home/upload/savills/ecoprop/pdf" # Ecoprop 报告保存路径
+    ecoprop_return_path = "/home/upload/broke/ecoprop/pdf" # Ecoprop 报告保存路径
 
-    # Link 地址
-    ecoprop_share_path = "http://sharedev.ecoprop.com/" # Ecoprop 分享路径
-    ecoprop_share_paths = "https://sharedev.ecoprop.com/" # # https 
-    ecoprop_pro_vs_path = "https://appdev.singmap.com/share/index.html#/vsProject" # Ecoprop Pro 路径
+    # # Link 地址
+    # ecoprop_share_path = "http://sharedev.ecoprop.com/" # Ecoprop 分享路径
+    # ecoprop_share_paths = "https://sharedev.ecoprop.com/" # # https 
+    # ecoprop_pro_vs_path = "https://sharedev.ecoprop.com/vsProject" # Ecoprop Pro 路径
 
-
+    # 分享域名
+    share_domain = "sharedev.ecoprop.com"
 
 
     @staticmethod

@@ -1,6 +1,6 @@
 
 # import imp
-import jinja2,pdfkit,base64,time
+import jinja2,pdfkit,base64,time,re,os,requests,json,time,datetime
 
 from docx import Document
 from docx.shared import Inches,RGBColor
@@ -9,12 +9,10 @@ from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 from typing import Optional
 from pydantic import BaseModel
 # from logging import exception
-import re
 from ast import literal_eval
 from urllib import parse
 # from msilib.schema import Error
 from fastapi import APIRouter,Form,HTTPException,Body
-import os
 from .comm import MakeReportlab,getAPI,getDatetimes
 from comm.logger import logger
 from config import Config
@@ -33,7 +31,6 @@ from reportlab.pdfbase.ttfonts import TTFont
 # from reportlab.lib.formatters import DecimalFormatter
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image, Table, TableStyle,PageTemplate
 from reportlab.lib.styles import getSampleStyleSheet,ParagraphStyle
-import requests,json,time,datetime
 # from hashlib import md5
 # from typing import Dict, List, Set, Tuple
 # from starlette.responses import FileResponse
@@ -1243,8 +1240,19 @@ def MakePDF(agentId,projectId):
     t.wrapOn(doc, 0, 0)
     t.drawOn(doc, 920, 250)
 
+    # 定义 URL 各部分
+    url_params = {}
+    components = [
+        "https",          # 协议 (scheme)
+        Config.share_domain,# 域名 (netloc),
+        prodatainfo['abbreviation']+"/"+userinfo['regNum'],      # 路径 (path)
+        "",               # 参数 (params) - 较少使用
+        parse.urlencode(url_params),  # 查询参数 (query)
+        ""                # 片段 (fragment) - 如 #top
+    ]
+    
     # 跳转到 项目分享页面
-    doc.linkURL('{}{}/{}'.format(Config.ecoprop_share_paths,prodatainfo['abbreviation'],userinfo['regNum']), (1250,130,1250+350,200))
+    doc.linkURL(parse.urlunparse(components), (1250,130,1250+350,200))
 
     # 跳转到 whatsapp
     # doc.linkURL('https://api.whatsapp.com/send?phone= '+userinfo['mobile'], (1250,130,1250+350,200))
@@ -1724,8 +1732,17 @@ def Shera_to_Pdf(agentId,projectId):
 
     # 文件内部的所有跳转全部将跳转到指定的分享页面
     logger.info('set openlink====>>>>')
-    datas['openlink'] = Config.ecoprop_share_path+datas['proInfo']['abbreviation']+"/"+datas['userInfo']['regNum']
-
+    # 定义 URL 各部分
+    url_params = {}
+    components = [
+        "https",          # 协议 (scheme)
+        Config.share_domain,# 域名 (netloc)
+        datas['proInfo']['abbreviation']+"/"+datas['userInfo']['regNum'],      # 路径 (path)
+        "",               # 参数 (params) - 较少使用
+        parse.urlencode(url_params),  # 查询参数 (query)
+        ""                # 片段 (fragment) - 如 #top
+    ]
+    datas['openlink'] = parse.urlunparse(components)
 
     # 模板文件路径
     # logger.info('Set Tmp Info ====>>>>'+agentId)
@@ -1899,7 +1916,21 @@ def Share_Pro_compare_Pdf(agentId,projectId):
         
     env = jinja2.Environment(loader=jinja2.FileSystemLoader(searchpath=Config.ecoprop_temp_path,encoding='utf-8'))
     template = env.get_template('ecoprop_pro_compare_share_temp.html')
-    datas['openlink'] = "{}?projectIds={}&agentId={}".format(Config.ecoprop_pro_vs_path,projectId,agentId)
+
+    # 定义 URL 各部分
+    url_params = {
+        "projectIds": projectId,  # 项目ID列表
+        "agentId": agentId         # 代理人ID
+    }
+    components = [
+        "https",          # 协议 (scheme)
+        Config.share_domain,# 域名 (netloc)
+        "/vsProject",      # 路径 (path)
+        "",               # 参数 (params) - 较少使用
+        parse.urlencode(url_params),  # 查询参数 (query)
+        ""                # 片段 (fragment) - 如 #top
+    ]
+    datas['openlink'] = parse.urlunparse(components)
 
 
     # 模板填充参数

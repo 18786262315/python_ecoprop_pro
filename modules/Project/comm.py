@@ -13,8 +13,7 @@ from reportlab.lib.formatters import DecimalFormatter
 from reportlab.lib.styles import getSampleStyleSheet
 from fastapi import HTTPException
 from PIL import Image
-import os,time,math,datetime
-import requests,json
+import os,time,math,datetime,requests,json
 from io import BytesIO
 from comm.logger import logger
 from reportlab.lib.utils import ImageReader

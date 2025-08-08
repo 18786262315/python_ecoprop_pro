@@ -14,6 +14,7 @@ from fastapi import APIRouter,Form,HTTPException,Body
 import json,time,datetime
 import jinja2,pdfkit,base64
 from config import Config
+from urllib import parse
 
 
 gettime = getDatetimes()
@@ -78,7 +79,21 @@ def XHORIZON_Comparison_PDF(agentId,projectId):
     env = jinja2.Environment(loader=jinja2.FileSystemLoader(searchpath=Config.ecoprop_temp_path,encoding='utf-8'))
     template = env.get_template('xhoapp_pro_compare_share_temp.html')
     logger.info(datas)
-    datas['openlink'] = "{}?projectIds={}&agentId={}".format(Config.ecoprop_pro_vs_path,projectId,agentId)
+
+    # 定义 URL 各部分
+    url_params = {
+        "projectIds": projectId,  # 项目ID列表
+        "agentId": agentId         # 代理人ID
+    }
+    components = [
+        "https",          # 协议 (scheme)
+        Config.share_domain,# 域名 (netloc)
+        "/vsProject",      # 路径 (path)
+        "",               # 参数 (params) - 较少使用
+        parse.urlencode(url_params),  # 查询参数 (query)
+        ""                # 片段 (fragment) - 如 #top
+    ]
+    datas['openlink'] = parse.urlunparse(components)
     datas['roomNo'] = no_room * 75
     # print(datas['roomNo'])
 

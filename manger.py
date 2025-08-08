@@ -21,6 +21,7 @@ from modules import Project,Transaction
 
 app = FastAPI()
 
+# 路由注册
 # app.include_router(Users.router)
 # app.include_router(Company.router)
 app.include_router(Transaction.router)
@@ -73,20 +74,11 @@ async def request_validation_exception_handler(request: Request, exc: RequestVal
     # logger.error(f"参数错误{request.method} {request.url}") # 记录请求信息,方便排错
     return JSONResponse({"code": "400", "message": exc.errors()})
 
-# Dependency
-# def get_db():
-#     try:
-#         db = database.SessionLocal()
-#         yield db
-#     finally:
-#         db.close()
 
-
-
-@app.post("/")
-async def main(agentId: str=Form(...) ,projectId:str=Form(...)):
-    logger.info(f"{agentId} {projectId}")
-    return {'status': 'ok'}
+# @app.post("/")
+# async def main(agentId: str=Form(...) ,projectId:str=Form(...)):
+#     logger.info(f"{agentId} {projectId}")
+#     return {'status': 'ok'}
 
 
 
