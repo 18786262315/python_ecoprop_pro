@@ -1,12 +1,12 @@
 #!/bin/bash
 
 # 配置项目参数
-PROJECT_DIR="$HOME/ecoprop_python/python_ecoprop_pro"
+PROJECT_DIR="$HOME/ecoprop_py/python_ecoprop_pro"
 GIT_REPO="https://github.com/18786262315/python_ecoprop_pro.git"  # 替换为实际仓库地址
 LOG_DIR="$PROJECT_DIR/logs"
 LOG_FILE="$LOG_DIR/log.txt"
 PORT=7777
-PYTHON_VENV="venv"
+PYTHON_VENV="./venv"
 PYTHON_PACKAGE="python3.12-venv"  # Python虚拟环境依赖包
 
 # 确保日志目录存在
@@ -59,7 +59,7 @@ fi
 echo "激活虚拟环境并安装依赖..."
 source "$PYTHON_VENV/bin/activate"
 pip3 install --upgrade pip
-pip3 install -r requirements.txt
+pip3 install -r $PROJECT_DIR/requirements.txt
 
 # 停止可能正在运行的进程
 echo "停止现有进程..."
