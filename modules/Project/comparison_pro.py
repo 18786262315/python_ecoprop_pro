@@ -42,12 +42,12 @@ def XHORIZON_Comparison_PDF(agentId,projectId):
     } 
     # agentId = "e73ca86d287143709c1450012bac9e9a"
     # projectId = "5b2216e95ef446bf853113450a0642f1,0c3cef5e77f547a99d61d6a2ccd37885"
-    datas['userInfo'] = getapi.requsetAPI(Config.now_host+'/app-service/agent/queryShareAgentInfo',params={"agentId": agentId})
+    datas['userInfo'] = getapi.requsetAPI(Config.API_IP+'/app-service/agent/queryShareAgentInfo',params={"agentId": agentId})
     logger.info('get User Info ====>>>>{0}',format(datas['userInfo']))
 
     UnitIdList = projectId.split(',')
     no_room = 1
-    proinfourl = Config.urlpath+"/app-service/other/queryProjectInfoByComparison"
+    proinfourl = Config.API_IP+"/app-service/other/queryProjectInfoByComparison"
     for item in UnitIdList:
         proinfo = getapi.requsetAPI(proinfourl,{"projectId":item,"agentId":agentId})[0]
         proinfo["min_price"] = priceFormat(proinfo["min_price"])

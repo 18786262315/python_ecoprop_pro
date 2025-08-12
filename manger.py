@@ -14,7 +14,7 @@ from comm.logger import logger
 # 模块引入
 
 # from sql import database,models
-from modules import Project,Transaction
+from modules import Project,Transaction,Temp
 
 
 # models.Base.metadata.create_all(bind=database.engine)
@@ -26,6 +26,7 @@ app = FastAPI()
 # app.include_router(Company.router)
 app.include_router(Transaction.router)
 app.include_router(Project.router)
+app.include_router(Temp.router)
 
 
 # 跨域问题

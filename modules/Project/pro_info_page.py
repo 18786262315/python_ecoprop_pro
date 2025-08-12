@@ -26,7 +26,7 @@ def XHORIZON_APP_PRO_PDF(agentId,projectId):
     # 基础数据准备 =====================================================
     getapi = getAPI()
     # 项目信息
-    proinfourl = Config.urlpath+Config.PND_PROJECT_INFO_BIG
+    proinfourl = Config.API_IP+Config.PND_PROJECT_INFO_BIG
     proinfodata = {
         "projectId":projectId,
         "agentId":agentId
@@ -47,25 +47,25 @@ def XHORIZON_APP_PRO_PDF(agentId,projectId):
     Symbol =  prodatainfo["currencySymbol"] if prodatainfo["currencySymbol"] else "$"
     unitproce = [0,0,0,0,0] #单位售价
 
-    propdfinfo = getapi.requsetAPI( Config.urlpath+Config.PND_PDF_PROJECT_LIST,{
+    propdfinfo = getapi.requsetAPI( Config.API_IP+Config.PND_PDF_PROJECT_LIST,{
         "projectId":projectId,
         "type":""
     })
 
     if prodatainfo['district'] :
-        districtinfo = getapi.requsetAPI(Config.urlpath+Config.PND_PDF_DISTRICT_LIST,{"district":prodatainfo['district'],"type":"1"})
+        districtinfo = getapi.requsetAPI(Config.API_IP+Config.PND_PDF_DISTRICT_LIST,{"district":prodatainfo['district'],"type":"1"})
         # logger.info('项目区域销售图查询成功--->>>%s'%(districtinfo))
     else:
         districtinfo = []
 
-    # fileinfo = getapi.requsetAPI(Config.urlpath+"/pnd-api/pdf/queryPdfList",{
+    # fileinfo = getapi.requsetAPI(Config.API_IP+"/pnd-api/pdf/queryPdfList",{
     #     "fileName":"ProjectReport",
     #     "page":""
     # })
     # logger.info('PDF文件页面图片查询成功--->>>%s'%(fileinfo))
 
     #新加坡区间 销售统计
-    regionurl = Config.urlpath+Config.PND_PROJECT_RETAIL_COUNT
+    regionurl = Config.API_IP+Config.PND_PROJECT_RETAIL_COUNT
     # RCRdata = { "region":"RCR"}
     RCRinfo = getapi.requsetAPI(regionurl,{ "region":"RCR"})
     # logger.info('RCR查询成功--->>>%s'%(RCRinfo))

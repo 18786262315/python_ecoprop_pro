@@ -23,7 +23,7 @@
             "type": "debugpy",
             "request": "launch",
             "module": "uvicorn",
-            "python": "D:\\OtherApps\\PythonEnvs\\envs\\testenv1\\python.exe",
+            "python": "D:\\OtherApps\\Miniconda\\python.exe",
             "args": [
                 "manger:app",
                 "--host",

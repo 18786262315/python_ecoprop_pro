@@ -1,8 +1,8 @@
 {
-    "python.pythonPath": "D:\\OtherApps\\PythonEnvs\\envs\\testenv1\\python.exe",
-    "python.venvPath": "D:\\OtherApps\\PythonEnvs\\envs",
+    "python.pythonPath": "D:\\OtherApps\\Miniconda\\python.exe",
+    "python.venvPath": "D:\\OtherApps\\Miniconda",
     "python.analysis.extraPaths": [
-        "D:\\OtherApps\\PythonEnvs\\envs\\testenv1\\Lib\\site-packages"
+        "D:\\OtherApps\\Miniconda\\Lib\\site-packages"
     ],
     "python.analysis.useLibraryCodeForTypes": true,
     "python.analysis.typeCheckingMode": "basic",
