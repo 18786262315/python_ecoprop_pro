@@ -111,10 +111,14 @@ class MakeReportlab():
 
         msyh = os.path.join(os.getcwd(), "font", "msyh.ttf")
         msyhbd = os.path.join(os.getcwd(), "font", "msyhbd.ttf")
+        ARIALBD = os.path.join(os.getcwd(), "font", "ARIALBD.TTF")
+        arial = os.path.join(os.getcwd(), "font", "arial.ttf")
+        simsun = os.path.join(os.getcwd(), "font", "simsun.ttc")
 
-        pdfmetrics.registerFont(TTFont(self.song, "simsun.ttc"))
+
+        pdfmetrics.registerFont(TTFont(self.song, simsun))
         # pdfmetrics.registerFont(TTFont('ARIALBD','ARIALBD.TTF')) #注册字体
-        pdfmetrics.registerFont(TTFont('arial','arial.ttf')) #注册字体
+        pdfmetrics.registerFont(TTFont('arial',arial)) #注册字体
         pdfmetrics.registerFont(TTFont('msyh',msyh)) #注册字体
         pdfmetrics.registerFont(TTFont('msyhbd',msyhbd)) #注册字体
        
