@@ -634,8 +634,9 @@ def MakePDF(agentId,projectId):
     msyhbd = os.path.join(os.getcwd(), "font", "msyhbd.ttf")
     ARIALBD = os.path.join(os.getcwd(), "font", "ARIALBD.TTF")
     arial = os.path.join(os.getcwd(), "font", "arial.ttf")
+    simsun = os.path.join(os.getcwd(), "font", "simsun.ttc")
 
-    pdfmetrics.registerFont(TTFont(song, "simsun.ttc"))
+    pdfmetrics.registerFont(TTFont(song, simsun))
     pdfmetrics.registerFont(TTFont('ARIALBD',ARIALBD)) #注册字体
     pdfmetrics.registerFont(TTFont('arial',arial)) #注册字体
     pdfmetrics.registerFont(TTFont('msyh',msyh)) #注册字体
@@ -1339,9 +1340,10 @@ def ComparisonPDF(agentId,projectId):
     msyhbd = os.path.join(os.getcwd(), "font", "msyhbd.ttf")
     ARIALBD = os.path.join(os.getcwd(), "font", "ARIALBD.TTF")
     arial = os.path.join(os.getcwd(), "font", "arial.ttf")
+    simsun = os.path.join(os.getcwd(), "font", "simsun.ttc")
 
     song = "simsun"
-    pdfmetrics.registerFont(TTFont(song, "simsun.ttc"))
+    pdfmetrics.registerFont(TTFont(song, simsun))
     pdfmetrics.registerFont(TTFont('ARIALBD',ARIALBD)) #注册字体
     pdfmetrics.registerFont(TTFont('arial',arial)) #注册字体
     pdfmetrics.registerFont(TTFont('msyh',msyh)) #注册字体
