@@ -1163,6 +1163,7 @@ def MakePDF(agentId,projectId):
         transactionPrice = 0
         if item['transactionDate']:
             date = time.strftime('%Y-%m',time.localtime(item['transactionDate']/1000))
+            logger.info(date)
         if item['price']:
             unitprice = item['price']
         if item['transactionPrice']:
