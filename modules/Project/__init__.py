@@ -654,6 +654,7 @@ def MakePDF(agentId,projectId):
 
     if not os.path.exists(uppath):
         os.makedirs(uppath)
+        logger.info(f'---------->>>文档创建{uppath}文件夹')
     logger.info(f'---------->>>文档创建{str(time.time())}文件夹')
     savepath = os.path.join(uppath,str(int(time.time()))+'.pdf') 
     logger.info(f'---------->>>文档创建{savepath}')
