@@ -2,19 +2,19 @@
 
 # 配置项目参数
 PROJECT_DIR="$HOME/ecoprop_py/python_ecoprop_pro"
-GIT_REPO="https://github.com/18786262315/python_ecoprop_pro.git"  # 替换为实际仓库地址
+GIT_REPO="https://github.com/18786262315/python_ecoprop_pro.git"
 LOG_DIR="$PROJECT_DIR/logs"
 LOG_FILE="$LOG_DIR/log.txt"
 PORT=7777
-PYTHON_VENV="./venv"
-PYTHON_PACKAGE="python3.12-venv"  # Python虚拟环境依赖包
+PYTHON_VENV="venv"
+PYTHON_PACKAGE="python3.12-venv"
 
 # 确保日志目录存在
 mkdir -p "$LOG_DIR"
 
 echo "===== 开始部署: $(date) ====="
 
-# 检查项目目录是否存在，不存在则克隆仓库
+# 检查项目目录是否存在
 if [ ! -d "$PROJECT_DIR" ]; then
     echo "项目目录不存在，从Git克隆仓库..."
     git clone "$GIT_REPO" "$PROJECT_DIR"
@@ -22,16 +22,37 @@ if [ ! -d "$PROJECT_DIR" ]; then
         echo "克隆仓库失败，请检查仓库地址和网络连接"
         exit 1
     fi
-else
-    echo "拉取最新代码..."
     cd "$PROJECT_DIR" || exit 1
-    git pull
-    if [ $? -ne 0 ]; then
-        echo "拉取代码失败，继续使用现有代码部署"
+else
+    # 进入项目目录
+    cd "$PROJECT_DIR" || exit 1
+    
+    # 检查是否为Git仓库
+    if [ ! -d ".git" ]; then
+        echo "检测到目录不是Git仓库，将删除并重新克隆..."
+        cd .. || exit 1
+        rm -rf "$PROJECT_DIR"
+        git clone "$GIT_REPO" "$PROJECT_DIR"
+        if [ $? -ne 0 ]; then
+            echo "重新克隆仓库失败"
+            exit 1
+        fi
+        cd "$PROJECT_DIR" || exit 1
+    else
+        echo "拉取最新代码..."
+        git pull
+        if [ $? -ne 0 ]; then
+            echo "拉取代码失败，继续使用现有代码部署"
+        fi
     fi
 fi
 
-cd "$PROJECT_DIR" || exit 1
+# 检查requirements.txt是否存在
+if [ ! -f "requirements.txt" ]; then
+    echo "错误：项目目录中未找到 requirements.txt 文件"
+    echo "请确认仓库中包含该文件，或手动创建后重新运行脚本"
+    exit 1
+fi
 
 # 检查并安装Python虚拟环境依赖
 echo "检查Python虚拟环境依赖..."
@@ -59,7 +80,11 @@ fi
 echo "激活虚拟环境并安装依赖..."
 source "$PYTHON_VENV/bin/activate"
 pip3 install --upgrade pip
-pip3 install -r $PROJECT_DIR/requirements.txt
+pip3 install -r requirements.txt
+if [ $? -ne 0 ]; then
+    echo "依赖安装失败，请检查requirements.txt内容"
+    exit 1
+fi
 
 # 停止可能正在运行的进程
 echo "停止现有进程..."
@@ -69,7 +94,7 @@ if [ -n "$PID" ]; then
     sleep 2
 fi
 
-# 启动应用（正式环境建议移除--reload参数）
+# 启动应用
 echo "启动应用程序..."
 nohup uvicorn manger:app --host 0.0.0.0 --port "$PORT" > "$LOG_FILE" 2>&1 &
 

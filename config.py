@@ -89,8 +89,8 @@ class Config:
 
     # 服务迁移到新服务器测试 ===============================================================================
     envs = "release" # 发布
-    imgpath = 'https://ecoprop.s3.ap-southeast-1.amazonaws.com' # oss 图片
-    host_imgpath = 'http://imagedev.singmap.com' # 服务所在的本地图片 /upload 地址 
+    imgpath = 'https://img.singmap.com' # oss 图片
+    host_imgpath = 'http://api.singmap.com' # 服务所在的本地图片 /upload 地址 
 
     API_IP = 'http://127.0.0.1:9998' #API
 

@@ -293,6 +293,10 @@ class WordTemplateFiller(TemplateFiller):
     
     def load_template(self) -> None:
         """加载Word模板"""
+        # 判断模板路径是本地还是线上文件，如果是线上文件，则下载模板
+        # if self.template_path.startswith('http'):
+        #     self.template_path = FileDown(self.template_path)
+
         self.document = Document(self.template_path)
     
     def fill(self, data: Dict[str, str], excluded_fields: Optional[List[str]] = None) -> None:

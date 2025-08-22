@@ -613,6 +613,7 @@ def MakePDF(agentId,projectId):
 
     #新加坡区间 销售统计
     regionurl = Config.API_IP+Config.PND_PROJECT_RETAIL_COUNT
+    logger.info('API--->>>%s'%(regionurl))
     # RCRdata = { "region":"RCR"}
     RCRinfo = getapi.requsetAPI(regionurl,{ "region":"RCR"})
     logger.info('RCR查询成功--->>>%s'%(RCRinfo))
@@ -631,10 +632,12 @@ def MakePDF(agentId,projectId):
     # 注册字体    
     msyh = os.path.join(os.getcwd(), "font", "msyh.ttf")
     msyhbd = os.path.join(os.getcwd(), "font", "msyhbd.ttf")
+    ARIALBD = os.path.join(os.getcwd(), "font", "ARIALBD.TTF")
+    arial = os.path.join(os.getcwd(), "font", "arial.ttf")
 
     pdfmetrics.registerFont(TTFont(song, "simsun.ttc"))
-    pdfmetrics.registerFont(TTFont('ARIALBD','ARIALBD.TTF')) #注册字体
-    pdfmetrics.registerFont(TTFont('arial','arial.ttf')) #注册字体
+    pdfmetrics.registerFont(TTFont('ARIALBD',ARIALBD)) #注册字体
+    pdfmetrics.registerFont(TTFont('arial',arial)) #注册字体
     pdfmetrics.registerFont(TTFont('msyh',msyh)) #注册字体
     pdfmetrics.registerFont(TTFont('msyhbd',msyhbd)) #注册字体
     Imagepath = os.path.join(Config.filepath,'file')
@@ -1334,11 +1337,13 @@ def ComparisonPDF(agentId,projectId):
     # 注册字体    
     msyh = os.path.join(os.getcwd(), "font", "msyh.ttf")
     msyhbd = os.path.join(os.getcwd(), "font", "msyhbd.ttf")
-    
+    ARIALBD = os.path.join(os.getcwd(), "font", "ARIALBD.TTF")
+    arial = os.path.join(os.getcwd(), "font", "arial.ttf")
+
     song = "simsun"
     pdfmetrics.registerFont(TTFont(song, "simsun.ttc"))
-    pdfmetrics.registerFont(TTFont('ARIALBD','ARIALBD.TTF')) #注册字体
-    pdfmetrics.registerFont(TTFont('arial','arial.ttf')) #注册字体
+    pdfmetrics.registerFont(TTFont('ARIALBD',ARIALBD)) #注册字体
+    pdfmetrics.registerFont(TTFont('arial',arial)) #注册字体
     pdfmetrics.registerFont(TTFont('msyh',msyh)) #注册字体
     pdfmetrics.registerFont(TTFont('msyhbd',msyhbd)) #注册字体
     # pdfmetrics.registerFont(TTFont('dejavu','dejavu-sans.book.ttf')) #注册字体
