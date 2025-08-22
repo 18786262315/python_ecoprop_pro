@@ -642,7 +642,6 @@ def MakePDF(agentId,projectId):
     pdfmetrics.registerFont(TTFont('msyh',msyh)) #注册字体
     pdfmetrics.registerFont(TTFont('msyhbd',msyhbd)) #注册字体
     Imagepath = os.path.join(Config.filepath,'file')
-    logger.info(f'---------->>>文档创建{Imagepath}')
 
     pagesize = (1747,965) # 画布大小
     # pagesize = (A4[1],A4[0]) # 画布大小
@@ -650,7 +649,7 @@ def MakePDF(agentId,projectId):
     gettime = getDatetimes()
     tt = gettime.getDate()
     uppath = os.path.join(Config.returnpaths,tt)
-    timestamp = time.time()
+
     if not os.path.exists(uppath):
         os.makedirs(uppath)
     savepath = os.path.join(uppath,str(int(time.time()))+'.pdf') 
@@ -661,9 +660,6 @@ def MakePDF(agentId,projectId):
     doc.setTitle(prodatainfo['projectName'])
 
     makefunc = MakeReportlab(doc,Imagepath,pagesize,Symbol) # 加载方法
-    logger.info('---------->>>文档创建')
-
-    
 
     ######################################################################
     # page1  ===============================================
@@ -1160,8 +1156,7 @@ def MakePDF(agentId,projectId):
         unitprice = 0
         transactionPrice = 0
         if item['transactionDate']:
-            ...
-            # date = time.strftime('%Y-%m',time.localtime(item['transactionDate']/1000))
+            date = time.strftime('%Y-%m',time.localtime(item['transactionDate']/1000))
         if item['price']:
             unitprice = item['price']
         if item['transactionPrice']:
