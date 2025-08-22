@@ -1,6 +1,6 @@
 
 # import imp
-import jinja2,pdfkit,base64,time,re,os,requests,json,time,datetime
+import jinja2,pdfkit,base64,time,re,os,requests,json,datetime
 
 from docx import Document
 from docx.shared import Inches,RGBColor
@@ -654,7 +654,7 @@ def MakePDF(agentId,projectId):
 
     if not os.path.exists(uppath):
         os.makedirs(uppath)
-    logger.info(f'---------->>>文档创建{time.time()}文件夹')
+    logger.info(f'---------->>>文档创建{str(time.time())}文件夹')
     savepath = os.path.join(uppath,str(int(time.time()))+'.pdf') 
     logger.info(f'---------->>>文档创建{savepath}')
 
