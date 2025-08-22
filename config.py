@@ -103,7 +103,7 @@ class Config:
     filepath = os.getcwd()  # 项目所在路径 
     ecoprop_temp_path = os.path.join(filepath,'temp') # 项目模板所在路径 
     # 文件导出路径
-    returnpaths = "/home/upload/broke/pnd/file/report" if envs == 'release' else os.path.join(os.getcwd(),'pdf') # Pnd 报告保存路径
+    returnpaths = "/home/upload/savills/pnd/file/report" if envs == 'release' else os.path.join(os.getcwd(),'pdf') # Pnd 报告保存路径
     ecoprop_return_path = "/home/upload/broke/ecoprop/pdf" if envs == 'release' else os.path.join(os.getcwd(),'pdf') # Ecoprop 报告保存路径
 
     # 分享域名
