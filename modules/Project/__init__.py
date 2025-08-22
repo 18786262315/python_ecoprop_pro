@@ -1168,6 +1168,7 @@ def MakePDF(agentId,projectId):
         if item['transactionPrice']:
             transactionPrice = item['transactionPrice']
         unittransactions[i+1] =  [date,item['floor'],item['area'],makefunc.priceset(transactionPrice),makefunc.priceset(unitprice)]
+        logger.info(666)
         # unittransactions.append([date,item['floor'],item['area'],makefunc.priceset(transactionPrice),makefunc.priceset(unitprice),])
     logger.info('============>>transactionDate')
     

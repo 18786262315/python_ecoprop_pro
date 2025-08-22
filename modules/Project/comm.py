@@ -563,6 +563,7 @@ class MakeReportlab():
         return data
 
     def priceset(self,price):
+        logger.info('============>>price')
         if price !=0 and price != None:
             price1 = format(round(price), ',')
             return str(self.S+price1)
