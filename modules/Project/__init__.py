@@ -1141,7 +1141,6 @@ def MakePDF(agentId,projectId):
     makefunc.addTesxts(fontsize=40,x=pagesize[0]-530,y=220,text=str(prodatainfo['sold']),fontname='ARIALBD')
 
     makefunc.addTesxts(fontsize=60,x=600,y=pagesize[1]-180,text="Sales Transactions",fontname='ARIALBD')
-    logger.info('============>>transactionDate')
 
     # 单位销量统计
     unittransactions = [
@@ -1162,16 +1161,14 @@ def MakePDF(agentId,projectId):
         unitprice = 0
         transactionPrice = 0
         if item['transactionDate']:
-            logger.info(f'times: {item['transactionDate']}')
-            date = time.strftime('%Y-%m',time.localtime(item['transactionDate']/1000))
-            logger.info(date)
+            ...
+            # date = time.strftime('%Y-%m',time.localtime(item['transactionDate']/1000))
         if item['price']:
             unitprice = item['price']
         if item['transactionPrice']:
             transactionPrice = item['transactionPrice']
         unittransactions[i+1] =  [date,item['floor'],item['area'],makefunc.priceset(transactionPrice),makefunc.priceset(unitprice)]
         # unittransactions.append([date,item['floor'],item['area'],makefunc.priceset(transactionPrice),makefunc.priceset(unitprice),])
-    logger.info('============>>transactionDate')
     
     t = Table(unittransactions,(pagesize[0]-560)/6,60, style={
     # ("FONT", (0, 0), (-1, -1), song, 22),
@@ -1187,7 +1184,6 @@ def MakePDF(agentId,projectId):
     t._argH[0] = 35
     t.wrapOn(doc, 0, 0)
     t.drawOn(doc, 100, 125)
-    logger.info('============>>transactionDate')
     doc.showPage()  # 保存当前画布页面
 
     # Page13 ===========================================================================

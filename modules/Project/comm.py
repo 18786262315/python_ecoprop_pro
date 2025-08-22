@@ -297,7 +297,7 @@ class MakeReportlab():
         '''页面背景图片'''
         I_path = os.path.join(self.imgpaths,imgName)
         # print(I_path)
-        logger.info("添加背景图片:{}".format(I_path))
+        # logger.info("添加背景图片:{}".format(I_path))
         self.doc.drawImage(I_path,0,0,width=self.pagesize[0],height=self.pagesize[1],mask='auto') #mask=auto 背景透明
 
     def addTesxts(self,fontsize=16,x=0,y=0,text='',color='',fontname='Helvetica'):
@@ -563,7 +563,6 @@ class MakeReportlab():
         return data
 
     def priceset(self,price):
-        logger.info('============>>price')
         if price !=0 and price != None:
             price1 = format(round(price), ',')
             return str(self.S+price1)
