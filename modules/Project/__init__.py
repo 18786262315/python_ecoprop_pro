@@ -642,15 +642,21 @@ def MakePDF(agentId,projectId):
     pdfmetrics.registerFont(TTFont('msyh',msyh)) #注册字体
     pdfmetrics.registerFont(TTFont('msyhbd',msyhbd)) #注册字体
     Imagepath = os.path.join(Config.filepath,'file')
+    logger.info(f'---------->>>文档创建{Imagepath}')
+
     pagesize = (1747,965) # 画布大小
     # pagesize = (A4[1],A4[0]) # 画布大小
     # PND文件夹+ 项目ID + 用户信息 + 文件名称
     gettime = getDatetimes()
     tt = gettime.getDate()
     uppath = os.path.join(Config.returnpaths,tt)
+    logger.info(f'---------->>>文档创建{uppath}')
+
     if not os.path.exists(uppath):
         os.makedirs(uppath)
     savepath = os.path.join(uppath,str(int(time.time()))+'.pdf') 
+    logger.info(f'---------->>>文档创建{savepath}')
+
     # returnPath = os.path.join(Config.filepath,tt,str(int(time.time()))+'.pdf')
     doc = canvas.Canvas(savepath,pagesize=pagesize)
     doc.setTitle(prodatainfo['projectName'])
