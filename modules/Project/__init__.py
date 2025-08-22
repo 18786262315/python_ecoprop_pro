@@ -1,6 +1,6 @@
 
 # import imp
-import jinja2,pdfkit,base64,time,re,os,requests,json,time,datetime
+import jinja2,pdfkit,base64,time,re,os,requests,json,datetime
 
 from docx import Document
 from docx.shared import Inches,RGBColor
@@ -1162,6 +1162,7 @@ def MakePDF(agentId,projectId):
         unitprice = 0
         transactionPrice = 0
         if item['transactionDate']:
+            logger.info(999)
             date = time.strftime('%Y-%m',time.localtime(item['transactionDate']/1000))
             logger.info(date)
         if item['price']:
@@ -1169,7 +1170,6 @@ def MakePDF(agentId,projectId):
         if item['transactionPrice']:
             transactionPrice = item['transactionPrice']
         unittransactions[i+1] =  [date,item['floor'],item['area'],makefunc.priceset(transactionPrice),makefunc.priceset(unitprice)]
-        logger.info(666)
         # unittransactions.append([date,item['floor'],item['area'],makefunc.priceset(transactionPrice),makefunc.priceset(unitprice),])
     logger.info('============>>transactionDate')
     
