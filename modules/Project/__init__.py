@@ -36,7 +36,7 @@ from reportlab.lib.styles import getSampleStyleSheet,ParagraphStyle
 # from starlette.responses import FileResponse
 from .pro_info_page import XHORIZON_APP_PRO_PDF
 from .comparison_pro import XHORIZON_Comparison_PDF
-
+import subprocess
 
 router = APIRouter(prefix="/project",tags=['project'],responses={405: {"description": "Not found"}},)
 gettime = getDatetimes()
@@ -428,15 +428,32 @@ async def Re_Itinerary(customerId: str=Form(...)):
 
         # 模板填充参数
         options = {
-            'page-size': ['A4'],
-            'margin-top': '5mm',
-            'margin-right': '5mm',
-            'margin-bottom': '5mm',
-            'margin-left': '5mm',
-            'orientation':'Landscape',
-            'encoding': "UTF-8",
-            'no-outline': None,
-        }
+                # 'page-width': '842px',
+                # 'page-height': '595px',
+                'page-size': ['A4'],
+                'margin-top': '0mm',
+                'margin-right': '0mm',
+                'margin-bottom': '0mm',
+                'margin-left': '0mm',
+                'orientation':'Landscape', #横向
+                'encoding': "UTF-8",
+                'no-outline': None,
+
+                'enable-local-file-access': None,  # 允许访问本地文件
+                'javascript-delay': 2000,          # 延迟执行JavaScript，确保图片完全加载
+                'images': None,                    # 启用图像加载
+                'enable-javascript': None,         # 启用JavaScript
+
+                # 日志设置
+                'quiet': None,                     # 减少输出信息
+
+                # 资源加载控制
+                # 内存和超时设置
+                'disable-smart-shrinking': None,   # 禁用智能缩小，保持原始尺寸比例
+                'zoom': 1,                         # 缩放因子
+                'load-error-handling': 'ignore',   # 忽略加载错误
+                'load-media-error-handling': 'ignore',  # 忽略媒体加载错误
+            }
         try:
             logger.info('Add tmp Info ====>>>>')
             InfoData = eval(re.sub('None','\'\'',str(InfoData))) # 去除None值
@@ -513,7 +530,7 @@ async def Condition_Report(customerId: str=Form(...)):
             'margin-left': '5mm',
             'orientation':'portrait',
             'encoding': "UTF-8",
-            'no-outline': None,
+            # 'no-outline': None,
             # 'header-html':Config.ecoprop_temp_path+'/pdfHeader.html', #设置页眉数据，作为页眉的html页面必须有<!DOCTYPE html> 不能动态化
             # '--header-center':'Condition Report',
             '--header-left':'Condition Report',
@@ -1782,8 +1799,21 @@ def Shera_to_Pdf(agentId,projectId):
         'orientation':'Landscape', #横向
         'encoding': "UTF-8",
         'no-outline': None,
+
         'enable-local-file-access': None,  # 允许访问本地文件
-        'quiet': None
+        'javascript-delay': 2000,          # 延迟执行JavaScript，确保图片完全加载
+        'images': None,                    # 启用图像加载
+        'enable-javascript': None,         # 启用JavaScript
+
+        # 日志设置
+        'quiet': None,                     # 减少输出信息
+
+        # 资源加载控制
+        # 内存和超时设置
+        'disable-smart-shrinking': None,   # 禁用智能缩小，保持原始尺寸比例
+        'zoom': 1,                         # 缩放因子
+        'load-error-handling': 'ignore',   # 忽略加载错误
+        'load-media-error-handling': 'ignore',  # 忽略媒体加载错误
     }
     try:
         datas = eval(re.sub('None','\'\'',str(datas))) # 去除None值
@@ -1859,16 +1889,31 @@ def Share_Unit_Pdf(agentId,unitId):
     template = env.get_template('ecoprop_unit_share_temp.html')
     # 模板填充参数
     options = {
-        'page-size': 'A4',
-        'margin-top': '5mm',
-        'margin-right': '5mm',
-        'margin-bottom': '5mm',
-        'margin-left': '5mm',
+        # 'page-width': '842px',
+        # 'page-height': '595px',
+        'page-size': ['A4'],
+        'margin-top': '0mm',
+        'margin-right': '0mm',
+        'margin-bottom': '0mm',
+        'margin-left': '0mm',
         'orientation':'Landscape', #横向
         'encoding': "UTF-8",
         'no-outline': None,
+
         'enable-local-file-access': None,  # 允许访问本地文件
-        'quiet': None
+        'javascript-delay': 2000,          # 延迟执行JavaScript，确保图片完全加载
+        'images': None,                    # 启用图像加载
+        'enable-javascript': None,         # 启用JavaScript
+
+        # 日志设置
+        'quiet': None,                     # 减少输出信息
+
+        # 资源加载控制
+        # 内存和超时设置
+        'disable-smart-shrinking': None,   # 禁用智能缩小，保持原始尺寸比例
+        'zoom': 1,                         # 缩放因子
+        'load-error-handling': 'ignore',   # 忽略加载错误
+        'load-media-error-handling': 'ignore',  # 忽略媒体加载错误
     }
     try:
         logger.info('Set tmp Info ====>>>>{0}'.format(datas))
@@ -1942,16 +1987,31 @@ def Share_Pro_compare_Pdf(agentId,projectId):
 
     # 模板填充参数
     options = {
-        'page-size': 'A4',
-        'margin-top': '5mm',
-        'margin-right': '5mm',
-        'margin-bottom': '5mm',
-        'margin-left': '5mm',
+        # 'page-width': '842px',
+        # 'page-height': '595px',
+        'page-size': ['A4'],
+        'margin-top': '0mm',
+        'margin-right': '0mm',
+        'margin-bottom': '0mm',
+        'margin-left': '0mm',
         'orientation':'Landscape', #横向
         'encoding': "UTF-8",
         'no-outline': None,
+
         'enable-local-file-access': None,  # 允许访问本地文件
-        'quiet': None
+        'javascript-delay': 2000,          # 延迟执行JavaScript，确保图片完全加载
+        'images': None,                    # 启用图像加载
+        'enable-javascript': None,         # 启用JavaScript
+
+        # 日志设置
+        'quiet': None,                     # 减少输出信息
+
+        # 资源加载控制
+        # 内存和超时设置
+        'disable-smart-shrinking': None,   # 禁用智能缩小，保持原始尺寸比例
+        'zoom': 1,                         # 缩放因子
+        'load-error-handling': 'ignore',   # 忽略加载错误
+        'load-media-error-handling': 'ignore',  # 忽略媒体加载错误
     }
     try:
         logger.info('Set tmp Info ====>>>>{0}'.format(datas))
@@ -1969,113 +2029,134 @@ def Share_Pro_compare_Pdf(agentId,projectId):
 
 
 # Word文档字段填充函数
-def text_to_word(paragraph, conntent,types):
+def text_to_word(paragraph_or_cell, conntent, types):
     """Word文档字段填充"""
     
-    def replace_placeholder(match, key):
+    def replace_placeholder(match_str, key):
         """替换占位符并记录日志"""
-        if key in conntent:
-            logger.info(f'替换: {match} -> {conntent[key]}')
-            return conntent[key]
+        # 去除可能的空白字符
+        clean_key = key.strip()
+        if clean_key in conntent:
+            val = conntent[clean_key]
+            # 处理 None 值
+            if val is None:
+                val = ""
+            logger.info(f'替换: {match_str} -> {val}')
+            return str(val)
         else:
-            logger.info(f'未找到内容: {match}')
-            return ""
+            logger.warning(f'未找到内容键: {clean_key} (原匹配: {match_str})')
+            return "" # 或者返回原字符串 match_str 以保留标签
 
-    # 处理文本替换
-    if any(tag in paragraph.text for tag in ["{{Sign", "{{ck", "{{rd"]):
-        logger.info(f"填充文本 =====>{paragraph.text}")
-        # 优化 正则表达式直接分割整个段落，处理需要白色文本且不做填充的标签
-        parts = re.split(r'(\{\{.*?\}\})', paragraph.text)
-        logger.info(f"parts: {parts}")
-        if types == 'cell':
-            # 清除表格内容
-            paragraph = paragraph.paragraphs[0]
-            paragraph.clear()
-        else:
-            # 清除段落内容
-            paragraph.clear()
-        for part in parts:
-            # 处理需要白字的标签
-            if part.startswith(("{{Sign", "{{ck", "{{rd")):
-                logger.info(f'特殊标签不处理: {part}')
-                # run_white = paragraph.add_run(part)  # 回填标签text
-                # run_white.font.color.rgb = RGBColor(255, 255, 255)  # 设置为白色
-                continue
-            
-            key = re.search(r'\{\{(.*)\}\}', part)
-            if key:
-                part = replace_placeholder(part, key.group(1).strip())
-            run_black = paragraph.add_run(part)
-            run_black.font.color.rgb = RGBColor(0, 0, 0)  # 设置为黑色
-        # 之前的实现方式
-        # matches = re.findall(r'({{.*?}})', paragraph.text)
-        # for match in matches:
-        #     key = re.search(r'\{\{(.*?)\}\}', match).group(1).strip()
-        #     if key == '':
-        #         logger.info('待填充字段为空,不填充')
-        #         continue
-        #     if key.startswith(("Sign", "ck", "rd")):
-        #         logger.info(f'排除: {match}')
-        #         continue
-            
-        #     # 替换内容
-        #     paragraph.text = paragraph.text.replace(match, replace_placeholder(match, key))
-        # if "{{ck" in paragraph.text:
-        #     parts = re.split(r'(\{\{ck1\}\}|\{\{ck2\}\})', paragraph.text)
-        #     print(parts)
-        #     # 添加黑色文本
-        #     paragraph.clear()
-        #     for part in parts:
-        #         if part == '{{ck1}}' or part == '{{ck2}}':
-        #             run_white = paragraph.add_run(part)  # 添加白色部分
-        #             run_white.font.color.rgb = RGBColor(255, 255, 255)  # 设置为白色
-        #             continue
-        #         run_black = paragraph.add_run(part)
-        #         run_black.font.color.rgb = RGBColor(0, 0, 0)  # 设置为黑色
-
-    elif "{{img" in paragraph.text:
-        # 添加指定图片到文档
-        logger.info("填充图片 =====>{}".format(paragraph.text))
-        matches = re.findall(r'\{\{(\w+)\}\}', paragraph.text)
-        if not conntent.get(matches[0]):
-            paragraph.text = ''
-            return
-        # 临时保存图片的路径
-        parsed_url = parse.urlparse(conntent[matches[0]])
-        img_filename = os.path.basename(parsed_url.path)
-        img_path = os.path.join(Config.ecoprop_temp_path, img_filename).replace('\\', '/')  # 构建临时文件路径
-        
-        response = requests.get(Config.imgpath + conntent[matches[0]])
-        if response.status_code == 200:
-            with open(img_path, 'wb') as file:
-                file.write(response.content)
-
-            paragraph.text = ''
-            run = paragraph.add_run('')
-            run.add_break()
-            # 添加图片并指定大小
-            run.add_picture(img_path, width=Inches(5.5))
-            # 删除图片
-            os.remove(img_path)
-        else:
-            logger.error("图片下载失败:{}".format(conntent[matches[0]]))
-            paragraph.text = ''
-    elif "{{buyerList}}" in paragraph.text:
-        # 填充买家列表
-        logger.info("填充买家列表 =====>{}".format(paragraph.text))
-        paragraph.text = ""
-        for index,rows in enumerate(conntent['buyerList']):
-            # paragraph.text += "({0}) {1} (ID No. {2}) \n".format(str(index+1),rows['buyerName'],rows['num'])
-            paragraph.text += "{0} {1} \n".format(rows['num'],rows['buyerName'])
-        # 设置对齐方式
-        paragraph.alignment = WD_PARAGRAPH_ALIGNMENT.LEFT 
+    # 确定要处理的段落列表
+    paragraphs_to_process = []
+    if types == 'cell':
+        # 如果是单元格，获取其内部所有段落
+        # 注意：python-docx 中 cell.paragraphs 至少包含一个空段落
+        paragraphs_to_process = paragraph_or_cell.paragraphs
     else:
-        # logger.info("填充文本 =====>{}".format(paragraph.text))
-        # 方案1 用jinja2模板填充文本（特殊内容不太好处理，比如一段内容、有的填充有的不填充）
-        logger.info(f"填充文本 =====>{paragraph.text}")
-        template = jinja2.Template(paragraph.text)
-        paragraph.text = template.render(conntent)
-        logger.info(f"填充后的文本 =====>{paragraph.text}")
+        # 如果是普通段落
+        paragraphs_to_process = [paragraph_or_cell]
+
+    for paragraph in paragraphs_to_process:
+        original_text = paragraph.text
+        
+        # 快速检查是否包含需要处理的标记
+        if not any(tag in original_text for tag in ["{{", "{{img", "{{buyerList"]):
+            continue
+
+        logger.info(f"处理段落/单元格部分: '{original_text}'")
+
+        # 特殊处理：买家列表
+        if "{{buyerList}}" in original_text:
+            logger.info("填充买家列表")
+            paragraph.clear()
+            if 'buyerList' in conntent and isinstance(conntent['buyerList'], list):
+                for index, rows in enumerate(conntent['buyerList']):
+                    # 避免最后一行多余换行，可根据需求调整
+                    line_text = "{0} {1}".format(rows.get('num', ''), rows.get('buyerName', ''))
+                    p_run = paragraph.add_run(line_text)
+                    p_run.font.color.rgb = RGBColor(0, 0, 0)
+                    if index < len(conntent['buyerList']) - 1:
+                        paragraph.add_run('\n')
+            paragraph.alignment = WD_PARAGRAPH_ALIGNMENT.LEFT 
+            continue
+
+        # 特殊处理：图片
+        if "{{img" in original_text:
+            logger.info("填充图片")
+            matches = re.findall(r'\{\{(\w+)\}\}', original_text)
+            if matches:
+                img_key = matches[0]
+                img_url_relative = conntent.get(img_key)
+                
+                paragraph.clear() # 清空原有文本
+                
+                if img_url_relative:
+                    parsed_url = parse.urlparse(Config.imgpath + img_url_relative)
+                    img_filename = os.path.basename(parsed_url.path)
+                    # 防止文件名冲突或非法字符，简单处理
+                    img_filename = re.sub(r'[^\w\.]', '_', img_filename)
+                    img_path = os.path.join(Config.ecoprop_temp_path, img_filename).replace('\\', '/')
+                    
+                    try:
+                        # 下载图片
+                        full_url = Config.imgpath + img_url_relative
+                        response = requests.get(full_url, timeout=10)
+                        if response.status_code == 200:
+                            with open(img_path, 'wb') as file:
+                                file.write(response.content)
+                            
+                            # 添加图片
+                            run = paragraph.add_run()
+                            # 设置图片大小，可以根据需要动态调整
+                            run.add_picture(img_path, width=Inches(5.5))
+                            
+                            # 删除临时文件
+                            if os.path.exists(img_path):
+                                os.remove(img_path)
+                        else:
+                            logger.error(f"图片下载失败: {full_url}, Status: {response.status_code}")
+                            paragraph.add_run("[Image Load Failed]")
+                    except Exception as e:
+                        logger.error(f"图片处理异常: {e}")
+                        paragraph.add_run("[Image Error]")
+                else:
+                    logger.warning(f"图片键 {img_key} 在数据中未找到")
+            continue
+
+        # 通用文本替换逻辑
+        # 使用正则分割，保留分隔符
+        # 注意：re.split 如果捕获组匹配，分隔符也会包含在结果列表中
+        parts = re.split(r'(\{\{.*?\}\})', original_text)
+        
+        paragraph.clear() # 清空当前段落内容
+        
+        for part in parts:
+            if not part:
+                continue
+                
+            # 检查是否是占位符
+            placeholder_match = re.match(r'\{\{(.*?)\}\}', part)
+            
+            if placeholder_match:
+                key = placeholder_match.group(1).strip()
+                
+                # 处理特殊标签 (Sign, ck, rd)
+                if key.startswith(("Sign", "ck", "rd")):
+                    logger.info(f'特殊标签跳过: {part}')
+                    # 如果希望保留标签但不可见，可以取消下面注释
+                    run_white = paragraph.add_run(part)
+                    run_white.font.color.rgb = RGBColor(255, 255, 255)
+                    continue
+                
+                # 普通替换
+                replacement_text = replace_placeholder(part, key)
+                run_black = paragraph.add_run(replacement_text)
+                run_black.font.color.rgb = RGBColor(0, 0, 0)
+            else:
+                # 普通文本
+                run_black = paragraph.add_run(part)
+                run_black.font.color.rgb = RGBColor(0, 0, 0)
 
 # 生成PDI签名文件,java 那边处理不了替换的问题。
 @router.post("/Make_Signature_File")
@@ -2107,8 +2188,63 @@ def Make_Signature_Files(p: Person):
         
         doc.save(p.filepath)
         logger.info("WORD 生成完成 ====>>>>>{0}".format(p.filepath))
+
+        # # Word 转 PDF ==》 临时解决方案，java 那边的转换工具使用有问题
+        # pdf_file = convert_word_to_pdf(p.filepath)
+        # # 返回结果调整
+        # return { 'code':'0', 'msg':'succeed', "datas":pdf_file } 
+    
         return { 'code':'0', 'msg':'succeed', "datas":p.filepath }
+    
     except BaseException as e:
         logger.info("WORD 生成失败 ====>>>>>{0}".format(e))
         return {'code':'-1','msg':'error',"datas":e}
 
+
+
+
+def convert_word_to_pdf(input_path, output_dir=None):
+    """
+    使用LibreOffice将Word文档转换为PDF
+    :param input_path: Word文件路径（.docx或.doc）
+    :param output_dir: 输出PDF目录，默认与输入文件同目录
+    :return: 转换后的PDF路径，失败则返回None
+    """
+    # 检查输入文件是否存在
+    if not os.path.exists(input_path):
+        logger.info(f"错误：文件不存在 - {input_path}")
+        return None
+    
+    # 确定输出目录
+    if output_dir is None:
+        output_dir = os.path.dirname(input_path)
+    os.makedirs(output_dir, exist_ok=True)  # 确保输出目录存在
+    
+    # 构建输出PDF路径（与输入文件同名）
+    file_name = os.path.splitext(os.path.basename(input_path))[0]
+    output_path = os.path.join(output_dir, f"{file_name}.pdf")
+    
+    # 构建LibreOffice命令
+    # 使用--headless无界面模式，--convert-to指定格式，--outdir指定输出目录
+    cmd = [
+        "soffice",
+        "--headless",
+        "--convert-to", "pdf",
+        "--outdir", output_dir,
+        input_path
+    ]
+    
+    try:
+        # 执行命令
+        result = subprocess.run(
+            cmd,
+            check=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True
+        )
+        logger.info(f"转换成功：{output_path}")
+        return output_path
+    except subprocess.CalledProcessError as e:
+        logger.error(f"转换失败：{e.stderr}")
+        return None

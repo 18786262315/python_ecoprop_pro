@@ -21,6 +21,38 @@
           height: 974px;
           position: relative;
         }
+
+        .year-text{
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 30%;
+          height: 100%;
+          display: flex;
+          flex-flow: column;
+          align-items: center;
+          justify-content: center;
+          padding: 0 10rem;
+          font-size: 22rem;
+          font-weight: 600;
+          line-height: 22rem;
+
+        }
+        .y-text-color{
+          /* 标准写法，部分现代浏览器支持 */
+          background-image: linear-gradient(to bottom, #b1dff3, #5ad5dd); 
+          /* 兼容 Webkit 内核 (Chrome, Safari, Edge) */
+          -webkit-background-clip: text;
+          background-clip: text;
+          /* 文字颜色必须透明才能看到背景 */
+          color: transparent; 
+          /* 确保背景不重复 */
+          background-repeat: no-repeat;
+          border: none;
+           /* 2. 设置文字描边：宽度 2px，颜色白色 (可根据背景调整颜色) */
+          -webkit-text-stroke:0; 
+          text-stroke: 0; /* 标准属性，部分浏览器支持 */
+        }
         .commpay-info{
           position: absolute;
           top: 205px;
@@ -166,7 +198,7 @@
           background-repeat: no-repeat;
           background-position: 50%;
           background-size: contain;
-          background-color: white;
+          background-color: #f5f5f5;
         }
         .logo-img {
           position: absolute;
@@ -182,7 +214,18 @@
 </head>
 <body>
   <div class="commpay">
-      <img style="position: absolute;left: 10%;height: 850px;" src="{{temppath}}/img/time-logo.png" alt="">
+      <!-- <img style="position: absolute;left: 10%;height: 850px;" src="./img/time-logo.png" alt=""> -->
+      <div class="year-text">
+        <div style="display: flex;">
+          <div class="y-text-color" style="margin-top: -60px;">2</div>
+          <div class="y-text-color" >0</div>
+        </div>
+        <div style="display: flex;">
+          <div class="y-text-color" style="margin-top: -60px;">2</div>
+          <div class="y-text-color" >6</div>
+        </div>
+
+      </div>
     <div class="commpay-info">
       {% if userInfo.brokeLogo %}
       <img class="commpay-logo Centered" src="{{imgpath}}{{userInfo.brokeLogo}}"  alt="">
@@ -263,7 +306,7 @@
     <div class="content-title-line"></div>
     <div class="gallery-img-list">
       {% for pro_img in media_list.img %}
-      <img class="Image-Data" style="object-fit: cover;" src="{{imgpath}}{{pro_img.url | urlencode}}" alt="">
+      <img class="Image-Data" style="object-fit: cover;" src="{{imgpath}}{{pro_img.url + '?quality=50' | urlencode}}" alt="">
       <!-- <div class="Image-Data" style="background-size: 100% 100%;background-image: url('{{imgpath}}{{pro_img.url | urlencode}}');"></div> -->
       {% if loop.index0 != 0 and loop.index % 12 == 0 %}
       <div style="page-break-after: always;color: white;">.</div>
@@ -345,7 +388,7 @@
     <div class="gallery-img-list">
       {% for floorplan in floor_plan_list.lists %}
       {% if floorplan.img %}
-        <img class="Image-Data" style="object-fit: cover;" src="{{imgpath}}{{floorplan.img}}" alt="">
+        <img class="Image-Data" style="object-fit: contain;" src="{{imgpath}}{{floorplan.img + '?quality=50'}}" alt="">
       {%endif%}
         <!-- <div class="Image-Data" style="background-image: url({{imgpath}}{{floorplan.img | urlencode}}{{''}});"></div> -->
       {% endfor %}
@@ -382,7 +425,7 @@
       <p style="font-size: 1.2rem;line-height: 2rem;margin: 0;">
         Register Or Call Our Sales Hotline <span style="color: #00d1c7;">{{userInfo.mobile}}</span> for many precise information & Priority accessibility
         for hassle-free experiences.
-        Due to the currentsituation, it is essential thatyou contact <span style="color: #00d1c7;">{{userInfo.mobile}}</span> to confirm yourshowflat
+        Due to the currentsituation, it is essential that you contact <span style="color: #00d1c7;">{{userInfo.mobile}}</span> to confirm yourshowflat
         appointment. <br>
         Registered Parties will be eligible for our Immediate Developer Appointed Marketing Pricing in
         addition to live updates of the advancement. Submityour Expression of Interest online and be a

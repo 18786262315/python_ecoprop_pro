@@ -79,13 +79,20 @@ def XHORIZON_APP_PRO_PDF(agentId,projectId):
     # logger.info('OCR查询成功--->>>%s'%(OCRinfo))
 
     # 创建PDF文档 =====================================================
+    song = "simsun"
 
-    # song = "simsun"
-    # pdfmetrics.registerFont(TTFont(song, "simsun.ttc"))
-    pdfmetrics.registerFont(TTFont('ARIALBD','ARIALBD.TTF')) #注册字体
-    pdfmetrics.registerFont(TTFont('arial','arial.ttf')) #注册字体
-    pdfmetrics.registerFont(TTFont('msyh','msyh.ttf')) #注册字体
-    pdfmetrics.registerFont(TTFont('msyhbd','msyhbd.ttf')) #注册字体
+    # 注册字体    
+    msyh = os.path.join(os.getcwd(), "font", "msyh.ttf")
+    msyhbd = os.path.join(os.getcwd(), "font", "msyhbd.ttf")
+    ARIALBD = os.path.join(os.getcwd(), "font", "ARIALBD.TTF")
+    arial = os.path.join(os.getcwd(), "font", "arial.ttf")
+    simsun = os.path.join(os.getcwd(), "font", "simsun.ttc")
+
+    pdfmetrics.registerFont(TTFont(song, simsun))
+    pdfmetrics.registerFont(TTFont('ARIALBD',ARIALBD)) #注册字体
+    pdfmetrics.registerFont(TTFont('arial',arial)) #注册字体
+    pdfmetrics.registerFont(TTFont('msyh',msyh)) #注册字体
+    pdfmetrics.registerFont(TTFont('msyhbd',msyhbd)) #注册字体
     Imagepath = os.path.join(Config.filepath,'file')
     pagesize = (1747,965) # 画布大小
     # pagesize = (A4[1],A4[0]) # 画布大小
@@ -97,11 +104,11 @@ def XHORIZON_APP_PRO_PDF(agentId,projectId):
         os.makedirs(uppath)
     
     savepath = os.path.join(uppath,str(int(time.time()))+'.pdf')
-    returnPath = os.path.join(Config.filepath,agentId,str(int(time.time()))+'.pdf')
+    # returnPath = os.path.join(Config.filepath,agentId,str(int(time.time()))+'.pdf')
     doc = canvas.Canvas(savepath,pagesize=pagesize)
     doc.setTitle(prodatainfo['projectName'])
     makefunc = MakeReportlab(doc,Imagepath,pagesize,Symbol) # 加载方法
-    # logger.info('---------->>>文档创建')
+    logger.info('---------->>>文档创建')
 
     
 
@@ -1028,8 +1035,8 @@ def XHORIZON_APP_PRO_PDF(agentId,projectId):
     doc.showPage()  # 保存当前画布页面
     doc.save()  # 保存文件并关闭画布
     # time.sleep(3)
-    return returnPath
-    # return savepath 
+    # return returnPath
+    return savepath 
 
 
 

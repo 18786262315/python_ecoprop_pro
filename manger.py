@@ -15,7 +15,7 @@ from comm.logger import logger
 
 # from sql import database,models
 from modules import Project,Transaction,Temp
-
+import modules
 
 # models.Base.metadata.create_all(bind=database.engine)
 
@@ -27,6 +27,7 @@ app = FastAPI()
 app.include_router(Transaction.router)
 app.include_router(Project.router)
 app.include_router(Temp.router)
+app.include_router(modules.router)
 
 
 # 跨域问题
@@ -83,6 +84,10 @@ async def request_validation_exception_handler(request: Request, exc: RequestVal
 
 
 
+# @app.get("/")
+# async def main():
+#     logger.info("测试接口")
+#     return {'status': 'ok'}
 
 
 

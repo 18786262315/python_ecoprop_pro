@@ -92,7 +92,8 @@ class Config:
     imgpath = 'https://img.singmap.com' # oss 图片
     host_imgpath = 'http://api.singmap.com' # 服务所在的本地图片 /upload 地址 
 
-    API_IP = 'http://127.0.0.1:9998' #API
+    # API_IP = 'http://127.0.0.1:9998' #API
+    API_IP = 'http://api.singmap.com' #API
 
     # ReLoSG 项目API地址
     ReLoSG_HOST = "http://192.168.0.145:4501" 
@@ -102,12 +103,12 @@ class Config:
 
     filepath = os.getcwd()  # 项目所在路径 
     ecoprop_temp_path = os.path.join(filepath,'temp') # 项目模板所在路径 
-    # 文件导出路径
+    # 文件导出路径（之前切到指定的路径下面有权限问题，就先放到 savills）
     returnpaths = "/home/upload/savills/pnd/file/report" if envs == 'release' else os.path.join(os.getcwd(),'pdf') # Pnd 报告保存路径
     ecoprop_return_path = "/home/upload/savills/ecoprop/pdf" if envs == 'release' else os.path.join(os.getcwd(),'pdf') # Ecoprop 报告保存路径
 
     # 分享域名
-    share_domain = "sharedev.ecoprop.com"
+    share_domain = "share.ecoprop.com"
 
 
     @staticmethod
