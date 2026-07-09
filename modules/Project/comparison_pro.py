@@ -112,7 +112,7 @@ def XHORIZON_Comparison_PDF(agentId,projectId):
         logger.info('Set tmp Info ====>>>>')
         datas = eval(re.sub('None','\'\'',str(datas))) # 去除None值
         htmls = template.render(datas)
-        config = pdfkit.configuration(wkhtmltopdf='/usr/local/bin/wkhtmltopdf') 
+        config = pdfkit.configuration(wkhtmltopdf=Config.wkhtml_path)
         pdfkit.from_string(htmls,re_path,configuration=config,options=options)
     except Exception as e:
         logger.error("File Padding Err ===>>>{0}".format(e))
