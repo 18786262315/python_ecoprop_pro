@@ -1,7 +1,7 @@
 
 
-from fastapi import APIRouter,HTTPException
-import re,requests,json
+from fastapi import APIRouter, HTTPException, Query
+import re, requests, json
 
 from comm.logger import logger
 from . import Picture_recognition as pic
@@ -33,19 +33,36 @@ class push_siteplan(userInfo):
     content:str
 
 @router.get('/mapping')
-async def SetMapping(data: get_siteplan):
+async def SetMapping(
+    userId: str = Query(...),
+    agentId: str = Query(''),
+    token: str = Query(''),
+    brokeId: str = Query(...),
+    sitePlanId: str = Query(...),
+    filepath: str = Query(...),
+):
+    logger.info('开始识别图片表格=======>')
+    """
+    图片表格识别
+    """
     try:
+        logger.info('开始识别图片表格=======>')
         # 判断图片地址是否是网络地址 如果不是 则拼接默认图片域名
-        if not re.match(r'^https?://', data.filepath):  # 判断是否是网络地址
-            data.filepath = Config.imgpath + data.filepath
+        _filepath = filepath
+        if not re.match(r'^https?://', _filepath):  # 判断是否是网络地址
+            logger.info('图片地址非网络地址，拼接默认图片域名')
+            _filepath = Config.imgpath + _filepath
 
         # 识别图片表格
-        content = pic.Picture_table_recognition(data.filepath)
-
+        content = pic.Picture_table_recognition(_filepath)
+        logger.info('图片表格识别完成=======>')
         # 推送到服务器（与旧版保持一致：json.dumps序列化）
         content_str = json.dumps(content, ensure_ascii=False)
         # 3. 构建提交数据（push_siteplan 继承 userInfo，包含 userId/token/brokeId）
-        push_data = push_siteplan(**data.model_dump(), content=content_str)
+        push_data = push_siteplan(
+            userId=userId, agentId=agentId, token=token, brokeId=brokeId,
+            sitePlanId=sitePlanId, content=content_str
+        )
         # logger.info('提交内容开始=======>{0}'.format(push_data))
         # 4. 签名加密
         signed_data = pic.set_signature(push_data.model_dump())
@@ -55,12 +72,21 @@ async def SetMapping(data: get_siteplan):
         ret = requests.post(Push_Url, data=signed_data)
         # print(f"POST响应状态码: {ret.status_code}")
         # print(f"POST响应内容: {ret.text}")
-        logger.info('图片表格识别完成=======>')
-        return {
-            'code':'0',
-            'msg':'success',
-            "datas":""
-        }
+        if ret.status_code == 200:
+            logger.info('图片表格识别完成=======>')
+            return {
+                'code':'0',
+                'msg':'success',
+                "datas":""
+            }
+        else:
+            logger.error('图片表格识别失败=======>')
+            return {
+                'code':'-1',
+                'msg':'error',
+                "datas":ret.text
+            }
+
     except BaseException as e:
         rtdata = {
             'code':'-1',
