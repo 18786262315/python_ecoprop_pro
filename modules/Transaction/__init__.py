@@ -1,11 +1,12 @@
 
 
-from fastapi import APIRouter,Form,HTTPException,Request
-import re,copy,requests,json,os,configparser,time
+from fastapi import APIRouter,HTTPException
+import re,requests,json
 
 from comm.logger import logger
 from . import Picture_recognition as pic
 from pydantic import BaseModel
+from config import Config
 """
 
 """
@@ -17,6 +18,7 @@ router = APIRouter(prefix="/Transaction",tags=['Transaction'],responses={405: {"
 
 class userInfo(BaseModel):
     userId:str
+    agentId:str = ''
     token:str = ''
     brokeId:str
 
@@ -33,22 +35,32 @@ class push_siteplan(userInfo):
 @router.get('/mapping')
 async def SetMapping(data: get_siteplan):
     try:
-        print(0)
+        # 判断图片地址是否是网络地址 如果不是 则拼接默认图片域名
+        if not re.match(r'^https?://', data.filepath):  # 判断是否是网络地址
+            data.filepath = Config.imgpath + data.filepath
 
+        # 识别图片表格
         content = pic.Picture_table_recognition(data.filepath)
 
-        # 推送到服务器
-        content = re.sub("'", '"', '%s' % content)  # 将单引号换成双引号
-        content = re.sub("\n", '', '%s' % content)  # 去除换行符
-
-        headers = {"Content-Type": "application/x-www-form-urlencoded"}
-        Push_Url = "/broke-manager-service/siteplan/updateSiteContent"
-        content = push_siteplan(**data.model_dump(),content=content)
-        return pic.set_signature(content.model_dump())
-
-        # ret = requests.post(Push_Url, data=pic.set_signature(content.dict()))
-        # logger.info('提交内容成功=======>')
-        # return ret.json()
+        # 推送到服务器（与旧版保持一致：json.dumps序列化）
+        content_str = json.dumps(content, ensure_ascii=False)
+        # 3. 构建提交数据（push_siteplan 继承 userInfo，包含 userId/token/brokeId）
+        push_data = push_siteplan(**data.model_dump(), content=content_str)
+        # logger.info('提交内容开始=======>{0}'.format(push_data))
+        # 4. 签名加密
+        signed_data = pic.set_signature(push_data.model_dump())
+        # 5. 提交到服务器（form表单格式）
+        # Push_Url = "https://api.singmap.com/manager-service/siteplan/updateSiteContent"
+        Push_Url =  Config.API_IP + "/manager-service/siteplan/updateSiteContent"
+        ret = requests.post(Push_Url, data=signed_data)
+        # print(f"POST响应状态码: {ret.status_code}")
+        # print(f"POST响应内容: {ret.text}")
+        logger.info('图片表格识别完成=======>')
+        return {
+            'code':'0',
+            'msg':'success',
+            "datas":""
+        }
     except BaseException as e:
         rtdata = {
             'code':'-1',
